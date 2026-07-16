@@ -1,0 +1,2 @@
+.town-search{width:100%;padding:14px 16px;border:1px solid #cbd9e3;border-radius:14px;margin:10px 0 16px}.towns{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.town{border:1px solid #dae6ee;border-radius:13px;background:white;padding:11px;text-align:left}.town:hover{background:#eaf6fc}
+.detail-copy{font-size:1rem;line-height:1.75;color:#29465f}.detail-copy h3{margin:22px 0 8px}.detail-list{padding-left:20px;color:#29465f}.detail-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}.detail-meta .item{min-height:110px}

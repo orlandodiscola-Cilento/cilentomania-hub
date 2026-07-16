@@ -1,0 +1,17 @@
+[
+    {
+        "url":  "https://www.cilentorent.com",
+        "image":  "images/partner/partner-1.png",
+        "alt":  "Cilento Rent"
+    },
+    {
+        "url":  "https://www.convergenze.it",
+        "image":  "images/partner/partner-2.png",
+        "alt":  "Convergenze"
+    },
+    {
+        "url":  "https://www.topmotorvillage.it",
+        "image":  "images/partner/partner-3.png",
+        "alt":  "Top Motor Village"
+    }
+]

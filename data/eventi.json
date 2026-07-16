@@ -1,0 +1,18 @@
+{
+    "events":  [
+
+               ],
+    "eventsUrl":  "",
+    "seasonalProjects":  [
+                             {
+                                 "title":  "Arena in Villa",
+                                 "place":  "Villa Matarazzo – Santa Maria di Castellabate",
+                                 "description":  "Rassegna culturale e di spettacolo. Programmazione in fase di aggiornamento."
+                             },
+                             {
+                                 "title":  "Agorà dei Mercanti – Gusto, Arte, Identità",
+                                 "place":  "Area IAT Paestum",
+                                 "description":  "Incontri, produzioni locali, presentazioni e degustazioni. Programmazione in fase di aggiornamento."
+                             }
+                         ]
+}

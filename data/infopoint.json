@@ -1,0 +1,58 @@
+[
+    {
+        "name":  "Acciaroli",
+        "address":  "Via Porto, Acciaroli",
+        "notes":  "",
+        "coordinates":  "40.1781391,15.0248045",
+        "email":  "infoacciaroli@cilentomania.it",
+        "phone":  "+390974275367"
+    },
+    {
+        "name":  "Agropoli – Lungomare San Marco",
+        "address":  "Via S. Marco, 35, Agropoli",
+        "notes":  "",
+        "coordinates":  "40.3648679,15.0006117",
+        "email":  "agropoli@cilentomania.it",
+        "phone":  ""
+    },
+    {
+        "name":  "Agropoli – Via San Felice",
+        "address":  "Via S. Felice, 3, Agropoli",
+        "notes":  "",
+        "coordinates":  "40.3507597,15.0013342",
+        "email":  "agropoli@cilentomania.it",
+        "phone":  ""
+    },
+    {
+        "name":  "Castellabate – Centro Storico",
+        "address":  "Via G. Matteotti, 6, Castellabate",
+        "notes":  "",
+        "coordinates":  "40.2788903,14.9527416",
+        "email":  "castellabate@cilentomania.it",
+        "phone":  "+390974967347"
+    },
+    {
+        "name":  "Castellabate – Villa Matarazzo",
+        "address":  "Corso Matarazzo, Santa Maria di Castellabate",
+        "notes":  "",
+        "coordinates":  "40.2902615,14.9490241",
+        "email":  "info@cilentomania.it",
+        "phone":  ""
+    },
+    {
+        "name":  "Paestum",
+        "address":  "Via Magna Graecia, 823, Capaccio Paestum",
+        "notes":  "",
+        "coordinates":  "40.4249278,15.0062859",
+        "email":  "paestum@cilentomania.it",
+        "phone":  "+3908281999872"
+    },
+    {
+        "name":  "Trentinara – Cilento in Volo",
+        "address":  "Via Panoramica, presso Cilento in Volo, Trentinara",
+        "notes":  "",
+        "coordinates":  "40.401241,15.1066756",
+        "email":  "info@cilentomania.it",
+        "phone":  ""
+    }
+]
