@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500" role="img" aria-labelledby="title desc">
+  <title id="title">Cilentomania HUB</title>
+  <desc id="desc">Immagine temporanea per le schede dei Comuni</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#075985"/>
+      <stop offset="0.55" stop-color="#1178bd"/>
+      <stop offset="1" stop-color="#159947"/>
+    </linearGradient>
+    <radialGradient id="light" cx="0.2" cy="0.15" r="0.9">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#background)"/>
+  <rect width="800" height="500" fill="url(#light)"/>
+  <path d="M0 390c110-70 205-76 301-18 91 55 179 48 265-20 74-59 152-65 234-20v168H0z" fill="#062746" opacity="0.22"/>
+  <circle cx="400" cy="190" r="70" fill="#ffffff" opacity="0.13"/>
+  <path d="M365 204l35-48 35 48-35 42z" fill="none" stroke="#ffffff" stroke-width="10" stroke-linejoin="round"/>
+  <text x="400" y="310" fill="#ffffff" font-family="Segoe UI, Arial, sans-serif" font-size="48" font-weight="800" text-anchor="middle">Cilentomania</text>
+  <text x="400" y="350" fill="#ffffff" opacity="0.9" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="600" letter-spacing="4" text-anchor="middle">ESPLORA IL TERRITORIO</text>
+  <text x="400" y="420" fill="#ffffff" opacity="0.75" font-family="Segoe UI, Arial, sans-serif" font-size="17" text-anchor="middle">Immagine in aggiornamento</text>
+</svg>

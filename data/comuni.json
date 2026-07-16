@@ -57,6 +57,23 @@
                          "detailHtml":  "\u003cdiv class=\"detail-copy\"\u003e\u003cp\u003eCapo Palinuro è uno dei promontori più riconoscibili del Cilento. Le falesie calcaree, le grotte marine e i punti panoramici creano uno scenario unico tra mare, mito e natura.\u003c/p\u003e\u003ch3\u003eEsperienze consigliate\u003c/h3\u003e\u003cp\u003eEscursione in barca alle grotte, passeggiata al faro, visita alla Grotta Azzurra e sosta sulle spiagge della zona.\u003c/p\u003e\u003cul class=\"detail-list\"\u003e\u003cli\u003eIdeale nelle giornate di mare calmo\u003c/li\u003e\u003cli\u003eNumerosi operatori nautici nel porto\u003c/li\u003e\u003cli\u003ePanorami spettacolari all\u0027alba e al tramonto\u003c/li\u003e\u003c/ul\u003e\u003c/div\u003e"
                      }
                  ],
+    "territory":  {
+                       "placeholderImage":  "assets/placeholder-comune.svg",
+                       "cards":  [
+                                     {
+                                         "municipality":  "Capaccio Paestum",
+                                         "locations":  ["Paestum"]
+                                     },
+                                     {
+                                         "municipality":  "Castellabate",
+                                         "locations":  ["Santa Maria di Castellabate"]
+                                     },
+                                     {
+                                         "municipality":  "Pollica",
+                                         "locations":  ["Acciaroli"]
+                                     }
+                                 ]
+                   },
     "municipalities":  {
                            "value":  [
                                          "Agropoli",
@@ -75,8 +92,8 @@
                                          "Campora",
                                          "Cannalonga",
                                          "Capaccio Paestum",
-                                         "Casalbuono",
                                          "Casal Velino",
+                                         "Casalbuono",
                                          "Casaletto Spartano",
                                          "Caselle in Pittari",
                                          "Castel San Lorenzo",
@@ -95,6 +112,7 @@
                                          "Gioi",
                                          "Giungano",
                                          "Ispani",
+                                         "Laureana Cilento",
                                          "Laurino",
                                          "Laurito",
                                          "Lustra",
@@ -108,7 +126,7 @@
                                          "Morigerati",
                                          "Novi Velia",
                                          "Ogliastro Cilento",
-                                         "Oliveto Citra",
+                                         "Omignano",
                                          "Orria",
                                          "Ottati",
                                          "Padula",
@@ -124,13 +142,12 @@
                                          "Prignano Cilento",
                                          "Roccadaspide",
                                          "Roccagloriosa",
+                                         "Rofrano",
                                          "Roscigno",
                                          "Rutino",
+                                         "Sacco",
                                          "Sala Consilina",
                                          "Salento",
-                                         "Sanza",
-                                         "Sapri",
-                                         "Sassano",
                                          "San Giovanni a Piro",
                                          "San Mauro Cilento",
                                          "San Mauro La Bruca",
@@ -139,6 +156,10 @@
                                          "Santa Marina",
                                          "Sant\u0027Angelo a Fasanella",
                                          "Sant\u0027Arsenio",
+                                         "Sanza",
+                                         "Sapri",
+                                         "Sassano",
+                                         "Serramezzana",
                                          "Sessa Cilento",
                                          "Sicignano degli Alburni",
                                          "Stella Cilento",
@@ -152,6 +173,6 @@
                                          "Vallo della Lucania",
                                          "Vibonati"
                                      ],
-                           "Count":  92
+                           "Count":  96
                        }
 }

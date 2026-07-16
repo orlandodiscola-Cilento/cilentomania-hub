@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "description": "Crediti e provenienza delle immagini utilizzate nelle card dei Comuni.",
+  "images": [
+    {
+      "municipality": "*",
+      "file": "assets/placeholder-comune.svg",
+      "type": "placeholder",
+      "author": "Cilentomania APS",
+      "source": "Cilentomania HUB",
+      "license": "Asset interno",
+      "notes": "Placeholder temporaneo 800 x 500 utilizzato fino all'inserimento delle fotografie approvate."
+    }
+  ]
+}
