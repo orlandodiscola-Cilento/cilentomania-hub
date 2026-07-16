@@ -1,5 +1,8 @@
 [
     {
+        "id":  "INF001",
+        "municipality":  "Pollica",
+        "locality":  "Acciaroli",
         "name":  "Acciaroli",
         "address":  "Via Porto, Acciaroli",
         "notes":  "",
@@ -8,6 +11,9 @@
         "phone":  "+390974275367"
     },
     {
+        "id":  "INF002",
+        "municipality":  "Agropoli",
+        "locality":  "Lungomare San Marco",
         "name":  "Agropoli – Lungomare San Marco",
         "address":  "Via S. Marco, 35, Agropoli",
         "notes":  "",
@@ -16,6 +22,9 @@
         "phone":  ""
     },
     {
+        "id":  "INF003",
+        "municipality":  "Agropoli",
+        "locality":  "San Felice",
         "name":  "Agropoli – Via San Felice",
         "address":  "Via S. Felice, 3, Agropoli",
         "notes":  "",
@@ -24,6 +33,9 @@
         "phone":  ""
     },
     {
+        "id":  "INF004",
+        "municipality":  "Castellabate",
+        "locality":  "Centro Storico",
         "name":  "Castellabate – Centro Storico",
         "address":  "Via G. Matteotti, 6, Castellabate",
         "notes":  "",
@@ -32,6 +44,9 @@
         "phone":  "+390974967347"
     },
     {
+        "id":  "INF005",
+        "municipality":  "Castellabate",
+        "locality":  "Santa Maria di Castellabate",
         "name":  "Castellabate – Villa Matarazzo",
         "address":  "Corso Matarazzo, Santa Maria di Castellabate",
         "notes":  "",
@@ -40,6 +55,9 @@
         "phone":  ""
     },
     {
+        "id":  "INF006",
+        "municipality":  "Capaccio Paestum",
+        "locality":  "Paestum",
         "name":  "Paestum",
         "address":  "Via Magna Graecia, 823, Capaccio Paestum",
         "notes":  "",
@@ -48,6 +66,9 @@
         "phone":  "+3908281999872"
     },
     {
+        "id":  "INF007",
+        "municipality":  "Trentinara",
+        "locality":  "Cilento in Volo",
         "name":  "Trentinara – Cilento in Volo",
         "address":  "Via Panoramica, presso Cilento in Volo, Trentinara",
         "notes":  "",

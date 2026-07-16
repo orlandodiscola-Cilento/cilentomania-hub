@@ -59,18 +59,53 @@
                  ],
     "territory":  {
                        "placeholderImage":  "assets/placeholder-comune.svg",
+                       "contentDefaults":  {
+                                               "introduzione":  null,
+                                               "presentazione":  null,
+                                               "storia":  null,
+                                               "tradizioni":  null,
+                                               "curiosita":  null,
+                                               "territorio":  null,
+                                               "localita":  [],
+                                               "enogastronomia":  null,
+                                               "informazioni_utili":  null,
+                                               "useful_contact_ids":  []
+                                           },
                        "cards":  [
                                      {
                                          "municipality":  "Capaccio Paestum",
-                                         "locations":  ["Paestum"]
+                                         "locations":  ["Paestum"],
+                                         "infopoint_ids":  ["INF006"]
                                      },
                                      {
                                          "municipality":  "Castellabate",
-                                         "locations":  ["Santa Maria di Castellabate"]
+                                         "locations":  ["Santa Maria di Castellabate"],
+                                         "infopoint_ids":  ["INF004", "INF005"]
                                      },
                                      {
                                          "municipality":  "Pollica",
-                                         "locations":  ["Acciaroli"]
+                                         "locations":  ["Acciaroli"],
+                                         "infopoint_ids":  ["INF001"]
+                                     },
+                                     {
+                                         "municipality":  "Agropoli",
+                                         "locations":  [],
+                                         "infopoint_ids":  ["INF002", "INF003"],
+                                         "introduzione":  null,
+                                         "presentazione":  null,
+                                         "storia":  null,
+                                         "tradizioni":  null,
+                                         "curiosita":  null,
+                                         "territorio":  null,
+                                         "localita":  [],
+                                         "enogastronomia":  null,
+                                         "informazioni_utili":  null,
+                                         "useful_contact_ids":  ["AGRO-COM-001", "AGRO-PL-001", "AGRO-CC-001", "AGRO-CA-001"]
+                                     },
+                                     {
+                                         "municipality":  "Trentinara",
+                                         "locations":  [],
+                                         "infopoint_ids":  ["INF007"]
                                      }
                                  ]
                    },
