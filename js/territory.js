@@ -6,6 +6,10 @@ let usefulContacts=[];
 let usefulContactsPromise=null;
 let territoryImages=[];
 let territoryImagesPromise=null;
+let lockedPageScrollY=0;
+let pageScrollLocked=false;
+let lockedBodyStyles=null;
+let territoryListScrollY=0;
 
 function initTerritoryData(data){
  municipalities=Array.isArray(data.municipalities)?data.municipalities:data.municipalities.value;
@@ -133,7 +137,7 @@ function municipalitySheet(name,includeInfopoints){
  const card=territoryCardData(name);
  if(!includeInfopoints)return '<div class="notice">Scheda territoriale predisposta per essere popolata con cosa vedere, dove dormire, dove mangiare, eventi, esperienze e servizi.</div>';
  const narrative=narrativeSection('Presentazione generale',card.presentazione)+narrativeSection('Storia',card.storia)+narrativeSection('Identità e tradizioni',card.tradizioni)+narrativeSection('Curiosità',card.curiosita)+narrativeSection('Paesaggio e territorio',card.territorio)+narrativeSection('Borghi, frazioni e località principali',card.localita,true)+narrativeSection('Enogastronomia tipica',card.enogastronomia)+narrativeSection('Informazioni utili per il visitatore',card.informazioni_utili);
- return '<button class="territory-back" type="button" data-territory-back>← Torna ai Comuni</button><article class="territory-municipality"><img class="territory-cover" src="'+safeTerritoryText(card.imageCover)+'" width="800" height="500" alt="'+safeTerritoryText(card.imageCoverAlt)+'" onerror="this.onerror=null;this.src=\''+safeTerritoryText(territoryConfig.placeholderImage)+'\'"><header class="territory-municipality-head"><h2>'+safeTerritoryText(name)+'</h2>'+(card.introduzione?'<p>'+safeTerritoryText(card.introduzione)+'</p>':'<p class="territory-content-pending">Introduzione da completare con fonti verificate.</p>')+'</header><div class="territory-narrative">'+narrative+'</div>'+territoryGallery(card)+(includeInfopoints?infopointPanel(card):'')+usefulContactsPanel(card)+practicalInformationPanel(card)+municipalityFinalActions(name)+'</article>';
+ return '<div class="territory-sticky-bar" data-municipality-toolbar><button class="territory-back" type="button" data-territory-back>← Torna ai Comuni</button><button class="territory-sheet-close" type="button" data-territory-close aria-label="Chiudi scheda Comune">×</button></div><article class="territory-municipality"><img class="territory-cover" src="'+safeTerritoryText(card.imageCover)+'" width="800" height="500" alt="'+safeTerritoryText(card.imageCoverAlt)+'" onerror="this.onerror=null;this.src=\''+safeTerritoryText(territoryConfig.placeholderImage)+'\'"><header class="territory-municipality-head"><h2>'+safeTerritoryText(name)+'</h2>'+(card.introduzione?'<p>'+safeTerritoryText(card.introduzione)+'</p>':'<p class="territory-content-pending">Introduzione da completare con fonti verificate.</p>')+'</header><div class="territory-narrative">'+narrative+'</div>'+territoryGallery(card)+(includeInfopoints?infopointPanel(card):'')+usefulContactsPanel(card)+practicalInformationPanel(card)+municipalityFinalActions(name)+'</article>';
 }
 function territoryExplorer(note){
  const cards=municipalities.map(name=>{
@@ -145,11 +149,37 @@ function territoryExplorer(note){
  return '<div class="notice">'+note+'</div><label class="territory-search-label" for="townFilter">Cerca per Comune o località</label><input class="town-search" id="townFilter" placeholder="Cerca un Comune o una località..."><div class="territory-grid" id="townList">'+cards+'</div><p class="territory-empty hidden" id="territoryEmpty">Nessun Comune trovato.</p>';
 }
 function openPanel(title,html){
+ const wasOpen=overlay.classList.contains('open');
  panelContent.innerHTML=(title?'<h2>'+title+'</h2>':'')+html;
- overlay.classList.add('open');document.body.style.overflow='hidden';
+ const isMunicipalitySheet=Boolean(panelContent.querySelector('[data-municipality-toolbar]'));
+ overlay.classList.toggle('territory-sheet-open',isMunicipalitySheet);
+ if(!wasOpen)lockPageScroll();
+ overlay.classList.add('open');
+ if(isMunicipalitySheet){
+  overlay.scrollTop=0;panelContent.closest('.panel')?.scrollTo({top:0,left:0,behavior:'auto'});
+  requestAnimationFrame(()=>document.querySelector('[data-territory-back]')?.focus({preventScroll:true}));
+ }
  setTimeout(()=>{bindTownFilter();bindTerritoryInteractions();},0);
 }
-function closePanel(){overlay.classList.remove('open');document.body.style.overflow='';}
+function lockPageScroll(){
+ if(pageScrollLocked)return;
+ lockedPageScrollY=window.scrollY||document.documentElement.scrollTop||0;
+ const scrollbarWidth=Math.max(0,window.innerWidth-document.documentElement.clientWidth);
+ lockedBodyStyles={position:document.body.style.position,top:document.body.style.top,left:document.body.style.left,right:document.body.style.right,width:document.body.style.width,overflow:document.body.style.overflow,paddingRight:document.body.style.paddingRight};
+ document.body.style.position='fixed';document.body.style.top='-'+lockedPageScrollY+'px';
+ document.body.style.left='0';document.body.style.right='0';document.body.style.width='100%';document.body.style.overflow='hidden';
+ if(scrollbarWidth)document.body.style.paddingRight=scrollbarWidth+'px';
+ pageScrollLocked=true;
+}
+function unlockPageScroll(){
+ if(!pageScrollLocked)return;
+ const styles=lockedBodyStyles||{};
+ Object.keys(styles).forEach(property=>{document.body.style[property]=styles[property]||'';});
+ const previousBehavior=document.documentElement.style.scrollBehavior;
+ document.documentElement.style.scrollBehavior='auto';window.scrollTo(0,lockedPageScrollY);document.documentElement.style.scrollBehavior=previousBehavior;
+ pageScrollLocked=false;lockedBodyStyles=null;
+}
+function closePanel(){overlay.classList.remove('open','territory-sheet-open');overlay.scrollTop=0;unlockPageScroll();}
 function bindTownFilter(){
  const f=document.getElementById('townFilter'); if(!f)return;
  f.addEventListener('input',()=>{
@@ -160,9 +190,13 @@ function bindTownFilter(){
   const empty=document.getElementById('territoryEmpty');if(empty)empty.classList.toggle('hidden',visible>0);
  });
  document.querySelectorAll('#townList .town').forEach(button=>button.addEventListener('click',()=>openPanel(button.textContent,municipalitySheet(button.textContent,false))));
- document.querySelectorAll('#townList [data-territory]').forEach(button=>button.addEventListener('click',async()=>{await Promise.all([usefulContactsPromise||loadUsefulContacts(),territoryImagesPromise||loadTerritoryImages()]);openPanel('',municipalitySheet(button.dataset.territory,true));}));
+ document.querySelectorAll('#townList [data-territory]').forEach(button=>button.addEventListener('click',async()=>{territoryListScrollY=overlay.scrollTop;await Promise.all([usefulContactsPromise||loadUsefulContacts(),territoryImagesPromise||loadTerritoryImages()]);openPanel('',municipalitySheet(button.dataset.territory,true));}));
 }
-function openTerritoryList(){openPanel('Esplora il Territorio',territoryExplorer('Cerca e seleziona un Comune.'));}
+function openTerritoryList(){
+ const restoreScroll=territoryListScrollY;
+ openPanel('Esplora il Territorio',territoryExplorer('Cerca e seleziona un Comune.'));
+ requestAnimationFrame(()=>overlay.scrollTo({top:restoreScroll,left:0,behavior:'auto'}));
+}
 function openTerritoryMunicipality(name){openPanel('',municipalitySheet(name,true));}
 // Adattatore non invasivo: usa soltanto archivi globali già esistenti che espongono
 // un campo municipality o comune; in assenza di dati compatibili non produce risultati.
@@ -204,6 +238,7 @@ function municipalitySectionHtml(type,name){
 }
 function bindTerritoryInteractions(){
  const listBack=document.querySelector('[data-territory-back]');if(listBack)listBack.addEventListener('click',openTerritoryList);
+ const sheetClose=document.querySelector('[data-territory-close]');if(sheetClose)sheetClose.addEventListener('click',openTerritoryList);
  const municipalityBack=document.querySelector('[data-municipality-back]');if(municipalityBack)municipalityBack.addEventListener('click',()=>openTerritoryMunicipality(municipalityBack.dataset.municipalityBack));
  document.querySelectorAll('[data-municipality-action]').forEach(button=>button.addEventListener('click',()=>openPanel('',municipalitySectionHtml(button.dataset.municipalityAction,button.dataset.municipality))));
  const toggle=document.querySelector('[data-infopoint-toggle]');
