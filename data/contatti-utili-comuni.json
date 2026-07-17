@@ -81,6 +81,26 @@
       "source": "https://www.aslsalerno.it/",
       "last_verified": null,
       "status": "da verificare"
+    },
+    {
+      "id": "ALB-COM-001",
+      "type": "comune",
+      "municipality": "Albanella",
+      "official_name": "Comune di Albanella",
+      "address": "Piazza Cavalieri di Vittorio Veneto, 6, 84044 Albanella SA",
+      "locality": "Albanella",
+      "phone": "0828781126",
+      "secondary_phone": null,
+      "email": null,
+      "pec": "protocollo@pec.comune.albanella.sa.it",
+      "website": "https://comune.albanella.sa.it/",
+      "coordinates": null,
+      "opening_days": null,
+      "hours": null,
+      "notes": "Centralino unico comunale.",
+      "source": "https://comune.albanella.sa.it/",
+      "last_verified": "2026-07-17",
+      "status": "verificato"
     }
   ]
 }

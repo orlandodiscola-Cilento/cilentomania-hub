@@ -181,6 +181,80 @@
                                          "useful_contact_ids":  ["AGRO-COM-001", "AGRO-PL-001", "AGRO-CC-001", "AGRO-CA-001"]
                                      },
                                      {
+                                         "municipality":  "Albanella",
+                                         "immagine_card":  "images/comuni/albanella.webp",
+                                         "immagine_card_id":  "IMG-ALBANELLA-CARD-001",
+                                         "immagine_copertina":  "images/comuni/albanella-santa-sofia.webp",
+                                         "immagine_copertina_id":  "IMG-ALBANELLA-COVER-001",
+                                         "galleria":  [],
+                                         "galleria_fotografica":  [
+                                                                            "IMG-ALBANELLA-GALLERY-001",
+                                                                            "IMG-ALBANELLA-GALLERY-002",
+                                                                            "IMG-ALBANELLA-GALLERY-003",
+                                                                            "IMG-ALBANELLA-GALLERY-004"
+                                                                        ],
+                                         "locations":  ["Matinella", "Borgo San Cesareo", "Bosco Camerine", "San Nicola"],
+                                         "infopoint_ids":  [],
+                                         "introduzione":  "Distesa tra le colline affacciate sulla Piana del Sele, Albanella unisce il borgo capoluogo, la vocazione olivicola e un territorio diffuso di località rurali, luoghi di culto e spazi naturali.",
+                                         "presentazione":  [
+                                                                   "Albanella è un comune collinare della provincia di Salerno. Il capoluogo occupa una posizione panoramica sulla pianura sottostante, mentre il territorio comunale si estende tra nuclei abitati, campagne coltivate e aree boscate.",
+                                                                   "L'identità locale è strettamente legata all'olivo, tanto che il portale istituzionale presenta Albanella come «La Città degli Ulivi». A questa matrice agricola si affiancano il patrimonio religioso del Santuario di Santa Sofia e l'ambiente dell'Oasi di Bosco Camerine.",
+                                                                   "La visita richiede quindi uno sguardo d'insieme: il centro del capoluogo, le frazioni e le contrade non formano un unico percorso pedonale, ma tappe distribuite in un paesaggio rurale da esplorare con tempi distesi."
+                                                               ],
+                                         "storia":  [
+                                                           "Il Comune fa risalire le origini dell'abitato al IX secolo, quando alcuni profughi provenienti da Paestum avrebbero cercato sulle colline un luogo più sicuro dalle incursioni saracene.",
+                                                           "Il territorio, tuttavia, era frequentato molto prima della formazione del borgo medievale. Tombe dipinte databili alla fine del IV secolo a.C. testimoniano una presenza antica più stabile e articolata.",
+                                                           "In località San Nicola sono stati rinvenuti i resti di un santuario extraurbano. Le caratteristiche del rituale e il deposito di statuine fittili e votive hanno condotto a collegare il luogo al culto di Demetra e Kore, divinità connesse alla fertilità della terra e alla fecondità femminile.",
+                                                           "Il Santuario di Santa Sofia è documentato almeno dal 1687, quando una visita pastorale lo descriveva come cappella rurale. La sua collocazione fuori dall'antico nucleo abitato conserva ancora oggi il rapporto fra devozione e paesaggio agricolo."
+                                                       ],
+                                         "tradizioni":  [
+                                                               "Santa Sofia è la patrona di Albanella e costituisce un riferimento centrale per la memoria religiosa e comunitaria. Il santuario a lei dedicato e le iniziative organizzate nel suo nome collegano il culto ai luoghi del territorio.",
+                                                               "Le Notti di Santa Sofia, ospitate nell'Oasi di Bosco Camerine, riuniscono musica, attività per famiglie, storia e sapori locali. La manifestazione valorizza anche il racconto della Rosa di Santa Sofia, fiore simbolicamente legato alla patrona.",
+                                                               "La tradizione olivicola trova espressione nella Festa dell'Olio di Oliva e nelle iniziative della rete Città dell'Olio, occasioni nelle quali produzione agricola, convivialità e cultura locale diventano esperienza condivisa."
+                                                           ],
+                                         "curiosita":  [
+                                                              "Piazza Garibaldi è conosciuta localmente anche come «il Pozzillo», nome che ricorda la presenza di un antico pozzo pubblico e il ruolo storico della piazza nella vita commerciale del paese.",
+                                                              "La Rosa di Santa Sofia è il motivo simbolico attorno al quale si sviluppa il racconto culturale delle Notti di Santa Sofia nell'Oasi di Bosco Camerine.",
+                                                              "I reperti votivi rinvenuti nell'area di San Nicola mettono in relazione il paesaggio agricolo di Albanella con culti antichi dedicati alla fertilità della campagna."
+                                                          ],
+                                         "territorio":  [
+                                                               "Il territorio comunale scende dalle colline verso la Piana del Sele e offre vedute ampie sulle campagne. Oliveti, nuclei rurali e strade di collegamento costruiscono un paesaggio agricolo continuo, nel quale gli insediamenti sono distribuiti e non concentrati nel solo capoluogo.",
+                                                               "Bosco Camerine conserva un ambiente boscato attraversato da sentieri e dotato di punti di osservazione. L'Oasi è utilizzata anche come luogo per attività culturali e iniziative rivolte alle famiglie.",
+                                                               "Il Santuario di Santa Sofia sorge fuori dal centro abitato, lungo la viabilità rurale. La sua posizione permette di leggere insieme patrimonio religioso, colline e coltivazioni, elementi caratteristici dell'immagine di Albanella."
+                                                           ],
+                                         "localita":  [
+                                                              "Albanella capoluogo — il nucleo collinare con Piazza Garibaldi, il Municipio e i principali servizi comunali.",
+                                                              "Matinella — il principale nucleo abitato nella parte pianeggiante del territorio, sede anche di servizi comunali decentrati.",
+                                                              "Borgo San Cesareo — località del territorio comunale collegata alla viabilità della Piana del Sele.",
+                                                              "Bosco Camerine — località rurale che comprende l'omonima oasi naturalistica e i suoi percorsi.",
+                                                              "San Nicola — area nota per i rinvenimenti archeologici del santuario extraurbano.",
+                                                              "Tempa delle Guardie, Forestelle, San Ianni, Cerrina, Tecchia e Santa Croce — denominazioni documentate negli avvisi comunali e utili per orientarsi nel territorio diffuso."
+                                                          ],
+                                         "enogastronomia":  [
+                                                                    "L'olivo è il segno agricolo più riconoscibile di Albanella. Il Comune aderisce alle iniziative Città dell'Olio e dedica alla produzione locale appuntamenti che raccontano il lavoro negli oliveti e l'uso dell'olio extravergine nella cucina quotidiana.",
+                                                                    "Le occasioni pubbliche promosse sul territorio presentano preparazioni semplici legate alla convivialità rurale: acquasale con pomodoro e olio, pasta aglio e olio, salumi, latticini e altri sapori della tradizione locale.",
+                                                                    "Non viene attribuita ad Albanella una singola ricetta esclusiva: l'esperienza gastronomica è descritta più correttamente attraverso l'olio, i prodotti agricoli e le preparazioni condivise con l'area salernitana e cilentana."
+                                                                ],
+                                         "informazioni_utili":  [
+                                                                          "Il territorio è esteso e le tappe principali sono distanti tra loro: per raggiungere capoluogo, Matinella, Santuario di Santa Sofia e Bosco Camerine è consigliabile organizzare gli spostamenti in anticipo.",
+                                                                          "Il Comune indica il collegamento ferroviario fino a Battipaglia e il successivo trasferimento con autobus locali per raggiungere il Santuario; le corse possono essere limitate, quindi gli orari vanno verificati prima della partenza.",
+                                                                          "Per i sentieri di Bosco Camerine sono consigliati calzature adatte, acqua e una verifica preventiva delle condizioni dell'area, soprattutto dopo maltempo o nei periodi più caldi.",
+                                                                          "Orari di apertura, accessibilità e celebrazioni del Santuario possono variare. Prima della visita è opportuno contattare il Comune o consultare i canali istituzionali aggiornati."
+                                                                      ],
+                                         "informazioni_pratiche":  {
+                                                                              "come_arrivare":  "In auto Albanella si raggiunge dalla SS18 seguendo le indicazioni per Capaccio Paestum e Albanella. Per chi viaggia in treno, la pagina comunale del Santuario indica Battipaglia come stazione di riferimento, con prosecuzione tramite autobus locale.",
+                                                                              "parcheggi":  "Non risultano informazioni ufficiali complete su aree di sosta dedicate ai visitatori; verificare la segnaletica sul posto e non ostacolare accessi, residenti o mezzi di servizio.",
+                                                                              "mobilita_locale":  "Le località sono distribuite su un territorio ampio. Le corse del trasporto pubblico locale possono essere poco frequenti; controllare gli orari aggiornati prima di pianificare più tappe nella stessa giornata.",
+                                                                              "accessibilita":  "Il Municipio dichiara il proprio impegno per l'accessibilità, ma non sono disponibili schede ufficiali dettagliate per tutti i luoghi turistici. Contattare preventivamente la struttura o il Comune per esigenze specifiche.",
+                                                                              "servizi_turistici":  "Non è presente nell'archivio del progetto un Infopoint verificato ad Albanella. Per informazioni istituzionali utilizzare il centralino comunale e il portale ufficiale.",
+                                                                              "periodo_consigliato":  "Primavera e autunno sono indicati per passeggiate e paesaggio rurale; in estate è preferibile visitare le aree all'aperto nelle ore meno calde e verificare il calendario degli eventi locali.",
+                                                                              "consigli_famiglie":  "Bosco Camerine ospita iniziative per famiglie, ma i sentieri restano ambienti naturali: scegliere percorsi adeguati, portare acqua e sorvegliare i bambini.",
+                                                                              "consigli_mobilita_ridotta":  "Prima di raggiungere Santuario, centro storico o oasi, chiedere conferma su parcheggio, pendenze e accessibilità effettiva del percorso previsto.",
+                                                                              "emergenze":  "Per emergenze utilizzare il Numero Unico Europeo 112. Per informazioni non urgenti è disponibile il centralino del Comune di Albanella."
+                                                                          },
+                                         "useful_contact_ids":  ["ALB-COM-001"]
+                                     },
+                                     {
                                          "municipality":  "Trentinara",
                                          "locations":  [],
                                          "infopoint_ids":  ["INF007"]
