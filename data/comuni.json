@@ -124,7 +124,12 @@
                                          "immagine_copertina":  "images/comuni/agropoli-copertina-final.webp",
                                          "immagine_copertina_id":  "IMG-AGROPOLI-COVER-001",
                                          "galleria":  [],
-                                         "galleria_fotografica":  [],
+                                         "galleria_fotografica":  [
+                                                                            "IMG-AGROPOLI-GALLERY-001",
+                                                                            "IMG-AGROPOLI-GALLERY-002",
+                                                                            "IMG-AGROPOLI-GALLERY-003",
+                                                                            "IMG-AGROPOLI-GALLERY-004"
+                                                                        ],
                                          "locations":  [],
                                          "infopoint_ids":  ["INF002", "INF003"],
                                          "introduzione":  "Affacciata sul mare del Cilento, Agropoli riunisce in un solo sguardo la città contemporanea, il porto e il borgo fortificato che domina la costa dall'alto del promontorio.",

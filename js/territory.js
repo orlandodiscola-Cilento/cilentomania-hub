@@ -69,8 +69,8 @@ function territoryImageById(id){
 function territoryGallery(card){
  const images=card.galleria_fotografica.map(territoryImageById).filter(image=>image&&image.file&&image.alt);
  if(!images.length)return '';
- const items=images.map(image=>'<figure class="territory-gallery-item"><img src="'+safeTerritoryText(image.file)+'" loading="lazy" alt="'+safeTerritoryText(image.alt)+'" onerror="this.closest(\'figure\').remove()">'+(image.title?'<figcaption>'+safeTerritoryText(image.title)+'</figcaption>':'')+'</figure>').join('');
- return '<section class="territory-gallery" aria-labelledby="territory-gallery-title"><h2 id="territory-gallery-title">Galleria fotografica</h2><div class="territory-gallery-grid">'+items+'</div></section>';
+ const items=images.map(image=>'<figure class="territory-gallery-item"><button class="territory-gallery-open" type="button" data-gallery-image="'+safeTerritoryText(image.id)+'" aria-label="Ingrandisci '+safeTerritoryText(image.title||image.alt)+'"><img src="'+safeTerritoryText(image.file)+'" loading="lazy" alt="'+safeTerritoryText(image.alt)+'" onerror="this.closest(\'figure\').remove()"></button><figcaption>'+(image.title?'<h3>'+safeTerritoryText(image.title)+'</h3>':'')+(image.description?'<p>'+safeTerritoryText(image.description)+'</p>':'')+'</figcaption></figure>').join('');
+ return '<section class="territory-gallery" aria-labelledby="territory-gallery-title"><h2 id="territory-gallery-title">Galleria fotografica</h2><div class="territory-gallery-grid">'+items+'</div><div class="territory-lightbox hidden" data-territory-lightbox role="dialog" aria-modal="true" aria-label="Immagine ingrandita"><button class="territory-lightbox-close" type="button" data-gallery-close aria-label="Chiudi immagine ingrandita">×</button><div class="territory-lightbox-content"><img data-gallery-large src="" alt=""><div class="territory-lightbox-copy"><h3 data-gallery-title></h3><p data-gallery-description></p></div></div></div></section>';
 }
 function municipalityHasInfopoint(card){
  return territoryInfopoints(card).length>0;
@@ -239,6 +239,7 @@ function municipalitySectionHtml(type,name){
 function bindTerritoryInteractions(){
  const listBack=document.querySelector('[data-territory-back]');if(listBack)listBack.addEventListener('click',openTerritoryList);
  const sheetClose=document.querySelector('[data-territory-close]');if(sheetClose)sheetClose.addEventListener('click',openTerritoryList);
+ bindTerritoryGallery();
  const municipalityBack=document.querySelector('[data-municipality-back]');if(municipalityBack)municipalityBack.addEventListener('click',()=>openTerritoryMunicipality(municipalityBack.dataset.municipalityBack));
  document.querySelectorAll('[data-municipality-action]').forEach(button=>button.addEventListener('click',()=>openPanel('',municipalitySectionHtml(button.dataset.municipalityAction,button.dataset.municipality))));
  const toggle=document.querySelector('[data-infopoint-toggle]');
@@ -247,4 +248,21 @@ function bindTerritoryInteractions(){
  const setOpen=open=>{panel.classList.toggle('hidden',!open);toggle.setAttribute('aria-expanded',String(open));if(open)panel.scrollIntoView({behavior:'smooth',block:'nearest'});};
  toggle.addEventListener('click',()=>setOpen(toggle.getAttribute('aria-expanded')!=='true'));
  const close=document.querySelector('[data-infopoint-close]');if(close)close.addEventListener('click',()=>setOpen(false));
+}
+function bindTerritoryGallery(){
+ const lightbox=document.querySelector('[data-territory-lightbox]');if(!lightbox)return;
+ const largeImage=lightbox.querySelector('[data-gallery-large]');
+ const title=lightbox.querySelector('[data-gallery-title]');
+ const description=lightbox.querySelector('[data-gallery-description]');
+ const closeButton=lightbox.querySelector('[data-gallery-close]');
+ const closeLightbox=()=>{lightbox.classList.add('hidden');largeImage.src='';};
+ document.querySelectorAll('[data-gallery-image]').forEach(button=>button.addEventListener('click',()=>{
+  const image=territoryImageById(button.dataset.galleryImage);if(!image||!image.file||!image.alt)return;
+  largeImage.src=image.file;largeImage.alt=image.alt;
+  title.textContent=image.title||'';title.hidden=!image.title;
+  description.textContent=image.description||'';description.hidden=!image.description;
+  lightbox.classList.remove('hidden');closeButton.focus({preventScroll:true});
+ }));
+ closeButton.addEventListener('click',closeLightbox);
+ lightbox.addEventListener('click',event=>{if(event.target===lightbox)closeLightbox();});
 }
