@@ -10,6 +10,34 @@
       "source": "Cilentomania HUB",
       "license": "Asset interno",
       "notes": "Placeholder temporaneo 800 x 500 utilizzato fino all'inserimento delle fotografie approvate."
+    },
+    {
+      "municipality": "Agropoli",
+      "file": "images/comuni/agropoli.webp",
+      "type": "card",
+      "subject": "Panorama di Agropoli con il promontorio urbano e il porto",
+      "author": "RealNordyNed",
+      "source": "Wikimedia Commons",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Agropoli_Panorama_2015.jpg",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "consulted_at": "2026-07-17",
+      "changes": "Ritaglio orizzontale 8:5, ridimensionamento a 800 x 500 pixel e conversione WebP.",
+      "notes": "Opera derivata distribuita secondo i termini della licenza CC BY-SA 4.0; attribuzione all'autore richiesta."
+    },
+    {
+      "municipality": "Agropoli",
+      "file": "images/comuni/agropoli-copertina-final.webp",
+      "type": "cover",
+      "subject": "Veduta di Agropoli dagli scaloni del borgo verso la città e il porto",
+      "author": "Carlo Iannuzzi (account Wikimedia Mujaidin)",
+      "source": "Wikimedia Commons",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Agropoli_-_Gli_Scaloni_e_il_Porto.JPG",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "consulted_at": "2026-07-17",
+      "changes": "Ritaglio privo della scritta presente nell'originale, ridimensionamento a 800 x 500 pixel e conversione WebP.",
+      "notes": "Opera derivata distribuita secondo i termini della licenza CC BY-SA 3.0; attribuzione all'autore richiesta."
     }
   ]
 }

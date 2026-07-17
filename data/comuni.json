@@ -69,6 +69,9 @@
                                                "localita":  [],
                                                "enogastronomia":  null,
                                                "informazioni_utili":  null,
+                                               "immagine_card":  null,
+                                               "immagine_copertina":  null,
+                                               "galleria":  [],
                                                "useful_contact_ids":  []
                                            },
                        "cards":  [
@@ -89,17 +92,57 @@
                                      },
                                      {
                                          "municipality":  "Agropoli",
+                                         "immagine_card":  "images/comuni/agropoli.webp",
+                                         "immagine_copertina":  "images/comuni/agropoli-copertina-final.webp",
+                                         "galleria":  [],
                                          "locations":  [],
                                          "infopoint_ids":  ["INF002", "INF003"],
-                                         "introduzione":  null,
-                                         "presentazione":  null,
-                                         "storia":  null,
-                                         "tradizioni":  null,
-                                         "curiosita":  null,
-                                         "territorio":  null,
-                                         "localita":  [],
-                                         "enogastronomia":  null,
-                                         "informazioni_utili":  null,
+                                         "introduzione":  "Affacciata sul mare del Cilento, Agropoli riunisce in un solo sguardo la città contemporanea, il porto e il borgo fortificato che domina la costa dall'alto del promontorio.",
+                                         "presentazione":  [
+                                                                   "Agropoli si sviluppa attorno a un promontorio proteso sul Tirreno. In cima si conserva il nucleo storico, racchiuso in parte dalle mura e riconoscibile per la porta monumentale, la salita a gradoni e il Castello Angioino Aragonese. Ai piedi della rupe si estendono il porto, la Marina e la città moderna.",
+                                                                   "La sua identità nasce dall'incontro fra paesaggio costiero e patrimonio storico. Il borgo antico mantiene un impianto raccolto e difensivo, mentre il lungomare e le baie raccontano il rapporto quotidiano della città con il mare.",
+                                                                   "Agropoli è anche uno dei punti di accesso al Cilento settentrionale. L'area naturalistica di Trentova-Tresino, compresa nel territorio del Parco Nazionale del Cilento, Vallo di Diano e Alburni, collega la dimensione urbana a sentieri, macchia mediterranea e tratti di costa di forte valore paesaggistico."
+                                                               ],
+                                         "storia":  [
+                                                           "La posizione elevata e la presenza di approdi naturali spiegano la lunga importanza strategica del promontorio. La documentazione comunale colloca una prima fortificazione stabile in età bizantina, durante la guerra greco-gotica del VI secolo, quando l'altura venne organizzata per controllare e difendere gli approdi sottostanti.",
+                                                           "Nel Medioevo l'abitato assunse la forma di borgo murato. Porta, mura, fossato e castello costituivano un sistema unitario: il nucleo residenziale era protetto sul versante più accessibile, mentre la rupe offriva una difesa naturale verso il mare.",
+                                                           "L'aspetto attuale del castello deriva soprattutto dalla sistemazione aragonese della fine del XV secolo. La struttura presenta una pianta triangolare, tre torri circolari, un ingresso monumentale sopraelevato e una piazza d'armi interna; gli ambienti conservano tracce delle successive funzioni militari e signorili.",
+                                                           "La conoscenza del passato locale continua oggi attraverso il patrimonio conservato nel centro storico e il Museo Archeologico del Palazzo Civico delle Arti. Il museo raccoglie testimonianze provenienti dal territorio comunale ed è stato istituito come struttura stabile con la collaborazione della Soprintendenza."
+                                                       ],
+                                         "tradizioni":  [
+                                                               "La cultura cittadina conserva una doppia radice, marinara e collinare. Il porto, la pesca e la vita sulla costa dialogano con la memoria del borgo fortificato e con le pratiche sociali sviluppate attorno alle piazze, alle chiese e agli spazi del centro storico.",
+                                                               "La festa dei Santi Pietro e Paolo, patroni della città, è uno dei riferimenti religiosi e comunitari più riconoscibili. Il calendario locale comprende inoltre il Carnevale, iniziative culturali, rievocazioni e spettacoli ospitati nel borgo e nel fossato del castello.",
+                                                               "Negli ultimi anni la programmazione comunale ha distribuito manifestazioni durante più stagioni, utilizzando il centro storico, il lungomare San Marco, il porto, il Centro Visite Trentova-Tresino e altri luoghi pubblici. Questa diffusione mantiene vivo il rapporto fra patrimonio, associazioni e vita contemporanea."
+                                                           ],
+                                         "curiosita":  [
+                                                              "Il castello ha una forma triangolare con tre torri circolari. Il suo perimetro si raccorda alle mura del borgo e protegge il lato collinare, quello storicamente più esposto agli attacchi.",
+                                                              "Il fossato che circondava la fortificazione era asciutto. All'interno, la piazza d'armi è oggi utilizzata come giardino e spazio per attività culturali e spettacoli.",
+                                                              "Il portale del castello impiega tufo pestano, mentre il catalogo del Ministero della Cultura segnala una particolare corrispondenza fra lo stemma comunale e la struttura urbana della città fortificata."
+                                                          ],
+                                         "territorio":  [
+                                                               "Il paesaggio di Agropoli alterna la rupe del centro storico, il fronte urbano affacciato sul mare, spiagge e promontori coperti dalla vegetazione mediterranea. Il porto occupa una posizione centrale fra il borgo alto e la linea di costa che prosegue verso sud.",
+                                                               "La pianificazione comunale distingue cinque principali ambiti costieri: il tratto verso Capaccio Paestum, il lungomare San Marco, la baia del Lido Azzurro, la spiaggia della Marina e la baia di Trentova. Ognuno presenta un rapporto diverso fra città, accesso al mare e paesaggio.",
+                                                               "Trentova-Tresino rappresenta il passaggio dalla costa urbana all'ambiente naturalistico del Parco. Il Centro Visite è indicato dal Comune come punto di partenza per oltre dieci chilometri di sentieri e come luogo dedicato alla conoscenza del paesaggio, della biodiversità e della cultura mediterranea."
+                                                           ],
+                                         "localita":  [
+                                                              "Centro storico — il borgo murato sulla sommità del promontorio, con la porta monumentale, le gradinate, le mura e il castello.",
+                                                              "Marina e porto — l'area ai piedi del promontorio, legata all'approdo, alla vita marittima e alla passeggiata sul fronte del mare.",
+                                                              "Lungomare San Marco — il lungo tratto costiero a nord del centro, parte essenziale della città contemporanea.",
+                                                              "Lido Azzurro — la baia urbana compresa nel sistema delle spiagge cittadine.",
+                                                              "Trentova — la baia e l'area costiera a sud del porto, apprezzate per il valore paesaggistico e l'accesso al mare.",
+                                                              "Tresino — il settore naturalistico collegato a Trentova, attraversato da sentieri e inserito nel contesto del Parco Nazionale."
+                                                          ],
+                                         "enogastronomia":  [
+                                                                    "La cucina da incontrare ad Agropoli appartiene al più ampio patrimonio cilentano e mette in relazione costa e campagna. Le fonti regionali non individuano una singola preparazione esclusiva della città: è quindi più corretto leggere la tavola locale attraverso prodotti certificati e consuetudini diffuse nel territorio.",
+                                                                    "L'olio extravergine Cilento DOP è ottenuto prevalentemente da varietà locali, fra cui Pisciottana, Rotondella, Ogliarola, Frantoio, Salella e Leccino. Il profilo delicato e aromatico lo rende adatto a verdure, legumi, primi piatti e preparazioni di pesce.",
+                                                                    "Il Fico Bianco del Cilento DOP è legato alle colline costiere che, secondo la Regione Campania, si estendono da Agropoli verso il Cilento meridionale. Essiccato e conservabile, racconta la cultura agricola locale e il passaggio da alimento quotidiano a prodotto tutelato."
+                                                                ],
+                                         "informazioni_utili":  [
+                                                                          "Il centro storico e il castello si raggiungono attraverso salite e gradinate. La visita può risultare impegnativa per persone con mobilità ridotta; è opportuno valutare preventivamente il percorso più adatto.",
+                                                                          "Orari, tariffe e modalità di accesso al castello possono cambiare con la stagione. Prima della visita è consigliabile consultare i canali ufficiali del Comune o contattare l'Ufficio Turismo.",
+                                                                          "Il Palazzo Civico delle Arti, in via Carlo Pisacane, ospita il Museo Archeologico, la biblioteca civica e altri spazi culturali. Anche in questo caso è utile verificare gli orari aggiornati e le eventuali modalità di prenotazione.",
+                                                                          "Per esplorare Trentova-Tresino conviene programmare il percorso attraverso il Centro Visite e informarsi sulle condizioni dei sentieri. Accessi alle spiagge, parcheggi e servizi costieri possono variare durante l'anno."
+                                                                      ],
                                          "useful_contact_ids":  ["AGRO-COM-001", "AGRO-PL-001", "AGRO-CC-001", "AGRO-CA-001"]
                                      },
                                      {

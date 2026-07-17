@@ -32,7 +32,10 @@ function territoryCardData(name){
  const configured=(territoryConfig.cards||[]).find(card=>card.municipality===name)||{};
  const defaults=territoryConfig.contentDefaults||{};
  const card={...defaults,...configured,municipality:name};
- card.image=card.image||territoryConfig.placeholderImage;
+ card.imageCard=card.immagine_card||card.image||territoryConfig.placeholderImage;
+ card.imageCover=card.immagine_copertina||card.image||card.imageCard;
+ card.galleria=Array.isArray(card.galleria)?card.galleria:[];
+ card.image=card.imageCard;
  card.localita=card.localita?.length?card.localita:(card.locations||[]);card.locations=card.localita;
  card.infopoint_ids=card.infopoint_ids||[];card.useful_contact_ids=card.useful_contact_ids||[];
  return card;
@@ -66,10 +69,10 @@ function infopointPanel(card){
  }).join('');
  return '<section class="territory-infopoint"><button class="territory-infopoint-toggle" type="button" data-infopoint-toggle aria-expanded="false">Infopoint Cilentomania</button><div class="territory-infopoint-panel hidden" data-infopoint-panel><div class="territory-infopoint-head"><h3>Infopoint Cilentomania</h3><button type="button" class="territory-infopoint-close" data-infopoint-close aria-label="Chiudi pannello Infopoint">×</button></div>'+content+'</div></section>';
 }
-function narrativeSection(title,value){
+function narrativeSection(title,value,isList=false){
  const hasValue=Array.isArray(value)?value.length>0:Boolean(value);
- const content=Array.isArray(value)?value.map(item=>'<li>'+safeTerritoryText(item)+'</li>').join(''):safeTerritoryText(value);
- const body=hasValue?(Array.isArray(value)?'<ul>'+content+'</ul>':'<p>'+content+'</p>'):'<p class="territory-content-pending">Contenuto da completare con fonti verificate.</p>';
+ const content=Array.isArray(value)?value.map(item=>(isList?'<li>':'<p>')+safeTerritoryText(item)+(isList?'</li>':'</p>')).join(''):safeTerritoryText(value);
+ const body=hasValue?(Array.isArray(value)?(isList?'<ul>'+content+'</ul>':content):'<p>'+content+'</p>'):'<p class="territory-content-pending">Contenuto da completare con fonti verificate.</p>';
  return '<section class="territory-narrative-section"><h3>'+title+'</h3>'+body+'</section>';
 }
 function usefulContactActions(contact){
@@ -95,8 +98,8 @@ function municipalityFinalActions(name){
 function municipalitySheet(name,includeInfopoints){
  const card=territoryCardData(name);
  if(!includeInfopoints)return '<div class="notice">Scheda territoriale predisposta per essere popolata con cosa vedere, dove dormire, dove mangiare, eventi, esperienze e servizi.</div>';
- const narrative=narrativeSection('Presentazione generale',card.presentazione)+narrativeSection('Storia',card.storia)+narrativeSection('Identità e tradizioni',card.tradizioni)+narrativeSection('Curiosità',card.curiosita)+narrativeSection('Paesaggio e territorio',card.territorio)+narrativeSection('Borghi, frazioni e località principali',card.localita)+narrativeSection('Enogastronomia tipica',card.enogastronomia)+narrativeSection('Informazioni utili per il visitatore',card.informazioni_utili);
- return '<button class="territory-back" type="button" data-territory-back>← Torna ai Comuni</button><article class="territory-municipality"><img class="territory-cover" src="'+safeTerritoryText(card.image)+'" width="800" height="500" alt="'+safeTerritoryText(name)+'" onerror="this.onerror=null;this.src=\''+safeTerritoryText(territoryConfig.placeholderImage)+'\'"><header class="territory-municipality-head"><h2>'+safeTerritoryText(name)+'</h2>'+(card.introduzione?'<p>'+safeTerritoryText(card.introduzione)+'</p>':'<p class="territory-content-pending">Introduzione da completare con fonti verificate.</p>')+'</header><div class="territory-narrative">'+narrative+'</div>'+(includeInfopoints?infopointPanel(card):'')+usefulContactsPanel(card)+municipalityFinalActions(name)+'</article>';
+ const narrative=narrativeSection('Presentazione generale',card.presentazione)+narrativeSection('Storia',card.storia)+narrativeSection('Identità e tradizioni',card.tradizioni)+narrativeSection('Curiosità',card.curiosita)+narrativeSection('Paesaggio e territorio',card.territorio)+narrativeSection('Borghi, frazioni e località principali',card.localita,true)+narrativeSection('Enogastronomia tipica',card.enogastronomia)+narrativeSection('Informazioni utili per il visitatore',card.informazioni_utili);
+ return '<button class="territory-back" type="button" data-territory-back>← Torna ai Comuni</button><article class="territory-municipality"><img class="territory-cover" src="'+safeTerritoryText(card.imageCover)+'" width="800" height="500" alt="'+safeTerritoryText(name)+'" onerror="this.onerror=null;this.src=\''+safeTerritoryText(territoryConfig.placeholderImage)+'\'"><header class="territory-municipality-head"><h2>'+safeTerritoryText(name)+'</h2>'+(card.introduzione?'<p>'+safeTerritoryText(card.introduzione)+'</p>':'<p class="territory-content-pending">Introduzione da completare con fonti verificate.</p>')+'</header><div class="territory-narrative">'+narrative+'</div>'+(includeInfopoints?infopointPanel(card):'')+usefulContactsPanel(card)+municipalityFinalActions(name)+'</article>';
 }
 function territoryExplorer(note){
  const cards=municipalities.map(name=>{
