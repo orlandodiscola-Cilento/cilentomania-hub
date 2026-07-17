@@ -72,6 +72,33 @@
                                                "immagine_card":  null,
                                                "immagine_copertina":  null,
                                                "galleria":  [],
+                                               "galleria_fotografica":  [],
+                                               "informazioni_pratiche":  {
+                                                                               "come_arrivare":  null,
+                                                                               "parcheggi":  null,
+                                                                               "mobilita_locale":  null,
+                                                                               "accessibilita":  null,
+                                                                               "servizi_turistici":  null,
+                                                                               "periodo_consigliato":  null,
+                                                                               "consigli_famiglie":  null,
+                                                                               "consigli_mobilita_ridotta":  null,
+                                                                               "emergenze":  null
+                                                                           },
+                                               "funzioni_future":  {
+                                                                         "video":  [],
+                                                                         "tour_virtuale":  null,
+                                                                         "meteo":  null,
+                                                                         "mappa":  null,
+                                                                         "qr_code":  null,
+                                                                         "assistente_ai":  null,
+                                                                         "itinerari":  [],
+                                                                         "prodotti_tipici":  [],
+                                                                         "eventi_futuri":  [],
+                                                                         "esperienze_prenotabili":  [],
+                                                                         "servizi":  [],
+                                                                         "mobilita":  [],
+                                                                         "accessibilita":  []
+                                                                     },
                                                "useful_contact_ids":  []
                                            },
                        "cards":  [
@@ -93,8 +120,11 @@
                                      {
                                          "municipality":  "Agropoli",
                                          "immagine_card":  "images/comuni/agropoli.webp",
+                                         "immagine_card_id":  "IMG-AGROPOLI-CARD-001",
                                          "immagine_copertina":  "images/comuni/agropoli-copertina-final.webp",
+                                         "immagine_copertina_id":  "IMG-AGROPOLI-COVER-001",
                                          "galleria":  [],
+                                         "galleria_fotografica":  [],
                                          "locations":  [],
                                          "infopoint_ids":  ["INF002", "INF003"],
                                          "introduzione":  "Affacciata sul mare del Cilento, Agropoli riunisce in un solo sguardo la città contemporanea, il porto e il borgo fortificato che domina la costa dall'alto del promontorio.",

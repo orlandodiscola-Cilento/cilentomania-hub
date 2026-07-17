@@ -4,6 +4,8 @@ let featuredDetails=[];
 let territoryConfig={placeholderImage:'assets/placeholder-comune.svg',cards:[]};
 let usefulContacts=[];
 let usefulContactsPromise=null;
+let territoryImages=[];
+let territoryImagesPromise=null;
 
 function initTerritoryData(data){
  municipalities=Array.isArray(data.municipalities)?data.municipalities:data.municipalities.value;
@@ -11,6 +13,16 @@ function initTerritoryData(data){
  featuredDetails=data.featured.map(x=>x.detailHtml);
  territoryConfig={...territoryConfig,...(data.territory||{})};
  usefulContactsPromise=loadUsefulContacts();
+ territoryImagesPromise=loadTerritoryImages();
+}
+async function loadTerritoryImages(){
+ if(territoryImages.length)return territoryImages;
+ try{
+  const response=await fetch('data/crediti-immagini-comuni.json',{cache:'no-store'});
+  if(!response.ok)throw new Error('HTTP '+response.status);
+  const data=await response.json();territoryImages=Array.isArray(data)?data:(data.images||[]);
+ }catch(error){console.warn('Archivio immagini dei Comuni non disponibile:',error);territoryImages=[];}
+ return territoryImages;
 }
 async function loadUsefulContacts(){
  if(usefulContacts.length)return usefulContacts;
@@ -32,13 +44,29 @@ function territoryCardData(name){
  const configured=(territoryConfig.cards||[]).find(card=>card.municipality===name)||{};
  const defaults=territoryConfig.contentDefaults||{};
  const card={...defaults,...configured,municipality:name};
- card.imageCard=card.immagine_card||card.image||territoryConfig.placeholderImage;
- card.imageCover=card.immagine_copertina||card.image||card.imageCard;
- card.galleria=Array.isArray(card.galleria)?card.galleria:[];
+ const cardCredit=territoryImageById(card.immagine_card_id);
+ const coverCredit=territoryImageById(card.immagine_copertina_id);
+ card.imageCard=cardCredit?.file||card.immagine_card||card.image||territoryConfig.placeholderImage;
+ card.imageCardAlt=cardCredit?.alt||card.municipality;
+ card.imageCover=coverCredit?.file||card.immagine_copertina||card.image||card.imageCard;
+ card.imageCoverAlt=coverCredit?.alt||card.municipality;
+ // galleria_fotografica è il campo ufficiale; galleria resta leggibile durante la migrazione.
+ const galleryIds=Object.prototype.hasOwnProperty.call(configured,'galleria_fotografica')?configured.galleria_fotografica:configured.galleria;
+ card.galleria_fotografica=Array.isArray(galleryIds)?galleryIds:[];
+ card.galleria=card.galleria_fotografica;
  card.image=card.imageCard;
  card.localita=card.localita?.length?card.localita:(card.locations||[]);card.locations=card.localita;
  card.infopoint_ids=card.infopoint_ids||[];card.useful_contact_ids=card.useful_contact_ids||[];
  return card;
+}
+function territoryImageById(id){
+ return id?territoryImages.find(image=>image.id===id):null;
+}
+function territoryGallery(card){
+ const images=card.galleria_fotografica.map(territoryImageById).filter(image=>image&&image.file&&image.alt);
+ if(!images.length)return '';
+ const items=images.map(image=>'<figure class="territory-gallery-item"><img src="'+safeTerritoryText(image.file)+'" loading="lazy" alt="'+safeTerritoryText(image.alt)+'" onerror="this.closest(\'figure\').remove()">'+(image.title?'<figcaption>'+safeTerritoryText(image.title)+'</figcaption>':'')+'</figure>').join('');
+ return '<section class="territory-gallery" aria-labelledby="territory-gallery-title"><h2 id="territory-gallery-title">Galleria fotografica</h2><div class="territory-gallery-grid">'+items+'</div></section>';
 }
 function municipalityHasInfopoint(card){
  return territoryInfopoints(card).length>0;
@@ -92,6 +120,12 @@ function usefulContactsPanel(card){
  }).join('');
  return '<section class="territory-useful"><h2>Contatti utili</h2><div class="territory-useful-grid">'+items+'</div></section>';
 }
+function practicalInformationPanel(card){
+ const labels={come_arrivare:'Come arrivare',parcheggi:'Parcheggi',mobilita_locale:'Mobilità locale',accessibilita:'Accessibilità',servizi_turistici:'Servizi turistici',periodo_consigliato:'Periodo consigliato',consigli_famiglie:'Consigli per famiglie',consigli_mobilita_ridotta:'Consigli per persone con mobilità ridotta',emergenze:'Emergenze'};
+ const data=card.informazioni_pratiche||{};
+ const items=Object.entries(labels).filter(([key])=>data[key]).map(([key,label])=>'<section class="territory-practical-item"><h3>'+label+'</h3><p>'+safeTerritoryText(data[key])+'</p></section>').join('');
+ return items?'<section class="territory-practical"><h2>Informazioni pratiche</h2><div class="territory-practical-grid">'+items+'</div></section>':'';
+}
 function municipalityFinalActions(name){
  return '<nav class="territory-final-actions" aria-label="Approfondimenti su '+safeTerritoryText(name)+'"><button type="button" data-municipality-action="sights" data-municipality="'+safeTerritoryText(name)+'">Cosa vedere</button><button type="button" data-municipality-action="events" data-municipality="'+safeTerritoryText(name)+'">Eventi ed esperienze</button><button type="button" data-municipality-action="eat" data-municipality="'+safeTerritoryText(name)+'">Dove mangiare</button><button type="button" data-municipality-action="sleep" data-municipality="'+safeTerritoryText(name)+'">Dove dormire</button></nav>';
 }
@@ -99,14 +133,14 @@ function municipalitySheet(name,includeInfopoints){
  const card=territoryCardData(name);
  if(!includeInfopoints)return '<div class="notice">Scheda territoriale predisposta per essere popolata con cosa vedere, dove dormire, dove mangiare, eventi, esperienze e servizi.</div>';
  const narrative=narrativeSection('Presentazione generale',card.presentazione)+narrativeSection('Storia',card.storia)+narrativeSection('Identità e tradizioni',card.tradizioni)+narrativeSection('Curiosità',card.curiosita)+narrativeSection('Paesaggio e territorio',card.territorio)+narrativeSection('Borghi, frazioni e località principali',card.localita,true)+narrativeSection('Enogastronomia tipica',card.enogastronomia)+narrativeSection('Informazioni utili per il visitatore',card.informazioni_utili);
- return '<button class="territory-back" type="button" data-territory-back>← Torna ai Comuni</button><article class="territory-municipality"><img class="territory-cover" src="'+safeTerritoryText(card.imageCover)+'" width="800" height="500" alt="'+safeTerritoryText(name)+'" onerror="this.onerror=null;this.src=\''+safeTerritoryText(territoryConfig.placeholderImage)+'\'"><header class="territory-municipality-head"><h2>'+safeTerritoryText(name)+'</h2>'+(card.introduzione?'<p>'+safeTerritoryText(card.introduzione)+'</p>':'<p class="territory-content-pending">Introduzione da completare con fonti verificate.</p>')+'</header><div class="territory-narrative">'+narrative+'</div>'+(includeInfopoints?infopointPanel(card):'')+usefulContactsPanel(card)+municipalityFinalActions(name)+'</article>';
+ return '<button class="territory-back" type="button" data-territory-back>← Torna ai Comuni</button><article class="territory-municipality"><img class="territory-cover" src="'+safeTerritoryText(card.imageCover)+'" width="800" height="500" alt="'+safeTerritoryText(card.imageCoverAlt)+'" onerror="this.onerror=null;this.src=\''+safeTerritoryText(territoryConfig.placeholderImage)+'\'"><header class="territory-municipality-head"><h2>'+safeTerritoryText(name)+'</h2>'+(card.introduzione?'<p>'+safeTerritoryText(card.introduzione)+'</p>':'<p class="territory-content-pending">Introduzione da completare con fonti verificate.</p>')+'</header><div class="territory-narrative">'+narrative+'</div>'+territoryGallery(card)+(includeInfopoints?infopointPanel(card):'')+usefulContactsPanel(card)+practicalInformationPanel(card)+municipalityFinalActions(name)+'</article>';
 }
 function territoryExplorer(note){
  const cards=municipalities.map(name=>{
   const card=territoryCardData(name);
   const search=[card.municipality,...card.locations].join(' ').toLowerCase();
   const badge=municipalityHasInfopoint(card)?'<span class="territory-badge">Infopoint Cilentomania</span>':'';
-  return '<article class="territory-card" data-search="'+safeTerritoryText(search)+'"><div class="territory-image"><img src="'+safeTerritoryText(card.image)+'" width="800" height="500" loading="lazy" alt="'+safeTerritoryText(card.municipality)+'" onerror="this.onerror=null;this.src=\''+safeTerritoryText(territoryConfig.placeholderImage)+'\'">'+badge+'</div><div class="territory-card-copy"><h3>'+safeTerritoryText(card.municipality)+'</h3><button class="territory-discover" type="button" data-territory="'+safeTerritoryText(card.municipality)+'">Scopri</button></div></article>';
+  return '<article class="territory-card" data-search="'+safeTerritoryText(search)+'"><div class="territory-image"><img src="'+safeTerritoryText(card.image)+'" width="800" height="500" loading="lazy" alt="'+safeTerritoryText(card.imageCardAlt)+'" onerror="this.onerror=null;this.src=\''+safeTerritoryText(territoryConfig.placeholderImage)+'\'">'+badge+'</div><div class="territory-card-copy"><h3>'+safeTerritoryText(card.municipality)+'</h3><button class="territory-discover" type="button" data-territory="'+safeTerritoryText(card.municipality)+'">Scopri</button></div></article>';
  }).join('');
  return '<div class="notice">'+note+'</div><label class="territory-search-label" for="townFilter">Cerca per Comune o località</label><input class="town-search" id="townFilter" placeholder="Cerca un Comune o una località..."><div class="territory-grid" id="townList">'+cards+'</div><p class="territory-empty hidden" id="territoryEmpty">Nessun Comune trovato.</p>';
 }
@@ -126,10 +160,26 @@ function bindTownFilter(){
   const empty=document.getElementById('territoryEmpty');if(empty)empty.classList.toggle('hidden',visible>0);
  });
  document.querySelectorAll('#townList .town').forEach(button=>button.addEventListener('click',()=>openPanel(button.textContent,municipalitySheet(button.textContent,false))));
- document.querySelectorAll('#townList [data-territory]').forEach(button=>button.addEventListener('click',async()=>{await (usefulContactsPromise||loadUsefulContacts());openPanel('',municipalitySheet(button.dataset.territory,true));}));
+ document.querySelectorAll('#townList [data-territory]').forEach(button=>button.addEventListener('click',async()=>{await Promise.all([usefulContactsPromise||loadUsefulContacts(),territoryImagesPromise||loadTerritoryImages()]);openPanel('',municipalitySheet(button.dataset.territory,true));}));
 }
 function openTerritoryList(){openPanel('Esplora il Territorio',territoryExplorer('Cerca e seleziona un Comune.'));}
 function openTerritoryMunicipality(name){openPanel('',municipalitySheet(name,true));}
+// Adattatore non invasivo: usa soltanto archivi globali già esistenti che espongono
+// un campo municipality o comune; in assenza di dati compatibili non produce risultati.
+function municipalityModuleRecords(type,name){
+ const candidates=type==='eat'
+  ?[globalThis.restaurantsArchive,globalThis.restaurantArchive,globalThis.diningArchive]
+  :[globalThis.accommodationsArchive,globalThis.hospitalityArchive,globalThis.sleepArchive];
+ return candidates.filter(Array.isArray).flat().filter(item=>(item.municipality||item.comune)===name);
+}
+function municipalityModuleCards(records){
+ return records.map(item=>{
+  const title=item.title||item.name||item.nome||item.official_name;
+  if(!title)return '';
+  const description=item.description||item.address||item.indirizzo||'';
+  return '<article class="item"><h3>'+safeTerritoryText(title)+'</h3>'+(description?'<p>'+safeTerritoryText(description)+'</p>':'')+'</article>';
+ }).filter(Boolean).join('');
+}
 function municipalitySectionHtml(type,name){
  const labels={sights:'Cosa vedere',events:'Eventi ed esperienze',eat:'Dove mangiare',sleep:'Dove dormire'};
  let content='';
@@ -145,7 +195,11 @@ function municipalitySectionHtml(type,name){
   const experienceHtml=experiences.length?'<div class="panel-grid">'+experiences.map(item=>'<article class="item"><h3>'+safeTerritoryText(item.title)+'</h3><p>'+safeTerritoryText(item.description)+'</p></article>').join('')+'</div>':'';
   content=eventHtml+experienceHtml||'<div class="notice">Nessun evento o esperienza verificata disponibile per questo Comune.</div>';
  }
- if(type==='eat'||type==='sleep')content='<div class="notice">Nessun contenuto verificato disponibile per questo Comune.</div>';
+ if(type==='eat'||type==='sleep'){
+  const records=municipalityModuleRecords(type,name);
+  const cards=municipalityModuleCards(records);
+  content=cards?'<div class="panel-grid">'+cards+'</div>':'<div class="notice">Nessun contenuto verificato disponibile per questo Comune.</div>';
+ }
  return '<button class="territory-back" type="button" data-municipality-back="'+safeTerritoryText(name)+'">← Torna alla scheda</button><section class="territory-filtered"><p class="territory-filter-label">Risultati esclusivi per '+safeTerritoryText(name)+'</p><h2>'+labels[type]+'</h2>'+content+'</section>';
 }
 function bindTerritoryInteractions(){
