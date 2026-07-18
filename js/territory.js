@@ -10,6 +10,8 @@ let lockedPageScrollY=0;
 let pageScrollLocked=false;
 let lockedBodyStyles=null;
 let territoryListScrollY=0;
+let territoryNavigationScrollTarget=null;
+let territoryNavigationScrollHandler=null;
 
 function initTerritoryData(data){
  municipalities=Array.isArray(data.municipalities)?data.municipalities:data.municipalities.value;
@@ -150,17 +152,77 @@ function territoryExplorer(note){
  }).join('');
  return '<div class="notice">'+note+'</div><label class="territory-search-label" for="townFilter">Cerca per Comune o località</label><input class="town-search" id="townFilter" placeholder="Cerca un Comune o una località..."><div class="territory-grid" id="townList">'+cards+'</div><p class="territory-empty hidden" id="territoryEmpty">Nessun Comune trovato.</p>';
 }
+function scrollNavigationDockToTop(){
+ if(!territoryNavigationScrollTarget)return;
+ const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ territoryNavigationScrollTarget.scrollTo({top:0,left:0,behavior:reducedMotion?'auto':'smooth'});
+}
+function updateNavigationDockPosition(){
+ const navigation=overlay.querySelector('[data-territory-fixed-nav]');
+ const panel=panelContent.closest('.panel');
+ if(!navigation||navigation.hidden||!panel)return;
+ const panelRight=panel.getBoundingClientRect().right;
+ navigation.style.setProperty('--territory-nav-left',(panelRight+6)+'px');
+}
+function ensureNavigationDock(){
+ let navigation=overlay.querySelector('[data-territory-fixed-nav]');
+ if(navigation)return navigation;
+ overlay.insertAdjacentHTML('beforeend','<nav class="navigation-dock territory-fixed-nav" data-navigation-dock data-territory-fixed-nav data-scroll-container="active" aria-label="Navigazione Esplora il Territorio" hidden><button class="scroll-navigation-button territory-fixed-button hidden" type="button" data-territory-fixed-back data-navigation-action="back" aria-label="Torna ai Comuni" title="Torna ai Comuni"><span aria-hidden="true">←</span></button><button class="scroll-navigation-button territory-fixed-button territory-fixed-top hidden" type="button" data-territory-fixed-top data-navigation-action="top" aria-label="Torna su" title="Torna su"><span aria-hidden="true">↑</span></button><button class="scroll-navigation-button territory-fixed-button" type="button" data-territory-fixed-close data-navigation-action="close" aria-label="Chiudi" title="Chiudi"><span aria-hidden="true">✕</span></button></nav>');
+ navigation=overlay.querySelector('[data-territory-fixed-nav]');
+ navigation.querySelector('[data-territory-fixed-back]').addEventListener('click',openTerritoryList);
+ navigation.querySelector('[data-territory-fixed-top]').addEventListener('click',scrollNavigationDockToTop);
+ navigation.querySelector('[data-territory-fixed-close]').addEventListener('click',()=>{
+  closePanel();
+ });
+ window.addEventListener('resize',updateNavigationDockPosition,{passive:true});
+ return navigation;
+}
+function configureNavigationDock(level){
+ if(territoryNavigationScrollTarget&&territoryNavigationScrollHandler)territoryNavigationScrollTarget.removeEventListener('scroll',territoryNavigationScrollHandler);
+ territoryNavigationScrollTarget=null;territoryNavigationScrollHandler=null;
+ const existingNavigation=overlay.querySelector('[data-territory-fixed-nav]');
+ if(existingNavigation)existingNavigation.hidden=true;
+ overlay.classList.remove('territory-fixed-nav-open');
+ if(!level){
+  return;
+ }
+ const isMunicipality=level==='municipality';
+ const navigation=ensureNavigationDock();
+ const backButton=navigation.querySelector('[data-territory-fixed-back]');
+ const topButton=navigation.querySelector('[data-territory-fixed-top]');
+ territoryNavigationScrollTarget=isMunicipality?panelContent.closest('.panel'):overlay;
+ navigation.dataset.level=level;
+ backButton.classList.toggle('hidden',!isMunicipality);
+ topButton.classList.remove('hidden');
+ navigation.hidden=isMunicipality?false:true;
+ overlay.classList.add('territory-fixed-nav-open');
+ updateNavigationDockPosition();
+ territoryNavigationScrollHandler=()=>{
+  const nearTop=territoryNavigationScrollTarget.scrollTop<300;
+  if(isMunicipality)topButton.classList.toggle('hidden',nearTop);
+  else{
+   navigation.hidden=nearTop;
+   if(!nearTop)updateNavigationDockPosition();
+  }
+ };
+ territoryNavigationScrollTarget.addEventListener('scroll',territoryNavigationScrollHandler,{passive:true});
+ territoryNavigationScrollHandler();
+}
 function openPanel(title,html){
  const wasOpen=overlay.classList.contains('open');
  panelContent.innerHTML=(title?'<h2>'+title+'</h2>':'')+html;
- const isMunicipalitySheet=Boolean(panelContent.querySelector('[data-municipality-toolbar]'));
+ const municipalityToolbar=panelContent.querySelector('[data-municipality-toolbar]');
+ const isMunicipalitySheet=Boolean(municipalityToolbar);
+ const isTerritoryList=Boolean(panelContent.querySelector('.territory-grid'));
+ if(municipalityToolbar)municipalityToolbar.remove();
  overlay.classList.toggle('territory-sheet-open',isMunicipalitySheet);
  if(!wasOpen)lockPageScroll();
  overlay.classList.add('open');
  if(isMunicipalitySheet){
   overlay.scrollTop=0;panelContent.closest('.panel')?.scrollTo({top:0,left:0,behavior:'auto'});
-  requestAnimationFrame(()=>document.querySelector('[data-territory-back]')?.focus({preventScroll:true}));
+  requestAnimationFrame(()=>document.querySelector('[data-territory-fixed-back]')?.focus({preventScroll:true}));
  }
+ configureNavigationDock(isMunicipalitySheet?'municipality':(isTerritoryList?'list':null));
  setTimeout(()=>{bindTownFilter();bindTerritoryInteractions();},0);
 }
 function lockPageScroll(){
@@ -181,7 +243,7 @@ function unlockPageScroll(){
  document.documentElement.style.scrollBehavior='auto';window.scrollTo(0,lockedPageScrollY);document.documentElement.style.scrollBehavior=previousBehavior;
  pageScrollLocked=false;lockedBodyStyles=null;
 }
-function closePanel(){overlay.classList.remove('open','territory-sheet-open');overlay.scrollTop=0;unlockPageScroll();}
+function closePanel(){configureNavigationDock(null);overlay.classList.remove('open','territory-sheet-open');overlay.scrollTop=0;unlockPageScroll();}
 function bindTownFilter(){
  const f=document.getElementById('townFilter'); if(!f)return;
  f.addEventListener('input',()=>{
@@ -239,8 +301,6 @@ function municipalitySectionHtml(type,name){
  return '<button class="territory-back" type="button" data-municipality-back="'+safeTerritoryText(name)+'">← Torna alla scheda</button><section class="territory-filtered"><p class="territory-filter-label">Risultati esclusivi per '+safeTerritoryText(name)+'</p><h2>'+labels[type]+'</h2>'+content+'</section>';
 }
 function bindTerritoryInteractions(){
- const listBack=document.querySelector('[data-territory-back]');if(listBack)listBack.addEventListener('click',openTerritoryList);
- const sheetClose=document.querySelector('[data-territory-close]');if(sheetClose)sheetClose.addEventListener('click',openTerritoryList);
  bindTerritoryGallery();
  const municipalityBack=document.querySelector('[data-municipality-back]');if(municipalityBack)municipalityBack.addEventListener('click',()=>openTerritoryMunicipality(municipalityBack.dataset.municipalityBack));
  document.querySelectorAll('[data-municipality-action]').forEach(button=>button.addEventListener('click',()=>openPanel('',municipalitySectionHtml(button.dataset.municipalityAction,button.dataset.municipality))));
