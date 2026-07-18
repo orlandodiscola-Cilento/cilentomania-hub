@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it" data-seo-page="home" data-seo-config="seo/seo.config.json" data-seo-pages="seo/pages.json">
+<html lang="it" data-seo-page="home" data-seo-config="seo/seo.config.json" data-seo-pages="seo/pages.json" data-site-contacts="data/site-contacts.json">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -31,11 +31,11 @@
     <h1>Il tuo assistente di viaggio nel Cilento</h1>
     <p class="lead">Scopri il Cilento, il Vallo di Diano e gli Alburni attraverso luoghi, esperienze e servizi selezionati.</p>
     <div class="quick">
-      <a href="https://wa.me/393201111364" target="_blank" rel="noopener">WhatsApp</a>
-      <a href="mailto:info@cilentomania.it">Mail</a>
-      <a href="tel:800983889">Numero Verde</a>
+      <a data-site-contact="whatsapp">WhatsApp</a>
+      <a data-site-contact="email">Mail</a>
+      <a data-site-contact="numeroVerde">Numero Verde</a>
     </div>
-    <div class="social"><span>Seguici</span><a href="https://www.facebook.com/cilentomania" target="_blank" rel="noopener">f</a><a href="https://www.instagram.com/cilentomania" target="_blank" rel="noopener">◎</a></div>
+    <div class="social"><span>Seguici</span><a data-site-contact="facebook" aria-label="Facebook">f</a><a data-site-contact="instagram">◎</a></div>
     <div class="search-row"><input id="globalSearch" placeholder="Cerca un Comune, un luogo o un'esperienza"><button id="searchBtn">Cerca</button></div>
     <button class="nearby" id="nearbyBtn">⌖ Cosa c'è vicino a me?</button>
   </div>
@@ -173,6 +173,7 @@
 <script src="js/events.js"></script>
 <script src="js/search.js"></script>
 <script src="js/design-system.js"></script>
+<script src="js/site-config.js"></script>
 <script src="js/seo-manager.js"></script>
 <script src="js/seo-bootstrap.js"></script>
 <script src="js/app.js"></script>

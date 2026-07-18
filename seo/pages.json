@@ -14,13 +14,7 @@
           "@type": "Organization",
           "name": "Cilentomania APS",
           "url": "https://www.cilentomania.it/",
-          "logo": "https://www.cilentomania.it/images/logo-cilentomania-hub.png",
-          "email": "info@cilentomania.it",
-          "telephone": "800983889",
-          "sameAs": [
-            "https://www.facebook.com/cilentomania",
-            "https://www.instagram.com/cilentomania"
-          ]
+          "logo": "https://www.cilentomania.it/images/logo-cilentomania-hub.png"
         }
       ]
     },

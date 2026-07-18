@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "placeholder": {
+    "src": "assets/placeholder-comune.svg",
+    "width": 800,
+    "height": 500
+  },
+  "gallery": {
+    "slots": 6,
+    "placeholderMessage": "Archivio fotografico in aggiornamento"
+  },
+  "formats": {
+    "card": {
+      "width": 800,
+      "height": 500,
+      "sizes": "(max-width: 560px) calc(100vw - 68px), (max-width: 900px) calc(50vw - 58px), 280px",
+      "loading": "lazy",
+      "fetchPriority": "low"
+    },
+    "cover": {
+      "width": 1280,
+      "height": 800,
+      "sizes": "(max-width: 1020px) calc(100vw - 72px), 924px",
+      "loading": "lazy",
+      "fetchPriority": "low"
+    },
+    "gallery": {
+      "width": 800,
+      "height": 500,
+      "sizes": "(max-width: 560px) calc(100vw - 68px), (max-width: 900px) calc(50vw - 58px), 280px",
+      "loading": "lazy",
+      "fetchPriority": "low"
+    }
+  },
+  "altTemplates": {
+    "card": "Veduta di {municipality}",
+    "cover": "Immagine di copertina di {municipality}"
+  },
+  "responsiveSourcesField": "sources"
+}

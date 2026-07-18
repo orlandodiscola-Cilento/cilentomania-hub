@@ -2,6 +2,8 @@
 
 La cartella contiene la configurazione SEO centrale, i profili delle pagine e il registro delle rotte pubbliche.
 
+I recapiti istituzionali e i profili social utilizzati dalla Home e dallo schema `Organization` sono centralizzati in `data/site-contacts.json`. Il loader condiviso `js/site-config.js` applica i collegamenti visibili e integra nel dato strutturato email, telefono e `sameAs`, evitando duplicazioni nei profili pagina.
+
 ## Integrazione futura delle pagine
 
 I dati specifici delle pagine integrate sono registrati in `pages.json`. Ogni documento dichiara il proprio identificatore con `data-seo-page` e carica `js/seo-manager.js` insieme a `js/seo-bootstrap.js`.

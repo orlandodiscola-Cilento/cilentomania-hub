@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "instagram": {
+    "url": "https://www.instagram.com/cilentomaniaofficial/",
+    "username": "@cilentomaniaofficial"
+  },
+  "facebook": {
+    "url": "https://www.facebook.com/cilentomania"
+  },
+  "whatsapp": {
+    "display": "+39 320 1111364",
+    "url": "https://wa.me/393201111364"
+  },
+  "email": {
+    "display": "info@cilentomania.it",
+    "url": "mailto:info@cilentomania.it"
+  },
+  "numeroVerde": {
+    "display": "800 983889",
+    "url": "tel:800983889"
+  }
+}
