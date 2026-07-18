@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "categories": [
+    {"id":"prodotti-tipici","title":"Prodotti tipici","icon":"✦","image":null,"button_text":"Prossimamente","destination":"#","active":false,"order":1},
+    {"id":"olio","title":"Olio","icon":"●","image":null,"button_text":"Prossimamente","destination":"#","active":false,"order":2},
+    {"id":"vini","title":"Vini","icon":"◇","image":null,"button_text":"Prossimamente","destination":"#","active":false,"order":3},
+    {"id":"conserve","title":"Conserve","icon":"◉","image":null,"button_text":"Prossimamente","destination":"#","active":false,"order":4},
+    {"id":"pasta","title":"Pasta","icon":"≈","image":null,"button_text":"Prossimamente","destination":"#","active":false,"order":5},
+    {"id":"dolci","title":"Dolci","icon":"✤","image":null,"button_text":"Prossimamente","destination":"#","active":false,"order":6},
+    {"id":"artigianato","title":"Artigianato","icon":"◆","image":null,"button_text":"Prossimamente","destination":"#","active":false,"order":7},
+    {"id":"libri-guide","title":"Libri e guide","icon":"▤","image":null,"button_text":"Prossimamente","destination":"#","active":false,"order":8},
+    {"id":"gadget-cilentomania","title":"Gadget Cilentomania","icon":"○","image":null,"button_text":"Prossimamente","destination":"#","active":false,"order":9}
+  ]
+}

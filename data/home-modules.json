@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "modules": [
+    {"key":"useful","title":"Numeri utili","subtitle":"Contatti e assistenza quando servono","icon":"☎","tone":"ocean","order":8},
+    {"key":"infopoints","title":"I nostri Infopoint","subtitle":"Punti di accoglienza sul territorio","icon":"ⓘ","tone":"forest","order":1},
+    {"key":"events","title":"Eventi","subtitle":"Appuntamenti da vivere nel Cilento","icon":"▣","tone":"terracotta","order":2},
+    {"key":"experiences","title":"Esperienze","subtitle":"Attività autentiche tra mare e borghi","icon":"✦","tone":"teal","order":3},
+    {"key":"sleep","title":"Dove dormire","subtitle":"Trova il soggiorno più adatto","icon":"▤","tone":"sky","order":5},
+    {"key":"eat","title":"Dove mangiare","subtitle":"Sapori, ristoranti e cucina locale","icon":"♨","tone":"clay","order":6},
+    {"key":"routes","title":"Itinerari","subtitle":"Percorsi tematici per il tuo viaggio","icon":"⌁","tone":"olive","order":7},
+    {"key":"services","title":"Servizi","subtitle":"Tutto ciò che rende semplice la visita","icon":"◇","tone":"slate","order":4}
+  ]
+}

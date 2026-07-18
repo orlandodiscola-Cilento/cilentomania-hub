@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="css/territory.css">
 <link rel="stylesheet" href="css/infopoint.css">
 <link rel="stylesheet" href="css/events.css">
+<link rel="stylesheet" href="css/design-system.css">
 </head>
 <body>
 <header class="topbar"><img src="images/logo-cilentomania-hub.png" alt="Cilentomania HUB"></header>
@@ -28,23 +29,32 @@
 </section>
 
 <main>
-<section class="modules" aria-label="Servizi principali">
-<button class="module m1" data-module="useful"><span class="icon">☎</span><strong>Numeri utili</strong></button>
-<button class="module m2" data-module="infopoints"><span class="icon">ⓘ</span><strong>I nostri Infopoint</strong></button>
-<button class="module m3" data-module="events"><span class="icon">▣</span><strong>Eventi</strong></button>
-<button class="module m4" data-module="experiences"><span class="icon">✦</span><strong>Esperienze</strong></button>
-<button class="module m5" data-module="sleep"><span class="icon">▤</span><strong>Dove dormire</strong></button>
-<button class="module m6" data-module="eat"><span class="icon">♨</span><strong>Dove mangiare</strong></button>
-<button class="module m7" data-module="routes"><span class="icon">⌁</span><strong>Itinerari</strong></button>
-<button class="module m8" data-module="services"><span class="icon">◇</span><strong>Servizi</strong></button>
+<section class="modules" id="homeModules" aria-label="Servizi principali"></section>
+
+<section class="explore ds-banner" aria-labelledby="explore-title">
+  <img class="explore__image ds-banner__media" src="assets/hero-palinuro.jpg" alt="" aria-hidden="true" loading="lazy">
+  <span class="explore__overlay ds-banner__overlay" aria-hidden="true"></span>
+  <span class="explore__content ds-banner__content">
+    <span class="explore__kicker">Cilento, Vallo di Diano e Alburni</span>
+    <span class="explore__title" id="explore-title">Esplora il Territorio</span>
+    <span class="explore__description">Scopri Comuni, borghi e località del Cilento.</span>
+    <button class="explore__cta ds-cta" id="exploreBtn" type="button">Inizia a esplorare <span aria-hidden="true">→</span></button>
+  </span>
 </section>
 
-<button class="explore" id="exploreBtn">
-  <span class="bigicon">⌖</span>
-  <span><h2>Esplora il Territorio</h2><p>Scopri Comuni, borghi e località del Cilento.</p></span>
-</button>
+<section class="bottega-promo ds-banner" aria-labelledby="bottega-title">
+  <img class="bottega-promo__image ds-banner__media" src="images/bottega-del-cilento-hero.png" alt="Olio, pasta, conserve, dolci e artigianato del Cilento" loading="lazy">
+  <div class="bottega-promo__shade ds-banner__overlay" aria-hidden="true"></div>
+  <div class="bottega-promo__content ds-banner__content">
+    <span class="bottega-badge">Prossimamente</span>
+    <p class="bottega-kicker">La selezione di Cilentomania</p>
+    <h2 id="bottega-title">Bottega del Cilento</h2>
+    <p>Prodotti tipici, artigianato e gadget selezionati da Cilentomania</p>
+    <a class="bottega-cta ds-cta" href="bottega-del-cilento.html">Scopri la Bottega <span aria-hidden="true">→</span></a>
+  </div>
+</section>
 
-<div class="section-head"><div><h2>Da non perdere</h2><p>Luoghi simbolo e grandi attrattori da inserire nel tuo viaggio.</p></div></div>
+<div class="section-head ds-section-heading"><div><h2>Da non perdere</h2><p>Luoghi simbolo e grandi attrattori da inserire nel tuo viaggio.</p></div></div>
 <section class="features">
     <article class="feature-card">
       <img src="https://parchipaestumvelia.cultura.gov.it/wp-content/uploads/2024/04/tempionettuno-1024x626.jpg" alt="Parco archeologico di Paestum" loading="lazy" onerror="this.style.display='none'">
@@ -134,8 +144,12 @@
 </main>
 <footer>Cilentomania APS · Promozione e accoglienza turistica nel Cilento</footer>
 
+<nav class="navigation-dock territory-fixed-nav navigation-dock--page" data-navigation-dock data-navigation-scope="page" data-top-threshold="320" data-scroll-container="window" aria-label="Navigazione pagina">
+  <button class="scroll-navigation-button territory-fixed-button territory-fixed-top hidden" id="homeTop" type="button" data-navigation-action="top" aria-label="Torna in alto" title="Torna in alto"><span aria-hidden="true">↑</span></button>
+</nav>
+
 <div class="overlay" id="overlay">
-  <section class="panel">
+  <section class="panel ds-modal-surface">
     <button class="close" id="closePanel">×</button>
     <div id="panelContent"></div>
   </section>
@@ -145,6 +159,7 @@
 <script src="js/infopoint.js"></script>
 <script src="js/events.js"></script>
 <script src="js/search.js"></script>
+<script src="js/design-system.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

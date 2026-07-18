@@ -46,18 +46,35 @@ function renderPartners(partners){
  container.innerHTML=partners.map(x=>`<a href="${x.url}" target="_blank" rel="noopener"><img src="${x.image}" alt="${x.alt}"></a>`).join('');
 }
 
+function escapeModuleText(value){
+ return String(value??'').replace(/[&<>\"]/g,character=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[character]));
+}
+
+function renderHomeModules(data){
+ const container=document.getElementById('homeModules');
+ const modules=[...(data.modules||[])].sort((a,b)=>(Number(a.order)||0)-(Number(b.order)||0));
+ container.innerHTML=modules.map(module=>{
+  const tone=/^[a-z-]+$/.test(module.tone)?module.tone:'ocean';
+  return '<button class="module ds-navigation-card module--'+tone+'" type="button" data-module="'+escapeModuleText(module.key)+'">'+
+   '<span class="module__top"><span class="module__icon" aria-hidden="true">'+escapeModuleText(module.icon)+'</span></span>'+
+   '<span class="module__copy"><strong>'+escapeModuleText(module.title)+'</strong><span>'+escapeModuleText(module.subtitle)+'</span></span></button>';
+ }).join('');
+}
+
 async function initApplication(){
- const [territoryData,infopointData,eventData,partners,itineraries]=await Promise.all([
+ const [territoryData,infopointData,eventData,partners,itineraries,homeModules]=await Promise.all([
   loadJson('data/comuni.json'),
   loadJson('data/infopoint.json'),
   loadJson('data/eventi.json'),
   loadJson('data/partner.json'),
-  loadJson('data/itinerari.json')
+  loadJson('data/itinerari.json'),
+  loadJson('data/home-modules.json')
  ]);
  initTerritoryData(territoryData);
  initInfopointData(infopointData);
  initEventsData(eventData);
  renderPartners(partners);
+ renderHomeModules(homeModules);
  bindApplication(createModules(itineraries));
 }
 
