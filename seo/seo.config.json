@@ -1,0 +1,28 @@
+{
+  "siteName": "Cilentomania HUB",
+  "baseUrl": "https://www.cilentomania.it",
+  "defaultLocale": "it_IT",
+  "defaultLanguage": "it",
+  "titleTemplate": "%s · Cilentomania HUB",
+  "defaultTitle": "Cilentomania HUB",
+  "defaultDescription": "Il tuo assistente di viaggio nel Cilento, Vallo di Diano e Alburni.",
+  "defaultImage": "/images/logo-cilentomania-hub.png",
+  "twitterCard": "summary_large_image",
+  "twitterSite": "",
+  "favicon": "/images/logo-cilentomania-hub.png",
+  "robots": {
+    "index": true,
+    "follow": true
+  },
+  "schemaTypes": [
+    "LocalBusiness",
+    "TouristDestination",
+    "Event",
+    "Organization",
+    "BreadcrumbList",
+    "FAQPage",
+    "Article",
+    "Product",
+    "Review"
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "pages": {
+    "home": {
+      "title": "Cilentomania | Il tuo assistente di viaggio nel Cilento",
+      "titleMode": "absolute",
+      "description": "Scopri il Cilento con Cilentomania: Comuni, borghi, eventi, esperienze, itinerari, infopoint, strutture, ristorazione e servizi utili per il tuo viaggio.",
+      "image": "/assets/hero-palinuro.jpg",
+      "url": "/",
+      "type": "website",
+      "robots": {"index": true, "follow": true},
+      "structuredData": [
+        {
+          "@type": "Organization",
+          "name": "Cilentomania APS",
+          "url": "https://www.cilentomania.it/",
+          "logo": "https://www.cilentomania.it/images/logo-cilentomania-hub.png",
+          "email": "info@cilentomania.it",
+          "telephone": "800983889",
+          "sameAs": [
+            "https://www.facebook.com/cilentomania",
+            "https://www.instagram.com/cilentomania"
+          ]
+        }
+      ]
+    },
+    "bottega": {
+      "title": "Bottega del Cilento | Prodotti e identità del territorio",
+      "titleMode": "absolute",
+      "description": "Scopri la Bottega del Cilento e le eccellenze agroalimentari, artigianali e culturali che raccontano l’identità del territorio.",
+      "image": "/images/bottega-del-cilento-hero.png",
+      "url": "/bottega-del-cilento.html",
+      "type": "website",
+      "robots": {"index": true, "follow": true},
+      "structuredData": [
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.cilentomania.it/"},
+            {"@type": "ListItem", "position": 2, "name": "Bottega del Cilento", "item": "https://www.cilentomania.it/bottega-del-cilento.html"}
+          ]
+        }
+      ]
+    }
+  }
+}
