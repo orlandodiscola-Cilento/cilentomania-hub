@@ -5,15 +5,15 @@
   "images": [
     {
       "src": "assets/hero-palinuro.jpg",
-      "objectPosition": "center center"
+      "objectPosition": "center 52%"
     },
     {
-      "src": "images/comuni/agropoli.webp",
-      "objectPosition": "center center"
+      "src": "images/comuni/ascea-velia-torre.webp",
+      "objectPosition": "center 48%"
     },
     {
-      "src": "images/comuni/camerota-spiaggia-mingardo.webp",
-      "objectPosition": "center center"
+      "src": "images/comuni/buccino-volcei.webp",
+      "objectPosition": "center 54%"
     }
   ]
 }
