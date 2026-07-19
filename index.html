@@ -23,10 +23,15 @@
 <link rel="stylesheet" href="css/infopoint.css">
 <link rel="stylesheet" href="css/events.css">
 <link rel="stylesheet" href="css/design-system.css">
+<link rel="stylesheet" href="/css/customer-satisfaction.css">
 </head>
 <body>
 <header class="topbar"><img src="images/logo-cilentomania-hub.png" alt="Cilentomania HUB"></header>
-<section class="hero">
+<section class="hero" data-hero-slider data-hero-config="data/home-hero.json">
+  <div class="hero__slides" aria-hidden="true">
+    <img class="hero__slide" data-hero-slide alt="" aria-hidden="true">
+    <img class="hero__slide" data-hero-slide alt="" aria-hidden="true">
+  </div>
   <div class="hero-inner">
     <h1>Il tuo assistente di viaggio nel Cilento</h1>
     <p class="lead">Scopri il Cilento, il Vallo di Diano e gli Alburni attraverso luoghi, esperienze e servizi selezionati.</p>
@@ -149,6 +154,8 @@
       </div>
     </article></section>
 
+<section data-customer-satisfaction data-customer-satisfaction-config="/data/customer-satisfaction.json" hidden aria-live="polite"></section>
+
 <section class="partners">
 <h2>I nostri Partner</h2>
 <div class="partner-grid" id="partnerGridContent">
@@ -174,6 +181,8 @@
 <script src="js/search.js"></script>
 <script src="js/design-system.js"></script>
 <script src="js/site-config.js"></script>
+<script src="js/hero-slider.js"></script>
+<script src="/js/customer-satisfaction.js"></script>
 <script src="js/seo-manager.js"></script>
 <script src="js/seo-bootstrap.js"></script>
 <script src="js/app.js"></script>

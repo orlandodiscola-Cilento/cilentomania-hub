@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "enabled": true,
+  "title": "La tua opinione conta",
+  "text": "Aiutaci a migliorare i servizi di Cilentomania.",
+  "button": {
+    "label": "Valuta la tua esperienza",
+    "description": "Compila il questionario di gradimento: richiede meno di un minuto.",
+    "url": "https://forms.gle/TZevXdkUHJ4UEfwy9",
+    "target": "_blank"
+  },
+  "icon": {
+    "name": "form",
+    "ariaLabel": ""
+  },
+  "image": null,
+  "appearance": {
+    "theme": "purple",
+    "showArrow": true
+  }
+}

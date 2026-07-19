@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "intervalMs": 5000,
+  "transitionMs": 1000,
+  "images": [
+    {
+      "src": "assets/hero-palinuro.jpg",
+      "objectPosition": "center center"
+    },
+    {
+      "src": "images/comuni/agropoli.webp",
+      "objectPosition": "center center"
+    },
+    {
+      "src": "images/comuni/camerota-spiaggia-mingardo.webp",
+      "objectPosition": "center center"
+    }
+  ]
+}
