@@ -1,0 +1,50 @@
+{
+  "welcome": "Benvenuto nel Cilento! 👋\n\nSono Cileo, il tuo assistente di viaggio.\n\nPosso aiutarti a scoprire borghi, spiagge, eventi, esperienze e molto altro.",
+  "fallback": "Sto ancora imparando a conoscere ogni angolo del Cilento 😊 Posso già aiutarti con Comuni, spiagge, eventi, itinerari, Infopoint, dove mangiare e dove dormire.",
+  "actions": [
+    { "id": "territorio", "label": "Esplora il territorio", "icon": "🗺️", "pose": "cartina", "reply": "Borghi sul mare, aree archeologiche e paesaggi del Parco: da dove vuoi cominciare? Posso raccontarti Agropoli, Castellabate, Paestum, Palinuro o Acciaroli." },
+    { "id": "eventi", "label": "Eventi", "icon": "📅", "pose": "idea", "reply": "Cerchi qualcosa da fare? Nella sezione Eventi della Home trovi gli appuntamenti disponibili nel territorio." },
+    { "id": "mangiare", "label": "Dove mangiare", "icon": "🍴", "pose": "indica", "reply": "Volentieri! Dimmi il Comune o la zona e ti aiuterò a orientarti. Dalla sezione Dove mangiare della Home puoi anche scegliere direttamente un Comune." },
+    { "id": "dormire", "label": "Dove dormire", "icon": "🛏️", "pose": "indica", "reply": "Dimmi dove vorresti soggiornare. Nella sezione Dove dormire della Home puoi scegliere un Comune e consultare le opzioni disponibili." },
+    { "id": "vicino", "label": "Cosa c'è vicino a me", "icon": "📍", "pose": "cerca", "reply": "Posso suggerirti luoghi, spiagge, ristorazione e strutture nei dintorni. Usa anche il pulsante “Cosa c'è vicino a me” presente nella Home per avviare la ricerca dalla tua posizione." }
+  ],
+  "responses": [
+    {
+      "keywords": ["agropoli", "dormire"], "priority": 100, "pose": "indica",
+      "reply": "Certamente! 😊 Per soggiornare ad Agropoli puoi partire dalla sezione Dove dormire della Home e selezionare Agropoli. È una base comoda per il borgo antico, il porto e la Baia di Trentova.",
+      "actions": [
+        { "label": "Esplora Agropoli", "query": "Agropoli" },
+        { "label": "Scopri cosa vedere", "query": "cosa vedere ad Agropoli" },
+        { "label": "Dove mangiare", "query": "dove mangiare ad Agropoli" },
+        { "label": "Eventi ed esperienze", "query": "eventi ed esperienze ad Agropoli" }
+      ]
+    },
+    {
+      "keywords": ["agropoli"], "priority": 50, "pose": "cartina",
+      "reply": "Certamente! 😊 Agropoli è uno dei principali centri turistici del Cilento, con il borgo antico, il Castello Angioino-Aragonese, il porto e la Baia di Trentova. Cosa vorresti scoprire?",
+      "actions": [
+        { "label": "Esplora Agropoli", "query": "Agropoli" },
+        { "label": "Scopri cosa vedere", "query": "cosa vedere ad Agropoli" },
+        { "label": "Dove mangiare", "query": "dove mangiare ad Agropoli" },
+        { "label": "Eventi ed esperienze", "query": "eventi ed esperienze ad Agropoli" }
+      ]
+    },
+    { "keywords": ["castellabate"], "priority": 50, "pose": "cartina", "reply": "Castellabate unisce il fascino del borgo storico al mare di Santa Maria e San Marco. Puoi scoprire il belvedere, il Castello dell'Abate e la costa: cosa ti interessa di più?" },
+    { "keywords": ["paestum"], "priority": 50, "pose": "cartina", "reply": "Paestum è una tappa imperdibile: i templi della Magna Grecia, il museo archeologico e il paesaggio di Capaccio Paestum meritano una visita con calma." },
+    { "keywords": ["palinuro"], "priority": 50, "pose": "cartina", "reply": "Palinuro è celebre per il promontorio, le grotte marine e le sue spiagge. Tra i luoghi simbolo ci sono Capo Palinuro e la Grotta Azzurra." },
+    { "keywords": ["acciaroli"], "priority": 50, "pose": "cartina", "reply": "Acciaroli è un borgo marinaro molto amato per il porto, il centro raccolto e il mare limpido. È ideale per una passeggiata lenta tra spiaggia e vicoli." },
+    { "keywords": ["dove", "mangiare"], "priority": 30, "pose": "indica", "reply": "Ottima idea! 😊 Dimmi in quale Comune ti trovi oppure usa la sezione Dove mangiare della Home per scegliere la zona che preferisci." },
+    { "keywords": ["dove", "dormire"], "priority": 30, "pose": "indica", "reply": "Posso aiutarti a scegliere la zona giusta. Indicami un Comune oppure apri la sezione Dove dormire della Home e seleziona la località." },
+    { "keywords": ["eventi"], "priority": 25, "pose": "idea", "reply": "Nella sezione Eventi della Home trovi gli appuntamenti disponibili. Se mi indichi una località, posso aiutarti a restringere la ricerca." },
+    { "keywords": ["esperienze"], "priority": 25, "pose": "idea", "reply": "Tra mare, trekking, visite culturali e sapori locali, le esperienze nel Cilento sono tantissime. Preferisci natura, cultura o gusto?" },
+    { "keywords": ["itinerari"], "priority": 25, "pose": "cartina", "reply": "Posso aiutarti a scegliere un itinerario tra borghi, costa, archeologia e natura. Dimmi quanto tempo hai e quali esperienze preferisci." },
+    { "keywords": ["infopoint"], "priority": 25, "pose": "indica", "reply": "Gli Infopoint sono utili per informazioni e accoglienza sul territorio. Puoi consultarli dalla sezione I nostri Infopoint nella Home." },
+    { "keywords": ["spiagge"], "priority": 25, "pose": "idea", "reply": "Il Cilento offre spiagge sabbiose, calette e baie protette. Posso raccontarti Trentova, la costa di Palinuro e le località marine intorno ad Acciaroli e Castellabate." },
+    { "keywords": ["cosa", "vedere"], "priority": 20, "pose": "cartina", "reply": "Posso suggerirti borghi, siti archeologici, panorami e spiagge. Indicami una località oppure il tipo di luogo che vorresti visitare." },
+    { "keywords": ["trova"], "priority": 10, "pose": "cerca", "reply": "Volentieri! Dimmi cosa vuoi trovare e, se puoi, indicami anche il Comune o la zona del Cilento che ti interessa." },
+    { "keywords": ["cerca"], "priority": 10, "pose": "cerca", "reply": "Certo! Indicami cosa stai cercando e la località che preferisci, così posso aiutarti a orientarti." },
+    { "keywords": ["grazie"], "priority": 80, "pose": "abbraccio", "reply": "È un piacere aiutarti! 😊 Se vuoi, possiamo continuare a esplorare insieme il Cilento." },
+    { "keywords": ["perfetto"], "priority": 80, "pose": "abbraccio", "reply": "Perfetto! 😊 Sono felice di esserti stato utile. Quando vuoi, continuiamo il viaggio nel Cilento." },
+    { "keywords": ["bellissimo"], "priority": 80, "pose": "abbraccio", "reply": "Vero? Il Cilento sa regalare luoghi bellissimi! 😊 Dimmi cosa vuoi scoprire adesso." }
+  ]
+}
