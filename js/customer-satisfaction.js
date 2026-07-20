@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const DEFAULT_CONFIG_URL = "/data/customer-satisfaction.json";
+  const DEFAULT_CONFIG_URL = "data/customer-satisfaction.json";
   const THEMES = new Set(["purple"]);
   const ICONS = {
     form: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm8 2v4h4l-4-4ZM8 12h8v-2H8v2Zm0 4h8v-2H8v2Zm0 4h5v-2H8v2Z"/></svg>'
