@@ -20,7 +20,7 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: /hub/
+          server-dir: /www.cilentomania.it/hub/
           local-dir: ./
           protocol: ftp
           port: 21
