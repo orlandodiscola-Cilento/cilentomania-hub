@@ -29,30 +29,31 @@
     build() {
       const root = document.createElement('aside');
       root.className = 'cileo';
-      root.setAttribute('aria-label', 'Assistente di viaggio Cileo');
+      root.setAttribute('aria-label', 'Velio, guida digitale di Cilentomania');
       root.innerHTML = `
-        <div class="cileo__bubble" data-cileo-bubble role="status">
-          <strong>Benvenuto nel Cilento! <span aria-hidden="true">👋</span></strong>
-          <span>Sono Cileo, il tuo assistente di viaggio.</span>
-          <span>Posso aiutarti a scoprire borghi, spiagge, eventi, esperienze e molto altro.</span>
+        <div class="cileo__bubble" data-cileo-bubble role="status" hidden>
+          <strong>Ciao e benvenuto! <span aria-hidden="true">👋</span></strong>
+          <span>Io sono Velio, la guida digitale di Cilentomania.</span>
+          <span>Scopri il Parco Nazionale del Cilento, Vallo di Diano e Alburni.</span>
         </div>
         <section class="cileo__panel" data-cileo-panel role="dialog" aria-modal="false" aria-labelledby="cileo-title" hidden>
           <header class="cileo__header">
-            <div><h2 id="cileo-title">Cileo</h2><p>Il tuo assistente di viaggio nel Cilento</p></div>
-            <button class="cileo__close" data-cileo-close type="button" aria-label="Chiudi Cileo">&times;</button>
+            <div><h2 id="cileo-title">Velio</h2><p>La guida digitale di Cilentomania<br>Scopri il Parco Nazionale del Cilento, Vallo di Diano e Alburni</p></div>
+            <button class="cileo__close" data-cileo-close type="button" aria-label="Chiudi Velio">&times;</button>
           </header>
           <div class="cileo__messages" data-cileo-messages aria-live="polite"></div>
           <div class="cileo__actions" data-cileo-actions aria-label="Azioni rapide"></div>
           <form class="cileo__form" data-cileo-form>
-            <label class="cileo__sr-only" for="cileo-input">Scrivi a Cileo</label>
-            <input id="cileo-input" data-cileo-input autocomplete="off" placeholder="Chiedi a Cileo..." maxlength="300">
+            <label class="cileo__sr-only" for="cileo-input">Scrivi a Velio</label>
+            <input id="cileo-input" data-cileo-input autocomplete="off" placeholder="Chiedi a Velio..." maxlength="300">
             <button type="submit" aria-label="Invia messaggio"><span aria-hidden="true">&#8593;</span></button>
           </form>
         </section>
-        <button class="cileo__launcher" data-cileo-launcher type="button" aria-label="Apri Cileo" aria-expanded="false">
-          <img data-cileo-avatar alt="Cileo, assistente di viaggio nel Cilento">
+        <button class="cileo__launcher" data-cileo-launcher type="button" aria-label="Apri Velio" aria-expanded="false"></button>
+        <div class="cileo__avatar-visual" aria-hidden="true">
+          <img data-cileo-avatar alt="Velio, guida digitale di Cilentomania">
           <span class="cileo__online" aria-hidden="true"></span>
-        </button>`;
+        </div>`;
       return root;
     }
 
@@ -93,7 +94,7 @@
     showTyping() {
       const typing = document.createElement('div');
       typing.className = 'cileo__message cileo__message--assistant cileo__typing';
-      typing.setAttribute('aria-label', 'Cileo sta scrivendo');
+      typing.setAttribute('aria-label', 'Velio sta scrivendo');
       typing.innerHTML = '<i></i><i></i><i></i>';
       this.elements.messages.appendChild(typing);
       this.elements.messages.scrollTop = this.elements.messages.scrollHeight;
@@ -101,11 +102,13 @@
     }
 
     showBubble() {
+      this.elements.bubble.hidden = false;
       this.elements.bubble.classList.add('is-visible');
     }
 
     hideBubble() {
       this.elements.bubble.classList.remove('is-visible');
+      this.elements.bubble.hidden = true;
     }
 
     open() {
@@ -115,8 +118,8 @@
       this.hideBubble();
       this.elements.panel.hidden = false;
       this.elements.launcher.setAttribute('aria-expanded', 'true');
-      this.elements.launcher.setAttribute('aria-label', 'Cileo aperto');
-      requestAnimationFrame(() => this.root.classList.add('is-open'));
+      this.elements.launcher.setAttribute('aria-label', 'Velio aperto');
+      this.root.classList.add('is-open');
       window.setTimeout(() => this.elements.input.focus(), 240);
       this.options.onOpen();
     }
@@ -125,9 +128,9 @@
       if (!this.isOpen) return;
       this.isOpen = false;
       this.root.classList.remove('is-open');
+      this.elements.panel.hidden = true;
       this.elements.launcher.setAttribute('aria-expanded', 'false');
-      this.elements.launcher.setAttribute('aria-label', 'Apri Cileo');
-      window.setTimeout(() => { this.elements.panel.hidden = true; }, 220);
+      this.elements.launcher.setAttribute('aria-label', 'Apri Velio');
       this.options.onClose();
       this.lastFocus?.focus?.();
     }

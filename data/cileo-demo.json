@@ -1,50 +1,53 @@
 {
-  "welcome": "Benvenuto nel Cilento! 👋\n\nSono Cileo, il tuo assistente di viaggio.\n\nPosso aiutarti a scoprire borghi, spiagge, eventi, esperienze e molto altro.",
-  "fallback": "Sto ancora imparando a conoscere ogni angolo del Cilento 😊 Posso già aiutarti con Comuni, spiagge, eventi, itinerari, Infopoint, dove mangiare e dove dormire.",
+  "welcome": "Ciao e benvenuto!\n\nIo sono Velio, la guida digitale di Cilentomania.\n\nTi accompagnerò alla scoperta del Parco Nazionale del Cilento, Vallo di Diano e Alburni, aiutandoti a trovare luoghi da visitare, esperienze da vivere, eventi, itinerari, ristoranti, strutture ricettive e tutte le meraviglie di questo straordinario territorio.\n\nDa dove vuoi iniziare?",
+  "fallback": "Il Cilento ha sempre qualcosa di nuovo da raccontare. Posso accompagnarti tra borghi, spiagge, eventi, esperienze, itinerari, Infopoint e sapori del territorio: scegliamo insieme da dove partire.",
   "actions": [
-    { "id": "territorio", "label": "Esplora il territorio", "icon": "🗺️", "pose": "cartina", "reply": "Borghi sul mare, aree archeologiche e paesaggi del Parco: da dove vuoi cominciare? Posso raccontarti Agropoli, Castellabate, Paestum, Palinuro o Acciaroli." },
-    { "id": "eventi", "label": "Eventi", "icon": "📅", "pose": "idea", "reply": "Cerchi qualcosa da fare? Nella sezione Eventi della Home trovi gli appuntamenti disponibili nel territorio." },
-    { "id": "mangiare", "label": "Dove mangiare", "icon": "🍴", "pose": "indica", "reply": "Volentieri! Dimmi il Comune o la zona e ti aiuterò a orientarti. Dalla sezione Dove mangiare della Home puoi anche scegliere direttamente un Comune." },
-    { "id": "dormire", "label": "Dove dormire", "icon": "🛏️", "pose": "indica", "reply": "Dimmi dove vorresti soggiornare. Nella sezione Dove dormire della Home puoi scegliere un Comune e consultare le opzioni disponibili." },
-    { "id": "vicino", "label": "Cosa c'è vicino a me", "icon": "📍", "pose": "cerca", "reply": "Posso suggerirti luoghi, spiagge, ristorazione e strutture nei dintorni. Usa anche il pulsante “Cosa c'è vicino a me” presente nella Home per avviare la ricerca dalla tua posizione." }
+    { "id": "territorio", "label": "Esplora il territorio", "icon": "🗺️", "pose": "cartina", "intent": "explore", "target": { "type": "site-section", "key": "territorio" }, "reply": "Tra borghi affacciati sul mare, siti archeologici e paesaggi del Parco, ogni angolo ha una storia. Possiamo iniziare da Agropoli, Castellabate, Paestum, Palinuro o Acciaroli." },
+    { "id": "eventi", "label": "Eventi", "icon": "📅", "pose": "idea", "intent": "list-events", "target": { "type": "site-section", "key": "eventi" }, "reply": "Feste di paese, musica, cultura e tradizioni animano il territorio durante tutto l'anno. Possiamo cercare gli appuntamenti più interessanti per la tua visita." },
+    { "id": "esperienze", "label": "Esperienze", "icon": "✨", "pose": "idea", "intent": "list-experiences", "target": { "type": "site-section", "key": "esperienze" }, "reply": "Mare, trekking, archeologia e sapori locali: dimmi cosa ti appassiona e scegliamo un'esperienza capace di farti vivere davvero il Cilento." },
+    { "id": "mangiare", "label": "Dove mangiare", "icon": "🍴", "pose": "indica", "intent": "search-restaurants", "target": { "type": "site-section", "key": "ristorazione" }, "reply": "La cucina cilentana racconta il territorio attraverso prodotti, ricette e persone. Indicami un Comune o una zona e ti guiderò nella scelta." },
+    { "id": "dormire", "label": "Dove dormire", "icon": "🛏️", "pose": "indica", "intent": "search-accommodations", "target": { "type": "site-section", "key": "strutture" }, "reply": "Dal mare ai borghi dell'interno, ogni zona offre un modo diverso di vivere il Cilento. Dimmi dove vorresti soggiornare e troviamo il punto di partenza più adatto." },
+    { "id": "itinerari", "label": "Itinerari", "icon": "🧭", "pose": "cartina", "intent": "suggest-itineraries", "target": { "type": "site-section", "key": "itinerari" }, "reply": "Possiamo costruire un percorso tra costa, borghi, natura e archeologia. Dimmi quanto tempo hai e cosa ami: prepariamo insieme il tuo itinerario." },
+    { "id": "infopoint", "label": "Infopoint", "icon": "ℹ️", "pose": "indica", "intent": "list-infopoints", "target": { "type": "site-section", "key": "infopoint" }, "reply": "Gli Infopoint sono punti di riferimento preziosi per conoscere servizi, iniziative e opportunità del territorio. Posso accompagnarti verso quello più utile per la tua visita." },
+    { "id": "vicino", "label": "Cosa c'è vicino a me", "icon": "📍", "pose": "cerca", "intent": "nearby-search", "target": { "type": "geolocation", "key": "nearby" }, "reply": "Intorno a te potrebbero esserci spiagge, borghi, ristoranti ed esperienze da non perdere. Quando la ricerca dalla posizione sarà disponibile, potremo esplorarli partendo da dove ti trovi." }
   ],
   "responses": [
     {
-      "keywords": ["agropoli", "dormire"], "priority": 100, "pose": "indica",
-      "reply": "Certamente! 😊 Per soggiornare ad Agropoli puoi partire dalla sezione Dove dormire della Home e selezionare Agropoli. È una base comoda per il borgo antico, il porto e la Baia di Trentova.",
+      "keywords": ["agropoli", "dormire"], "priority": 100, "pose": "indica", "intent": "search-accommodations", "target": { "type": "municipality", "key": "agropoli" },
+      "reply": "Agropoli è una base comoda per vivere il borgo antico, il porto e la Baia di Trentova. Per il soggiorno possiamo orientarci tra centro, lungomare e zone più tranquille, in base al viaggio che immagini.",
       "actions": [
-        { "label": "Esplora Agropoli", "query": "Agropoli" },
-        { "label": "Scopri cosa vedere", "query": "cosa vedere ad Agropoli" },
-        { "label": "Dove mangiare", "query": "dove mangiare ad Agropoli" },
-        { "label": "Eventi ed esperienze", "query": "eventi ed esperienze ad Agropoli" }
+        { "label": "Esplora Agropoli", "query": "Agropoli", "intent": "open-municipality", "target": { "type": "municipality", "key": "agropoli" } },
+        { "label": "Scopri cosa vedere", "query": "cosa vedere ad Agropoli", "intent": "filter-places", "target": { "type": "municipality", "key": "agropoli" } },
+        { "label": "Dove mangiare", "query": "dove mangiare ad Agropoli", "intent": "search-restaurants", "target": { "type": "municipality", "key": "agropoli" } },
+        { "label": "Eventi ed esperienze", "query": "eventi ed esperienze ad Agropoli", "intent": "list-events", "target": { "type": "municipality", "key": "agropoli" } }
       ]
     },
     {
-      "keywords": ["agropoli"], "priority": 50, "pose": "cartina",
-      "reply": "Certamente! 😊 Agropoli è uno dei principali centri turistici del Cilento, con il borgo antico, il Castello Angioino-Aragonese, il porto e la Baia di Trentova. Cosa vorresti scoprire?",
+      "keywords": ["agropoli"], "priority": 50, "pose": "cartina", "intent": "open-municipality", "target": { "type": "municipality", "key": "agropoli" },
+      "reply": "Agropoli è uno dei luoghi simbolo del Cilento. Se ami il mare, il centro storico e i grandi panorami, è un ottimo punto di partenza: possiamo scoprire il Castello, il porto, la Baia di Trentova oppure costruire un itinerario nei dintorni.",
       "actions": [
-        { "label": "Esplora Agropoli", "query": "Agropoli" },
-        { "label": "Scopri cosa vedere", "query": "cosa vedere ad Agropoli" },
-        { "label": "Dove mangiare", "query": "dove mangiare ad Agropoli" },
-        { "label": "Eventi ed esperienze", "query": "eventi ed esperienze ad Agropoli" }
+        { "label": "Esplora Agropoli", "query": "Agropoli", "intent": "open-municipality", "target": { "type": "municipality", "key": "agropoli" } },
+        { "label": "Scopri cosa vedere", "query": "cosa vedere ad Agropoli", "intent": "filter-places", "target": { "type": "municipality", "key": "agropoli" } },
+        { "label": "Dove mangiare", "query": "dove mangiare ad Agropoli", "intent": "search-restaurants", "target": { "type": "municipality", "key": "agropoli" } },
+        { "label": "Eventi ed esperienze", "query": "eventi ed esperienze ad Agropoli", "intent": "list-events", "target": { "type": "municipality", "key": "agropoli" } }
       ]
     },
-    { "keywords": ["castellabate"], "priority": 50, "pose": "cartina", "reply": "Castellabate unisce il fascino del borgo storico al mare di Santa Maria e San Marco. Puoi scoprire il belvedere, il Castello dell'Abate e la costa: cosa ti interessa di più?" },
-    { "keywords": ["paestum"], "priority": 50, "pose": "cartina", "reply": "Paestum è una tappa imperdibile: i templi della Magna Grecia, il museo archeologico e il paesaggio di Capaccio Paestum meritano una visita con calma." },
-    { "keywords": ["palinuro"], "priority": 50, "pose": "cartina", "reply": "Palinuro è celebre per il promontorio, le grotte marine e le sue spiagge. Tra i luoghi simbolo ci sono Capo Palinuro e la Grotta Azzurra." },
-    { "keywords": ["acciaroli"], "priority": 50, "pose": "cartina", "reply": "Acciaroli è un borgo marinaro molto amato per il porto, il centro raccolto e il mare limpido. È ideale per una passeggiata lenta tra spiaggia e vicoli." },
-    { "keywords": ["dove", "mangiare"], "priority": 30, "pose": "indica", "reply": "Ottima idea! 😊 Dimmi in quale Comune ti trovi oppure usa la sezione Dove mangiare della Home per scegliere la zona che preferisci." },
-    { "keywords": ["dove", "dormire"], "priority": 30, "pose": "indica", "reply": "Posso aiutarti a scegliere la zona giusta. Indicami un Comune oppure apri la sezione Dove dormire della Home e seleziona la località." },
-    { "keywords": ["eventi"], "priority": 25, "pose": "idea", "reply": "Nella sezione Eventi della Home trovi gli appuntamenti disponibili. Se mi indichi una località, posso aiutarti a restringere la ricerca." },
-    { "keywords": ["esperienze"], "priority": 25, "pose": "idea", "reply": "Tra mare, trekking, visite culturali e sapori locali, le esperienze nel Cilento sono tantissime. Preferisci natura, cultura o gusto?" },
-    { "keywords": ["itinerari"], "priority": 25, "pose": "cartina", "reply": "Posso aiutarti a scegliere un itinerario tra borghi, costa, archeologia e natura. Dimmi quanto tempo hai e quali esperienze preferisci." },
-    { "keywords": ["infopoint"], "priority": 25, "pose": "indica", "reply": "Gli Infopoint sono utili per informazioni e accoglienza sul territorio. Puoi consultarli dalla sezione I nostri Infopoint nella Home." },
-    { "keywords": ["spiagge"], "priority": 25, "pose": "idea", "reply": "Il Cilento offre spiagge sabbiose, calette e baie protette. Posso raccontarti Trentova, la costa di Palinuro e le località marine intorno ad Acciaroli e Castellabate." },
-    { "keywords": ["cosa", "vedere"], "priority": 20, "pose": "cartina", "reply": "Posso suggerirti borghi, siti archeologici, panorami e spiagge. Indicami una località oppure il tipo di luogo che vorresti visitare." },
-    { "keywords": ["trova"], "priority": 10, "pose": "cerca", "reply": "Volentieri! Dimmi cosa vuoi trovare e, se puoi, indicami anche il Comune o la zona del Cilento che ti interessa." },
-    { "keywords": ["cerca"], "priority": 10, "pose": "cerca", "reply": "Certo! Indicami cosa stai cercando e la località che preferisci, così posso aiutarti a orientarti." },
-    { "keywords": ["grazie"], "priority": 80, "pose": "abbraccio", "reply": "È un piacere aiutarti! 😊 Se vuoi, possiamo continuare a esplorare insieme il Cilento." },
-    { "keywords": ["perfetto"], "priority": 80, "pose": "abbraccio", "reply": "Perfetto! 😊 Sono felice di esserti stato utile. Quando vuoi, continuiamo il viaggio nel Cilento." },
-    { "keywords": ["bellissimo"], "priority": 80, "pose": "abbraccio", "reply": "Vero? Il Cilento sa regalare luoghi bellissimi! 😊 Dimmi cosa vuoi scoprire adesso." }
+    { "keywords": ["castellabate"], "priority": 50, "pose": "cartina", "intent": "open-municipality", "target": { "type": "municipality", "key": "castellabate" }, "reply": "Castellabate regala due anime: il borgo raccolto intorno al Castello dell'Abate e la costa di Santa Maria e San Marco. Ti consiglio di concederti il belvedere al tramonto e una passeggiata sul mare; possiamo organizzare insieme il resto della visita." },
+    { "keywords": ["paestum"], "priority": 50, "pose": "cartina", "intent": "open-place", "target": { "type": "place", "key": "paestum" }, "reply": "Paestum è una tappa che lascia il segno. I templi della Magna Grecia, il museo e il paesaggio di Capaccio Paestum meritano tempo e curiosità; posso aiutarti ad abbinarli al mare, ai sapori locali o a un itinerario nei dintorni." },
+    { "keywords": ["palinuro"], "priority": 50, "pose": "cartina", "intent": "open-place", "target": { "type": "place", "key": "palinuro" }, "reply": "Palinuro è il Cilento delle falesie, delle grotte marine e dell'acqua trasparente. Capo Palinuro e la Grotta Azzurra sono due simboli, ma vale la pena scoprire anche le spiagge e i sentieri del promontorio." },
+    { "keywords": ["acciaroli"], "priority": 50, "pose": "cartina", "intent": "open-place", "target": { "type": "place", "key": "acciaroli" }, "reply": "Acciaroli invita a rallentare: il porto, i vicoli raccolti e il mare limpido raccontano l'anima più autentica della costa. Ti consiglio una passeggiata senza fretta, lasciando spazio a una sosta sulla spiaggia e ai sapori locali." },
+    { "keywords": ["dove", "mangiare"], "priority": 30, "pose": "indica", "intent": "search-restaurants", "reply": "Ottima scelta: la tavola è uno dei modi più belli per conoscere il Cilento. Indicami il Comune o la zona e ti guiderò tra cucina locale, prodotti del territorio e luoghi da scoprire." },
+    { "keywords": ["dove", "dormire"], "priority": 30, "pose": "indica", "intent": "search-accommodations", "reply": "Scegliere la zona giusta rende il viaggio ancora più piacevole. Indicami un Comune, oppure dimmi se preferisci mare, borgo o natura, e troviamo insieme la soluzione più adatta." },
+    { "keywords": ["eventi"], "priority": 25, "pose": "idea", "intent": "list-events", "reply": "Gli eventi sono un'occasione speciale per incontrare tradizioni e comunità locali. Indicami il periodo o la zona che visiterai e restringiamo insieme la ricerca." },
+    { "keywords": ["esperienze"], "priority": 25, "pose": "idea", "intent": "list-experiences", "reply": "Nel Cilento puoi passare dal mare a un sentiero, da un sito archeologico a una tavola ricca di sapori. Preferisci natura, cultura, avventura o gusto? Ti consiglio da dove iniziare." },
+    { "keywords": ["itinerari"], "priority": 25, "pose": "cartina", "intent": "suggest-itineraries", "reply": "Un buon itinerario unisce ciò che ami ai ritmi del territorio. Dimmi quanto tempo hai e se preferisci costa, borghi, archeologia o natura: possiamo costruirlo insieme." },
+    { "keywords": ["infopoint"], "priority": 25, "pose": "indica", "intent": "list-infopoints", "reply": "Gli Infopoint accolgono i visitatori con informazioni e suggerimenti utili sul territorio. Posso accompagnarti nella scelta del punto più vicino o più adatto alla tua visita." },
+    { "keywords": ["spiagge"], "priority": 25, "pose": "idea", "intent": "filter-places", "reply": "Dalle distese sabbiose alle calette protette, la costa cilentana cambia volto a ogni curva. Possiamo partire da Trentova, Palinuro, Acciaroli o Castellabate e trovare la spiaggia più adatta a te." },
+    { "keywords": ["cosa", "vedere"], "priority": 20, "pose": "cartina", "intent": "filter-places", "reply": "Borghi, siti archeologici, panorami e baie raccontano mille volti del Cilento. Indicami una località o ciò che ami di più e ti consiglio un percorso da cui partire." },
+    { "keywords": ["trova"], "priority": 10, "pose": "cerca", "intent": "search", "reply": "Volentieri. Dimmi cosa desideri trovare e, se puoi, indicami anche il Comune o la zona: sarà più semplice scegliere il consiglio giusto." },
+    { "keywords": ["cerca"], "priority": 10, "pose": "cerca", "intent": "search", "reply": "Raccontami cosa stai cercando e quale zona del Cilento ti incuriosisce: posso accompagnarti nella scelta." },
+    { "keywords": ["grazie"], "priority": 80, "pose": "abbraccio", "reply": "È un piacere condividere il Cilento con te. Quando vuoi, continuiamo a esplorarlo insieme." },
+    { "keywords": ["perfetto"], "priority": 80, "pose": "abbraccio", "reply": "Perfetto! Il viaggio comincia già dalla scelta. Continuiamo quando vuoi con una nuova tappa nel Cilento." },
+    { "keywords": ["bellissimo"], "priority": 80, "pose": "abbraccio", "reply": "È vero: il Cilento sa sorprendere con paesaggi, storie e incontri speciali. Scegliamo la prossima meraviglia da scoprire." }
   ]
 }

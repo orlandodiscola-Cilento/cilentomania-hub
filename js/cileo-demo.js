@@ -9,7 +9,7 @@
 
     async load() {
       const response = await fetch(this.dataUrl, { cache: 'no-store' });
-      if (!response.ok) throw new Error('Impossibile caricare la demo di Cileo (HTTP ' + response.status + ')');
+      if (!response.ok) throw new Error('Impossibile caricare la demo della guida digitale (HTTP ' + response.status + ')');
       this.data = await response.json();
       return this.data;
     }
@@ -36,7 +36,9 @@
       return {
         text: action?.reply || rule?.reply || this.data?.fallback,
         pose: action?.pose || rule?.pose || 'idea',
-        actions: rule?.actions || this.getActions()
+        actions: rule?.actions || this.getActions(),
+        intent: action?.intent || rule?.intent || null,
+        target: action?.target || rule?.target || null
       };
     }
   }

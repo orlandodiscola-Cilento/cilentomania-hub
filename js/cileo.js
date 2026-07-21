@@ -26,13 +26,9 @@
         this.ui.addMessage(data.welcome, 'assistant');
       } catch (error) {
         console.error('Cileo:', error);
-        this.ui.addMessage('Ciao! La modalit\u00e0 demo non \u00e8 disponibile in questo momento.', 'assistant');
+        this.ui.addMessage('In questo momento non riesco a mostrarti i miei consigli. Torna presto: il Cilento ha ancora tanto da raccontare.', 'assistant');
       }
       this.ui.root.classList.add('is-ready');
-      window.setTimeout(() => {
-        if (!this.ui.isOpen) this.ui.showBubble();
-      }, 650);
-      window.setTimeout(() => this.ui.hideBubble(), 6200);
       this.started = true;
       document.dispatchEvent(new CustomEvent('cileo:ready', { detail: { instance: this } }));
       return this;
@@ -70,7 +66,7 @@
         this.animation.play(sequence);
       } catch (error) {
         stopTyping();
-        this.ui.addMessage('Non riesco a rispondere in questo momento.', 'assistant');
+        this.ui.addMessage('Questo consiglio per ora mi sfugge. Possiamo continuare esplorando luoghi, eventi e itinerari del Cilento.', 'assistant');
         this.animation.setCileoState('thinking', { duration: 1400, nextState: 'welcome' });
       }
     }
