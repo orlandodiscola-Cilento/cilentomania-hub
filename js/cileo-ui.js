@@ -21,11 +21,15 @@
         content: this.root.querySelector('[data-cileo-content]'),
         messages: this.root.querySelector('[data-cileo-messages]'),
         actions: this.root.querySelector('[data-cileo-actions]'),
+        suggestionsToggle: this.root.querySelector('[data-cileo-suggestions-toggle]'),
         form: this.root.querySelector('[data-cileo-form]'),
         input: this.root.querySelector('[data-cileo-input]')
       };
+      this.hasConversation = false;
+      this.suggestionState = 'initial';
       this.viewportFrame = 0;
       this.bind();
+      this.setSuggestionState('initial');
       this.updateViewport();
     }
 
@@ -46,7 +50,8 @@
           </header>
           <div class="cileo__content" data-cileo-content>
             <div class="cileo__messages" data-cileo-messages aria-live="polite"></div>
-            <div class="cileo__actions" data-cileo-actions aria-label="Azioni rapide"></div>
+            <div class="cileo__actions" id="cileo-suggestions" data-cileo-actions aria-label="Azioni rapide"></div>
+            <button class="cileo__suggestions-toggle" data-cileo-suggestions-toggle type="button" aria-expanded="false" aria-controls="cileo-suggestions" hidden>Suggerimenti</button>
           </div>
           <form class="cileo__form" data-cileo-form>
             <label class="cileo__sr-only" for="cileo-input">Scrivi a Velio</label>
@@ -65,6 +70,12 @@
     bind() {
       this.elements.launcher.addEventListener('click', () => this.toggle());
       this.elements.close.addEventListener('click', () => this.close());
+      this.elements.suggestionsToggle.addEventListener('click', () => {
+        const collapsedState = this.hasConversation ? 'conversation' : 'initial';
+        const nextState = this.suggestionState === 'suggestions-open' ? collapsedState : 'suggestions-open';
+        this.setSuggestionState(nextState);
+        this.scheduleContentScroll();
+      });
       this.elements.form.addEventListener('submit', event => {
         event.preventDefault();
         const value = this.elements.input.value.trim();
@@ -84,7 +95,12 @@
       window.addEventListener('orientationchange', scheduleViewportUpdate, { passive: true });
       window.visualViewport?.addEventListener('resize', scheduleViewportUpdate, { passive: true });
       window.visualViewport?.addEventListener('scroll', scheduleViewportUpdate, { passive: true });
-      this.elements.input.addEventListener('focus', scheduleViewportUpdate);
+      this.elements.input.addEventListener('focus', () => {
+        if (this.suggestionState === 'suggestions-open') {
+          this.setSuggestionState(this.hasConversation ? 'conversation' : 'initial');
+        }
+        scheduleViewportUpdate();
+      });
       this.elements.input.addEventListener('blur', scheduleViewportUpdate);
     }
 
@@ -103,6 +119,7 @@
       this.root.style.setProperty('--cileo-vv-top', `${offsetTop}px`);
       this.root.style.setProperty('--cileo-vv-bottom', `${bottom}px`);
       this.root.classList.toggle('is-keyboard-open', keyboardOpen);
+      this.syncSuggestionControls();
     }
 
     scrollContentToBottom() {
@@ -112,6 +129,21 @@
     scheduleContentScroll() {
       this.scrollContentToBottom();
       window.requestAnimationFrame(() => this.scrollContentToBottom());
+    }
+
+    setSuggestionState(state) {
+      this.suggestionState = state;
+      this.root.dataset.suggestionsState = state;
+      this.syncSuggestionControls();
+    }
+
+    syncSuggestionControls() {
+      const isInitial = this.suggestionState === 'initial';
+      const isExpanded = this.suggestionState === 'suggestions-open';
+      const keyboardOpen = this.root.classList.contains('is-keyboard-open');
+      this.elements.suggestionsToggle.hidden = isInitial && !keyboardOpen;
+      this.elements.suggestionsToggle.textContent = isExpanded ? 'Nascondi suggerimenti' : 'Suggerimenti';
+      this.elements.suggestionsToggle.setAttribute('aria-expanded', String(isExpanded));
     }
 
     lockPageScroll() {
@@ -152,11 +184,13 @@
 
     setActions(actions) {
       this.currentActions = actions;
-      this.elements.actions.innerHTML = actions.map((action, index) =>
+      if (!this.primaryActions) this.primaryActions = actions;
+      const visibleActions = this.suggestionState === 'initial' ? actions : this.primaryActions;
+      this.elements.actions.innerHTML = visibleActions.map((action, index) =>
         `<button type="button" data-cileo-action="${index}">${action.icon ? `<span aria-hidden="true">${escapeHtml(action.icon)}</span>` : ''}${escapeHtml(action.label)}</button>`
       ).join('');
       this.elements.actions.querySelectorAll('[data-cileo-action]').forEach(button => {
-        button.addEventListener('click', () => this.options.onAction(this.currentActions[Number(button.dataset.cileoAction)]));
+        button.addEventListener('click', () => this.options.onAction(visibleActions[Number(button.dataset.cileoAction)]));
       });
       window.requestAnimationFrame(() => this.scrollContentToBottom());
     }
@@ -165,7 +199,10 @@
       const message = document.createElement('div');
       message.className = 'cileo__message cileo__message--' + sender;
       message.textContent = text;
-      if (sender === 'user') this.root.classList.add('has-conversation');
+      if (sender === 'user') {
+        this.hasConversation = true;
+        this.setSuggestionState('conversation');
+      }
       this.elements.messages.appendChild(message);
       this.scheduleContentScroll();
       return message;
@@ -216,6 +253,9 @@
       this.focusTimer = 0;
       this.root.classList.remove('is-open');
       this.root.classList.remove('is-keyboard-open');
+      if (this.suggestionState === 'suggestions-open') {
+        this.setSuggestionState(this.hasConversation ? 'conversation' : 'initial');
+      }
       this.elements.panel.hidden = true;
       this.elements.launcher.setAttribute('aria-expanded', 'false');
       this.elements.launcher.setAttribute('aria-label', 'Apri Velio');

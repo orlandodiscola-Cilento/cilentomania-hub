@@ -45,7 +45,7 @@ html.cileo-page-locked { overflow: hidden; overscroll-behavior: none; }
 .cileo__header p { margin: 4px 0 0; color: rgba(255, 255, 255, .82); font-size: .78rem; }
 .cileo__close { display: grid; width: 39px; height: 39px; flex: 0 0 39px; border: 1px solid rgba(255, 255, 255, .2); border-radius: 50%; padding: 0; place-items: center; background: rgba(255, 255, 255, .12); color: #fff; font-size: 1.55rem; line-height: 1; cursor: pointer; }
 .cileo__close:hover { background: rgba(255, 255, 255, .22); }
-.cileo__close:focus-visible, .cileo__actions button:focus-visible, .cileo__form button:focus-visible { outline: 3px solid #ffca3a; outline-offset: 2px; }
+.cileo__close:focus-visible, .cileo__actions button:focus-visible, .cileo__suggestions-toggle:focus-visible, .cileo__form button:focus-visible { outline: 3px solid #ffca3a; outline-offset: 2px; }
 .cileo__content { min-width: 0; min-height: 0; flex: 1 1 auto; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; background: linear-gradient(#f7fbfd, #fff); }
 .cileo__messages { display: flex; min-width: 0; min-height: 0; padding: 19px 17px 12px; flex-direction: column; gap: 11px; overflow: visible; background: transparent; }
 .cileo__message { max-width: 85%; border-radius: 17px; padding: 11px 13px; font-size: .88rem; line-height: 1.45; overflow-wrap: anywhere; white-space: pre-line; }
@@ -55,6 +55,9 @@ html.cileo-page-locked { overflow: hidden; overscroll-behavior: none; }
 .cileo__actions { display: grid; min-width: 0; padding: 8px 14px 10px; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; overflow: visible; background: #fff; }
 .cileo__actions button { display: inline-flex; min-width: 0; min-height: 42px; border: 1px solid #cde3ef; border-radius: 13px; padding: 7px 9px; align-items: center; justify-content: center; gap: 5px; background: #f7fcff; color: #075d8b; font: inherit; font-size: .71rem; font-weight: 800; line-height: 1.2; text-align: center; white-space: normal; overflow-wrap: anywhere; cursor: pointer; transition: background .18s ease, border-color .18s ease, transform .18s ease; }
 .cileo__actions button:hover { border-color: #91c9e5; background: #eaf7ff; transform: translateY(-1px); }
+.cileo[data-suggestions-state="conversation"] .cileo__actions { display: none; }
+.cileo__suggestions-toggle { display: block; min-width: 0; min-height: 44px; margin: 4px auto 8px; border: 1px solid #cde3ef; border-radius: 13px; padding: 7px 12px; background: #f7fcff; color: #075d8b; font: inherit; font-size: .75rem; font-weight: 800; cursor: pointer; }
+.cileo__suggestions-toggle[hidden] { display: none; }
 .cileo__form { display: flex; min-width: 0; margin: 0 14px 12px; border: 1px solid #cddfe8; border-radius: 16px; padding: 5px 5px 5px 13px; flex: 0 0 auto; align-items: center; gap: 8px; background: #fff; box-shadow: 0 5px 18px rgba(7, 59, 96, .07); }
 .cileo__form:focus-within { border-color: #57a8d2; box-shadow: 0 0 0 3px rgba(8, 121, 189, .11); }
 .cileo__form input { width: 100%; min-width: 0; max-width: 100%; height: 38px; border: 0; outline: 0; flex: 1 1 0; background: transparent; color: #17384d; font: inherit; font-size: .86rem; }
@@ -79,7 +82,7 @@ html.cileo-page-locked { overflow: hidden; overscroll-behavior: none; }
   .cileo.is-keyboard-open .cileo__content { flex-basis: 72px; }
   .cileo__actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .cileo__actions button:last-child:nth-child(odd) { grid-column: 1 / -1; }
-  .cileo.is-keyboard-open .cileo__actions, .cileo.has-conversation .cileo__actions { display: none; }
+  .cileo.is-keyboard-open[data-suggestions-state="initial"] .cileo__actions { display: none; }
   .cileo__form { margin: 0 12px max(8px, env(safe-area-inset-bottom)); padding: 3px 3px 3px 11px; gap: 6px; }
   .cileo__form input { height: 36px; font-size: 16px; line-height: 1.25; }
   .cileo__form button { width: 44px; height: 44px; flex-basis: 44px; }
