@@ -109,6 +109,11 @@
       this.elements.content.scrollTop = this.elements.content.scrollHeight;
     }
 
+    scheduleContentScroll() {
+      this.scrollContentToBottom();
+      window.requestAnimationFrame(() => this.scrollContentToBottom());
+    }
+
     lockPageScroll() {
       if (this.pageScrollLock) return;
       const body = document.body;
@@ -160,8 +165,9 @@
       const message = document.createElement('div');
       message.className = 'cileo__message cileo__message--' + sender;
       message.textContent = text;
+      if (sender === 'user') this.root.classList.add('has-conversation');
       this.elements.messages.appendChild(message);
-      this.scrollContentToBottom();
+      this.scheduleContentScroll();
       return message;
     }
 
@@ -171,7 +177,7 @@
       typing.setAttribute('aria-label', 'Velio sta scrivendo');
       typing.innerHTML = '<i></i><i></i><i></i>';
       this.elements.messages.appendChild(typing);
-      this.scrollContentToBottom();
+      this.scheduleContentScroll();
       return () => typing.remove();
     }
 

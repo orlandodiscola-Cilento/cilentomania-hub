@@ -74,8 +74,12 @@ html.cileo-page-locked { overflow: hidden; overscroll-behavior: none; }
   .cileo.is-keyboard-open .cileo__panel { top: calc(var(--cileo-vv-top, 0px) + 12px + env(safe-area-inset-top)); bottom: auto; height: min(590px, calc(var(--cileo-vv-height, 100dvh) - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom))); min-height: 0; }
   .cileo__bubble { right: 79px; bottom: 96px; width: min(270px, calc(100vw - 100px)); padding: 13px 14px; font-size: .79rem; }
   .cileo__header { min-height: 78px; padding: 15px 14px 14px 18px; }
+  .cileo.is-keyboard-open .cileo__header { min-height: 54px; padding: 8px 14px 7px 18px; }
+  .cileo.is-keyboard-open .cileo__header p { display: none; }
+  .cileo.is-keyboard-open .cileo__content { flex-basis: 72px; }
   .cileo__actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .cileo__actions button:last-child:nth-child(odd) { grid-column: 1 / -1; }
+  .cileo.is-keyboard-open .cileo__actions, .cileo.has-conversation .cileo__actions { display: none; }
   .cileo__form { margin: 0 12px max(8px, env(safe-area-inset-bottom)); padding: 3px 3px 3px 11px; gap: 6px; }
   .cileo__form input { height: 36px; font-size: 16px; line-height: 1.25; }
   .cileo__form button { width: 44px; height: 44px; flex-basis: 44px; }
