@@ -18,6 +18,7 @@
         bubble: this.root.querySelector('[data-cileo-bubble]'),
         panel: this.root.querySelector('[data-cileo-panel]'),
         close: this.root.querySelector('[data-cileo-close]'),
+        content: this.root.querySelector('[data-cileo-content]'),
         messages: this.root.querySelector('[data-cileo-messages]'),
         actions: this.root.querySelector('[data-cileo-actions]'),
         form: this.root.querySelector('[data-cileo-form]'),
@@ -43,8 +44,10 @@
             <div><h2 id="cileo-title">Velio</h2><p>La guida digitale di Cilentomania<br>Scopri il Parco Nazionale del Cilento, Vallo di Diano e Alburni</p></div>
             <button class="cileo__close" data-cileo-close type="button" aria-label="Chiudi Velio">&times;</button>
           </header>
-          <div class="cileo__messages" data-cileo-messages aria-live="polite"></div>
-          <div class="cileo__actions" data-cileo-actions aria-label="Azioni rapide"></div>
+          <div class="cileo__content" data-cileo-content>
+            <div class="cileo__messages" data-cileo-messages aria-live="polite"></div>
+            <div class="cileo__actions" data-cileo-actions aria-label="Azioni rapide"></div>
+          </div>
           <form class="cileo__form" data-cileo-form>
             <label class="cileo__sr-only" for="cileo-input">Scrivi a Velio</label>
             <input id="cileo-input" data-cileo-input autocomplete="off" placeholder="Chiedi a Velio..." maxlength="300">
@@ -97,8 +100,49 @@
       this.root.style.setProperty('--cileo-vv-width', `${width}px`);
       this.root.style.setProperty('--cileo-vv-height', `${height}px`);
       this.root.style.setProperty('--cileo-vv-left', `${offsetLeft}px`);
+      this.root.style.setProperty('--cileo-vv-top', `${offsetTop}px`);
       this.root.style.setProperty('--cileo-vv-bottom', `${bottom}px`);
       this.root.classList.toggle('is-keyboard-open', keyboardOpen);
+    }
+
+    scrollContentToBottom() {
+      this.elements.content.scrollTop = this.elements.content.scrollHeight;
+    }
+
+    lockPageScroll() {
+      if (this.pageScrollLock) return;
+      const body = document.body;
+      this.pageScrollLock = {
+        y: window.scrollY,
+        position: body.style.position,
+        top: body.style.top,
+        left: body.style.left,
+        right: body.style.right,
+        width: body.style.width,
+        overflow: body.style.overflow
+      };
+      document.documentElement.classList.add('cileo-page-locked');
+      body.style.position = 'fixed';
+      body.style.top = `-${this.pageScrollLock.y}px`;
+      body.style.left = '0';
+      body.style.right = '0';
+      body.style.width = '100%';
+      body.style.overflow = 'hidden';
+    }
+
+    unlockPageScroll() {
+      if (!this.pageScrollLock) return;
+      const lock = this.pageScrollLock;
+      const body = document.body;
+      document.documentElement.classList.remove('cileo-page-locked');
+      body.style.position = lock.position;
+      body.style.top = lock.top;
+      body.style.left = lock.left;
+      body.style.right = lock.right;
+      body.style.width = lock.width;
+      body.style.overflow = lock.overflow;
+      this.pageScrollLock = null;
+      window.scrollTo(0, lock.y);
     }
 
     setActions(actions) {
@@ -109,6 +153,7 @@
       this.elements.actions.querySelectorAll('[data-cileo-action]').forEach(button => {
         button.addEventListener('click', () => this.options.onAction(this.currentActions[Number(button.dataset.cileoAction)]));
       });
+      window.requestAnimationFrame(() => this.scrollContentToBottom());
     }
 
     addMessage(text, sender) {
@@ -116,7 +161,7 @@
       message.className = 'cileo__message cileo__message--' + sender;
       message.textContent = text;
       this.elements.messages.appendChild(message);
-      this.elements.messages.scrollTop = this.elements.messages.scrollHeight;
+      this.scrollContentToBottom();
       return message;
     }
 
@@ -126,7 +171,7 @@
       typing.setAttribute('aria-label', 'Velio sta scrivendo');
       typing.innerHTML = '<i></i><i></i><i></i>';
       this.elements.messages.appendChild(typing);
-      this.elements.messages.scrollTop = this.elements.messages.scrollHeight;
+      this.scrollContentToBottom();
       return () => typing.remove();
     }
 
@@ -149,19 +194,26 @@
       this.elements.launcher.setAttribute('aria-expanded', 'true');
       this.elements.launcher.setAttribute('aria-label', 'Velio aperto');
       this.root.classList.add('is-open');
+      this.lockPageScroll();
       this.updateViewport();
-      window.setTimeout(() => this.elements.input.focus(), 240);
+      this.focusTimer = window.setTimeout(() => {
+        this.focusTimer = 0;
+        if (this.isOpen) this.elements.input.focus();
+      }, 240);
       this.options.onOpen();
     }
 
     close() {
       if (!this.isOpen) return;
       this.isOpen = false;
+      window.clearTimeout(this.focusTimer);
+      this.focusTimer = 0;
       this.root.classList.remove('is-open');
       this.root.classList.remove('is-keyboard-open');
       this.elements.panel.hidden = true;
       this.elements.launcher.setAttribute('aria-expanded', 'false');
       this.elements.launcher.setAttribute('aria-label', 'Apri Velio');
+      this.unlockPageScroll();
       this.options.onClose();
       this.lastFocus?.focus?.();
     }

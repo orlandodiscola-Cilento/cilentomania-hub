@@ -7,6 +7,7 @@
 }
 
 body { overflow-x: hidden; }
+html.cileo-page-locked { overflow: hidden; overscroll-behavior: none; }
 
 .cileo, .cileo * { box-sizing: border-box; }
 .cileo { position: fixed; right: max(18px, env(safe-area-inset-right)); bottom: max(14px, env(safe-area-inset-bottom)); z-index: 1900; width: 112px; max-width: 100%; height: 126px; overflow: visible; color: #102d42; font-family: Inter, "Segoe UI", sans-serif; pointer-events: none; }
@@ -39,13 +40,14 @@ body { overflow-x: hidden; }
 .cileo__panel[hidden] { display: none; }
 .cileo.is-open .cileo__panel { opacity: 1; transform: none; }
 .cileo__panel, .cileo__panel * { min-width: 0; max-width: 100%; }
-.cileo__header { display: flex; min-height: 88px; padding: 19px 18px 17px 21px; align-items: center; justify-content: space-between; gap: 15px; background: linear-gradient(135deg, #0879bd, #07577f); color: #fff; }
+.cileo__header { display: flex; min-height: 88px; padding: 19px 18px 17px 21px; flex: 0 0 auto; align-items: center; justify-content: space-between; gap: 15px; background: linear-gradient(135deg, #0879bd, #07577f); color: #fff; }
 .cileo__header h2 { margin: 0; font-size: 1.25rem; line-height: 1.2; }
 .cileo__header p { margin: 4px 0 0; color: rgba(255, 255, 255, .82); font-size: .78rem; }
 .cileo__close { display: grid; width: 39px; height: 39px; flex: 0 0 39px; border: 1px solid rgba(255, 255, 255, .2); border-radius: 50%; padding: 0; place-items: center; background: rgba(255, 255, 255, .12); color: #fff; font-size: 1.55rem; line-height: 1; cursor: pointer; }
 .cileo__close:hover { background: rgba(255, 255, 255, .22); }
 .cileo__close:focus-visible, .cileo__actions button:focus-visible, .cileo__form button:focus-visible { outline: 3px solid #ffca3a; outline-offset: 2px; }
-.cileo__messages { display: flex; min-width: 0; min-height: 0; padding: 19px 17px 12px; flex: 1 1 auto; flex-direction: column; gap: 11px; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; background: linear-gradient(#f7fbfd, #fff); }
+.cileo__content { min-width: 0; min-height: 0; flex: 1 1 auto; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; background: linear-gradient(#f7fbfd, #fff); }
+.cileo__messages { display: flex; min-width: 0; min-height: 0; padding: 19px 17px 12px; flex-direction: column; gap: 11px; overflow: visible; background: transparent; }
 .cileo__message { max-width: 85%; border-radius: 17px; padding: 11px 13px; font-size: .88rem; line-height: 1.45; overflow-wrap: anywhere; white-space: pre-line; }
 .cileo__message--assistant { align-self: flex-start; border: 1px solid var(--cileo-line); border-bottom-left-radius: 5px; background: #fff; color: #27485d; }
 .cileo__message--user { align-self: flex-end; border-bottom-right-radius: 5px; background: var(--cileo-blue); color: #fff; }
@@ -69,12 +71,12 @@ body { overflow-x: hidden; }
   .cileo { right: 10px; bottom: 8px; width: 88px; height: 104px; }
   .cileo.is-open .cileo__launcher, .cileo.is-open .cileo__avatar-visual { transform: translate(-4px, -13px); }
   .cileo__panel { right: auto; bottom: calc(var(--cileo-vv-bottom, 0px) + 116px); left: calc(var(--cileo-vv-left, 0px) + 12px + env(safe-area-inset-left)); width: calc(var(--cileo-vv-width, 100%) - 24px - env(safe-area-inset-left) - env(safe-area-inset-right)); max-width: calc(100% - 24px); height: min(80dvh, calc(var(--cileo-vv-height, 100dvh) - 132px), 590px); min-height: min(390px, calc(var(--cileo-vv-height, 100dvh) - 132px)); border-radius: 22px; }
-  .cileo.is-keyboard-open .cileo__panel { bottom: calc(var(--cileo-vv-bottom, 0px) + 12px + env(safe-area-inset-bottom)); height: min(590px, calc(var(--cileo-vv-height, 100dvh) - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom))); min-height: 0; }
+  .cileo.is-keyboard-open .cileo__panel { top: calc(var(--cileo-vv-top, 0px) + 12px + env(safe-area-inset-top)); bottom: auto; height: min(590px, calc(var(--cileo-vv-height, 100dvh) - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom))); min-height: 0; }
   .cileo__bubble { right: 79px; bottom: 96px; width: min(270px, calc(100vw - 100px)); padding: 13px 14px; font-size: .79rem; }
   .cileo__header { min-height: 78px; padding: 15px 14px 14px 18px; }
   .cileo__actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .cileo__actions button:last-child:nth-child(odd) { grid-column: 1 / -1; }
-  .cileo__form { margin: 0 12px 8px; padding: 3px 3px 3px 11px; gap: 6px; }
+  .cileo__form { margin: 0 12px max(8px, env(safe-area-inset-bottom)); padding: 3px 3px 3px 11px; gap: 6px; }
   .cileo__form input { height: 36px; font-size: 16px; line-height: 1.25; }
   .cileo__form button { width: 44px; height: 44px; flex-basis: 44px; }
   .cileo__online { right: 4px; bottom: 5px; }
