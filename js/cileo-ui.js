@@ -23,7 +23,9 @@
         form: this.root.querySelector('[data-cileo-form]'),
         input: this.root.querySelector('[data-cileo-input]')
       };
+      this.viewportFrame = 0;
       this.bind();
+      this.updateViewport();
     }
 
     build() {
@@ -70,6 +72,33 @@
       this.root.addEventListener('keydown', event => {
         if (event.key === 'Escape' && this.isOpen) this.close();
       });
+
+      const scheduleViewportUpdate = () => {
+        window.cancelAnimationFrame(this.viewportFrame);
+        this.viewportFrame = window.requestAnimationFrame(() => this.updateViewport());
+      };
+      window.addEventListener('resize', scheduleViewportUpdate, { passive: true });
+      window.addEventListener('orientationchange', scheduleViewportUpdate, { passive: true });
+      window.visualViewport?.addEventListener('resize', scheduleViewportUpdate, { passive: true });
+      window.visualViewport?.addEventListener('scroll', scheduleViewportUpdate, { passive: true });
+      this.elements.input.addEventListener('focus', scheduleViewportUpdate);
+      this.elements.input.addEventListener('blur', scheduleViewportUpdate);
+    }
+
+    updateViewport() {
+      const viewport = window.visualViewport;
+      const width = viewport?.width ?? document.documentElement.clientWidth;
+      const height = viewport?.height ?? window.innerHeight;
+      const offsetLeft = viewport?.offsetLeft ?? 0;
+      const offsetTop = viewport?.offsetTop ?? 0;
+      const bottom = Math.max(0, window.innerHeight - offsetTop - height);
+      const keyboardOpen = this.isOpen && document.activeElement === this.elements.input;
+
+      this.root.style.setProperty('--cileo-vv-width', `${width}px`);
+      this.root.style.setProperty('--cileo-vv-height', `${height}px`);
+      this.root.style.setProperty('--cileo-vv-left', `${offsetLeft}px`);
+      this.root.style.setProperty('--cileo-vv-bottom', `${bottom}px`);
+      this.root.classList.toggle('is-keyboard-open', keyboardOpen);
     }
 
     setActions(actions) {
@@ -120,6 +149,7 @@
       this.elements.launcher.setAttribute('aria-expanded', 'true');
       this.elements.launcher.setAttribute('aria-label', 'Velio aperto');
       this.root.classList.add('is-open');
+      this.updateViewport();
       window.setTimeout(() => this.elements.input.focus(), 240);
       this.options.onOpen();
     }
@@ -128,6 +158,7 @@
       if (!this.isOpen) return;
       this.isOpen = false;
       this.root.classList.remove('is-open');
+      this.root.classList.remove('is-keyboard-open');
       this.elements.panel.hidden = true;
       this.elements.launcher.setAttribute('aria-expanded', 'false');
       this.elements.launcher.setAttribute('aria-label', 'Apri Velio');
