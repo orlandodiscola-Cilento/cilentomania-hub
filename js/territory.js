@@ -21,6 +21,77 @@ let territoryNavigationScrollTarget=null;
 let territoryNavigationScrollHandler=null;
 let modalReturnHtml='';
 let municipalityModuleDataCache={eat:null,sleep:null};
+let municipalityModuleNavigationState=null;
+
+function restoreMunicipalityModuleListFromBackButton(backButton){
+ if(!backButton)return;
+ const fallbackType=backButton.getAttribute('data-module-back-type')||'sleep';
+ const fallbackMunicipality=backButton.getAttribute('data-module-back-municipality')||'';
+ const fallbackComuneId=backButton.getAttribute('data-module-back-comune-id')||municipalitySlug(fallbackMunicipality);
+ const state=municipalityModuleNavigationState||buildMunicipalityModuleNavigationState(fallbackType,fallbackMunicipality,fallbackComuneId,{search:'',locality:'',category:'',price:'',boolean:[]},0);
+ const resolvedState=buildMunicipalityModuleNavigationState(
+  state.type||fallbackType,
+  state.municipalityName||fallbackMunicipality,
+  state.comuneId||fallbackComuneId,
+  state.filters||{search:'',locality:'',category:'',price:'',boolean:[]},
+  state.scrollTop
+ );
+ openMunicipalityModule(resolvedState.type,resolvedState.municipalityName,resolvedState.comuneId,resolvedState);
+}
+
+function bindMunicipalityModuleBackDelegation(){
+ if(!panelContent||panelContent.dataset.moduleBackDelegationBound==='true')return;
+ panelContent.addEventListener('click',event=>{
+  const backButton=event.target.closest('[data-action="back-to-module-list"]');
+  if(!backButton||!panelContent.contains(backButton))return;
+  event.preventDefault();
+  restoreMunicipalityModuleListFromBackButton(backButton);
+ });
+ panelContent.dataset.moduleBackDelegationBound='true';
+}
+
+function buildMunicipalityModuleNavigationState(type,municipalityName,comuneId,filters,scrollTop){
+ return {type:type||'sleep',municipalityName:municipalityName||'',comuneId:comuneId||'',filters:filters||{search:'',locality:'',category:'',price:'',boolean:[]},scrollTop:Number(scrollTop||0)};
+}
+function setMunicipalityModuleNavigationState(state){
+ municipalityModuleNavigationState=state||null;
+ return municipalityModuleNavigationState;
+}
+function validateMunicipalityDetailUrl(value){
+ if(typeof value!=='string')return false;
+ const trimmed=value.trim();
+ if(!trimmed)return false;
+ try{
+  const url=new URL(trimmed.startsWith('http://')||trimmed.startsWith('https://')?trimmed:'https://'+trimmed);
+  return (url.protocol==='http:'||url.protocol==='https:')&&!/^(www\.)?cilentomania\.it$/i.test(url.hostname)&&!/\.cilentomania\.it$/i.test(url.hostname);
+ }catch(error){
+  return false;
+ }
+}
+function validateMunicipalityDetailEmail(value){
+ if(typeof value!=='string')return false;
+ const trimmed=value.trim();
+ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
+}
+function validateMunicipalityDetailPhone(value){
+ if(typeof value!=='string')return false;
+ const trimmed=value.trim();
+ return /^[+0-9\s().-]{4,20}$/.test(trimmed);
+}
+function buildMunicipalityDetailActions(item){
+ const actions=[];
+ const phone=item.telefono?String(item.telefono).trim():'';
+ const email=item.email?String(item.email).trim():'';
+ const site=item.sito_web?String(item.sito_web).trim():'';
+ const booking=item.url_prenotazione?String(item.url_prenotazione).trim():'';
+ const mapHref=item.latitudine&&item.longitudine?('https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(item.latitudine+','+item.longitudine)):(item.indirizzo?'https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(item.indirizzo):'');
+ if(phone&&validateMunicipalityDetailPhone(phone))actions.push('<a class="module-action" href="tel:'+safeTerritoryText(phone)+'">Chiama</a>');
+ if(email&&validateMunicipalityDetailEmail(email))actions.push('<a class="module-action" href="mailto:'+safeTerritoryText(email)+'">Scrivi</a>');
+ if(booking&&validateMunicipalityDetailUrl(booking))actions.push('<a class="module-action" href="'+safeTerritoryText(booking)+'" target="_blank" rel="noopener noreferrer">Prenota</a>');
+ if(mapHref)actions.push('<a class="module-action" href="'+safeTerritoryText(mapHref)+'" target="_blank" rel="noopener noreferrer">Come arrivare</a>');
+ if(site&&validateMunicipalityDetailUrl(site))actions.push('<a class="module-action" href="'+safeTerritoryText(site)+'" target="_blank" rel="noopener noreferrer">Visita il sito</a>');
+ return actions;
+}
 
 function initTerritoryData(data){
  municipalities=Array.isArray(data.municipalities)?data.municipalities:data.municipalities.value;
@@ -289,32 +360,51 @@ async function loadMunicipalityModuleData(type){
  }
  return municipalityModuleDataCache[type];
 }
+function municipalityModuleChipIcon(value){
+ const normalized=String(value||'').toLowerCase();
+ if(/mare|spiaggia|vista|lido/.test(normalized))return '🏖';
+ if(/cucina|ristor|menu|pizza|pesce|carne|vegetariano|gluten/.test(normalized))return '🍝';
+ if(/parche|auto|transit|mobil/.test(normalized))return '🚗';
+ if(/animali|pet|cani|dog/.test(normalized))return '🐶';
+ if(/accessib|disabil|wheelchair/.test(normalized))return '♿';
+ if(/famiglia|bambin|famili/.test(normalized))return '🧒';
+ if(/wifi|connessione|internet/.test(normalized))return '📶';
+ if(/piscina|spa|trattamen|benessere/.test(normalized))return '🛀';
+ if(/colazione|caff|breakfast/.test(normalized))return '☕';
+ return '•';
+}
 function municipalityModuleCardContent(item,config){
  const services=(Array.isArray(item.servizi)?item.servizi:[]).slice(0,3);
  const badge=item.partner_cilentomania?'<span class="module-card__badge">Partner Cilentomania</span>':'<span class="module-card__badge module-card__badge--muted">Scheda in bozza tecnica</span>';
  const description=String(item.descrizione_breve||item.descrizione_completa||'').trim();
- return '<article class="module-card" data-entity-type="'+safeTerritoryText(config.entityType)+'" data-entity-id="'+safeTerritoryText(item.id||'')+'" data-comune-id="'+safeTerritoryText(item.comune_id||'')+'" data-category="'+safeTerritoryText(item.categoria||'')+'" data-localita="'+safeTerritoryText(item.localita||'')+'"><div class="module-card__media"><img src="'+safeTerritoryText(item.immagine_copertina||item.image||'assets/placeholder-comune.svg')+'" alt="'+safeTerritoryText(item.nome||'Attività')+'" loading="lazy" onerror="this.style.display=\'none\'"></div><div class="module-card__copy"><div class="module-card__meta">'+badge+'<span class="module-card__category">'+safeTerritoryText(item.categoria||'')+'</span></div><h3>'+safeTerritoryText(item.nome||'')+'</h3><p class="module-card__location">'+safeTerritoryText(item.localita||'')+'</p>'+(description?'<p class="module-card__description">'+safeTerritoryText(description)+'</p>':'')+'<ul class="module-card__services">'+(services.length?services.map(service=>'<li>'+safeTerritoryText(service)+'</li>').join(''):'<li>Dati in arrivo</li>')+'</ul><button class="module-card__cta" type="button" data-module-discover="'+safeTerritoryText(item.id||'')+'">Scopri</button></div></article>';
+ const serviceMarkup=services.length?services.map(service=>'<span class="module-chip"><span class="module-chip__icon">'+safeTerritoryText(municipalityModuleChipIcon(service))+'</span>'+safeTerritoryText(service)+'</span>').join(''):'<span class="module-chip module-chip--muted">Dettagli in aggiornamento</span>';
+ return '<article class="module-card" data-entity-type="'+safeTerritoryText(config.entityType)+'" data-entity-id="'+safeTerritoryText(item.id||'')+'" data-comune-id="'+safeTerritoryText(item.comune_id||'')+'" data-category="'+safeTerritoryText(item.categoria||'')+'" data-localita="'+safeTerritoryText(item.localita||'')+'"><div class="module-card__media"><img src="'+safeTerritoryText(item.immagine_copertina||item.image||'assets/placeholder-comune.svg')+'" alt="'+safeTerritoryText(item.nome||'Attività')+'" loading="lazy" onerror="this.style.display=\'none\'"></div><div class="module-card__copy"><div class="module-card__header"><div class="module-card__pill-row">'+badge+'<span class="module-card__category">'+safeTerritoryText(item.categoria||'')+'</span></div><h3>'+safeTerritoryText(item.nome||'')+'</h3><p class="module-card__location">'+safeTerritoryText(item.localita||'')+'</p></div>'+(description?'<p class="module-card__description">'+safeTerritoryText(description)+'</p>':'')+'<div class="module-card__services">'+serviceMarkup+'</div><button class="module-card__cta" type="button" data-module-discover="'+safeTerritoryText(item.id||'')+'">Scopri</button></div></article>';
 }
 function municipalityModuleResultsHtml(records,config,municipalityName,comuneId){
  const cards=records.map(item=>municipalityModuleCardContent(item,config)).join('');
  return '<div class="module-experience__results-grid" data-module-results-grid>'+(cards||'<div class="module-empty" role="status"><h3>Nessun risultato</h3><p>Prova a cambiare i filtri o la ricerca.</p></div>')+'</div>';
 }
-function municipalityModuleFilterHtml(config,records){
+function municipalityModuleFilterHtml(config,records,filters={}){
  const localities=[...new Set(records.map(item=>item.localita).filter(Boolean))].sort();
  const categories=[...new Set(records.map(item=>item.categoria).filter(Boolean))].sort();
  const priceOptions=[...new Set(records.map(item=>item.fascia_prezzo).filter(Boolean))].sort();
  const localityOptions=localities.length?localities:config.localities;
  const categoryOptions=categories.length?categories:config.categories;
  const priceSelectOptions=priceOptions.length?priceOptions:config.priceOptions;
- const booleanFilterMarkup=config.booleanFilters.map(filter=>'<label class="module-filter-toggle"><input type="checkbox" data-module-boolean="'+safeTerritoryText(filter.key)+'"> <span>'+safeTerritoryText(filter.label)+'</span></label>').join('');
- return '<div class="module-experience__filters" data-module-filters><button class="module-filters-toggle" type="button" data-module-filters-toggle aria-expanded="false">Filtra risultati</button><div class="module-filters-panel" data-module-filters-panel hidden><label class="module-filter-field"><span>'+safeTerritoryText(config.nameLabel)+'</span><input type="search" data-module-search placeholder="'+safeTerritoryText(config.placeholder)+'" aria-label="'+safeTerritoryText(config.nameLabel)+'"></label><label class="module-filter-field"><span>'+safeTerritoryText(config.locationLabel)+'</span><select data-module-locality><option value="">Tutte le località</option>'+(localityOptions.map(option=>'<option value="'+safeTerritoryText(option)+'">'+safeTerritoryText(option)+'</option>').join(''))+'</select></label><label class="module-filter-field"><span>'+safeTerritoryText(config.categoryLabel)+'</span><select data-module-category><option value="">Tutte le categorie</option>'+(categoryOptions.map(option=>'<option value="'+safeTerritoryText(option)+'">'+safeTerritoryText(option)+'</option>').join(''))+'</select></label><label class="module-filter-field"><span>'+safeTerritoryText(config.priceLabel)+'</span><select data-module-price><option value="">Tutte le fasce</option>'+(priceSelectOptions.map(option=>'<option value="'+safeTerritoryText(option)+'">'+safeTerritoryText(option)+'</option>').join(''))+'</select></label><div class="module-filter-boolean-group">'+booleanFilterMarkup+'</div></div></div>';
+ const searchValue=String(filters.search||'');
+ const localityValue=String(filters.locality||'');
+ const categoryValue=String(filters.category||'');
+ const priceValue=String(filters.price||'');
+ const booleanSelection=Array.isArray(filters.boolean)?filters.boolean:[];
+ const booleanFilterMarkup=config.booleanFilters.map(filter=>'<label class="module-filter-toggle"><input type="checkbox" data-module-boolean="'+safeTerritoryText(filter.key)+'"'+(booleanSelection.includes(filter.key)?' checked':'')+'> <span>'+safeTerritoryText(filter.label)+'</span></label>').join('');
+ return '<div class="module-experience__filters" data-module-filters><button class="module-filters-toggle" type="button" data-module-filters-toggle aria-expanded="false">Filtra risultati</button><div class="module-filters-panel" data-module-filters-panel hidden><label class="module-filter-field"><span>'+safeTerritoryText(config.nameLabel)+'</span><input type="search" data-module-search value="'+safeTerritoryText(searchValue)+'" placeholder="'+safeTerritoryText(config.placeholder)+'" aria-label="'+safeTerritoryText(config.nameLabel)+'"></label><label class="module-filter-field"><span>'+safeTerritoryText(config.locationLabel)+'</span><select data-module-locality><option value="">Tutte le località</option>'+(localityOptions.map(option=>'<option value="'+safeTerritoryText(option)+'"'+(localityValue===option?' selected':'')+'>'+safeTerritoryText(option)+'</option>').join(''))+'</select></label><label class="module-filter-field"><span>'+safeTerritoryText(config.categoryLabel)+'</span><select data-module-category><option value="">Tutte le categorie</option>'+(categoryOptions.map(option=>'<option value="'+safeTerritoryText(option)+'"'+(categoryValue===option?' selected':'')+'>'+safeTerritoryText(option)+'</option>').join(''))+'</select></label><label class="module-filter-field"><span>'+safeTerritoryText(config.priceLabel)+'</span><select data-module-price><option value="">Tutte le fasce</option>'+(priceSelectOptions.map(option=>'<option value="'+safeTerritoryText(option)+'"'+(priceValue===option?' selected':'')+'>'+safeTerritoryText(option)+'</option>').join(''))+'</select></label><div class="module-filter-boolean-group">'+booleanFilterMarkup+'</div></div></div>';
 }
-function municipalityModuleViewHtml(type,municipalityName,comuneId,records){
+function municipalityModuleViewHtml(type,municipalityName,comuneId,records,filters={}){
  const config=municipalityModuleConfig(type);
  const title=config.titlePrefix+' '+municipalityName;
  const count=records.length;
  const resolvedComuneId=String(comuneId || municipalitySlug(municipalityName));
- return '<section class="module-experience" data-module-experience data-module-type="'+safeTerritoryText(type)+'" data-municipality-name="'+safeTerritoryText(municipalityName)+'" data-comune-id="'+safeTerritoryText(resolvedComuneId)+'" data-entity-type="'+safeTerritoryText(config.entityType)+'" data-module-view-root><div class="module-experience__header"><p class="module-experience__kicker">Sezione dedicata</p><h2>'+safeTerritoryText(title)+'</h2><p class="module-experience__intro">'+safeTerritoryText(config.intro)+'</p><div class="module-experience__meta"><span class="module-experience__count" data-module-count>'+safeTerritoryText(count+' risultati')+'</span><button class="territory-back" type="button" data-module-back-results>← Torna alla scheda del Comune</button></div></div>'+municipalityModuleFilterHtml(config,records)+municipalityModuleResultsHtml(records,config,municipalityName,comuneId)+'</section>';
+ return '<section class="module-experience" data-module-experience data-module-type="'+safeTerritoryText(type)+'" data-municipality-name="'+safeTerritoryText(municipalityName)+'" data-comune-id="'+safeTerritoryText(resolvedComuneId)+'" data-entity-type="'+safeTerritoryText(config.entityType)+'" data-module-view-root><div class="module-experience__header"><p class="module-experience__kicker">Sezione dedicata</p><h2>'+safeTerritoryText(title)+'</h2><p class="module-experience__intro">'+safeTerritoryText(config.intro)+'</p><div class="module-experience__meta"><span class="module-experience__count" data-module-count>'+safeTerritoryText(count+' risultati')+'</span><button class="territory-back" type="button" data-module-back-results>← Torna ai risultati</button></div></div>'+municipalityModuleFilterHtml(config,records,filters)+municipalityModuleResultsHtml(records,config,municipalityName,comuneId)+'</section>';
 }
 function municipalityModuleFilterRecords(records,filters,config){
  const searchValue=String(filters.search||'').trim().toLowerCase();
@@ -371,7 +461,10 @@ function municipalityModuleDetailHtml(item,config,municipalityName,comuneId){
  const claim=item.claim?'<p class="module-detail__claim">'+safeTerritoryText(item.claim)+'</p>':'';
  const badge=item.partner_cilentomania?'<span class="module-card__badge">Partner Cilentomania</span>':'';
  const starBadge=item.stelle?'<span class="module-card__badge module-card__badge--muted">'+safeTerritoryText(String(item.stelle)+' stelle')+'</span>':'';
- const actions=[callLink?'<a class="module-action" href="'+safeTerritoryText(callLink)+'">Chiama</a>':'',whatsappLink?'<a class="module-action" href="'+safeTerritoryText(whatsappLink)+'" target="_blank" rel="noopener">WhatsApp</a>':'',writeLink?'<a class="module-action" href="'+safeTerritoryText(writeLink)+'">Scrivi</a>':'',bookingLink?'<a class="module-action" href="'+safeTerritoryText(bookingLink)+'" target="_blank" rel="noopener">Prenota</a>':'',mapHref?'<a class="module-action" href="'+safeTerritoryText(mapHref)+'" target="_blank" rel="noopener">Come arrivare</a>':'',siteLink?'<a class="module-action" href="'+safeTerritoryText(siteLink)+'" target="_blank" rel="noopener">Visita il sito</a>':''].filter(Boolean).join('');
+ const actionLinks=buildMunicipalityDetailActions(item);
+ const actionsMarkup=actionLinks.length?actionLinks.join(''):'<span class="module-detail__empty">Nessuna azione disponibile al momento.</span>';
+ const detailServices=[...servicesHighlight,...services].filter(Boolean);
+ const servicesMarkup=detailServices.length?'<div class="module-detail__service-badges">'+detailServices.map(service=>'<span class="module-detail__service-badge">'+safeTerritoryText(service)+'</span>').join('')+'</div>':'<div class="module-detail__service-empty">Nessun servizio disponibile.</div>';
  const linkedSections=[
   ['Cosa vedere nei dintorni', Array.isArray(item.luoghi_vicini_ids)&&item.luoghi_vicini_ids.length?'<div class="module-linked-list"><p>Collegamenti territoriali disponibili.</p></div>':'' ],
   ['Esperienze consigliate', Array.isArray(item.esperienze_collegate_ids)&&item.esperienze_collegate_ids.length?'<div class="module-linked-list"><p>Collegamenti esperienziali disponibili.</p></div>':'' ],
@@ -380,18 +473,31 @@ function municipalityModuleDetailHtml(item,config,municipalityName,comuneId){
   ['Itinerari consigliati', Array.isArray(item.itinerari_collegati_ids)&&item.itinerari_collegati_ids.length?'<div class="module-linked-list"><p>Itinerari collegati disponibili.</p></div>':'' ],
   ['Infopoint più vicino', Array.isArray(item.infopoint_collegati_ids)&&item.infopoint_collegati_ids.length?'<div class="module-linked-list"><p>Infopoint collegati disponibili.</p></div>':'' ]
  ].filter(([,content])=>Boolean(content)).map(([title,content])=>'<section class="module-detail__section"><h3>'+safeTerritoryText(title)+'</h3>'+content+'</section>').join('');
- return '<div class="module-detail" data-entity-type="'+safeTerritoryText(config.entityType)+'" data-entity-id="'+safeTerritoryText(item.id||'')+'" data-comune-id="'+safeTerritoryText(comuneId||municipalitySlug(municipalityName))+'" data-localita="'+safeTerritoryText(item.localita||'')+'" data-category="'+safeTerritoryText(item.categoria||'')+'" data-view="accommodation-detail"><div class="module-detail__topbar"><button class="territory-back" type="button" data-module-back-results>← Torna a Dove dormire</button><nav class="module-detail__breadcrumb" aria-label="Percorso struttura"><span>Castellabate</span><span aria-hidden="true">/</span><span>Dove dormire</span><span aria-hidden="true">/</span><span>'+safeTerritoryText(item.nome||'Struttura')+'</span></nav></div><div class="module-detail__hero"><img class="module-detail__cover" src="'+safeTerritoryText(heroImage)+'" alt="'+safeTerritoryText(item.nome||'Struttura')+'" loading="lazy" onerror="this.style.display=\'none\'"><div class="module-detail__hero-copy"><div class="module-detail__hero-meta">'+badge+starBadge+'<span class="module-card__category">'+safeTerritoryText(item.categoria||'')+'</span></div><h2>'+safeTerritoryText(item.nome||'')+'</h2><p class="module-detail__meta">'+safeTerritoryText(item.localita||'')+'</p>'+claim+'<div class="module-detail__actions module-detail__actions--hero">'+(actions?actions:'<span class="module-detail__empty">Nessuna azione disponibile al momento.</span>')+'</div></div></div><div class="module-detail__body"><section class="module-detail__section"><h3>Presentazione</h3><p class="module-detail__description">'+safeTerritoryText(item.descrizione_completa||item.descrizione_breve||'')+'</p></section>'+(servicesHighlight.length?'<section class="module-detail__section"><h3>Servizi in evidenza</h3><ul class="module-card__services">'+servicesHighlight.map(service=>'<li>'+safeTerritoryText(service)+'</li>').join('')+'</ul></section>':'')+(services.length?'<section class="module-detail__section"><h3>Servizi</h3><ul class="module-card__services">'+services.map(service=>'<li>'+safeTerritoryText(service)+'</li>').join('')+'</ul></section>':'')+(idealFor.length?'<section class="module-detail__section"><h3>Ideale per</h3><div class="module-detail__chips">'+idealFor.map(value=>'<span class="module-chip">'+safeTerritoryText(value)+'</span>').join('')+'</div></section>':'')+(roomTypes.length||treatments.length||experiences.length?'<section class="module-detail__section"><h3>Camere e trattamenti</h3><div class="module-detail__stack">'+(roomTypes.length?'<div><strong>Tipologie camere</strong><ul class="module-card__services">'+roomTypes.map(value=>'<li>'+safeTerritoryText(value)+'</li>').join('')+'</ul></div>':'')+(treatments.length?'<div><strong>Trattamenti disponibili</strong><ul class="module-card__services">'+treatments.map(value=>'<li>'+safeTerritoryText(value)+'</li>').join('')+'</ul></div>':'')+(experiences.length?'<div><strong>Esperienze interne</strong><ul class="module-card__services">'+experiences.map(value=>'<li>'+safeTerritoryText(value)+'</li>').join('')+'</ul></div>':'')+'</div></section>':'')+(gallery.length?'<section class="module-detail__section"><h3>Galleria</h3>'+galleryMarkup+'</section>':'')+'<section class="module-detail__section"><h3>Informazioni pratiche</h3><div class="module-detail__info">'+practical+'</div></section>'+(linkedSections?'<section class="module-detail__section"><h3>Collegamenti al territorio</h3>'+linkedSections+'</section>':'')+'<section class="module-detail__section"><h3>Mappa</h3><div class="module-map">'+(mapHref?'<a class="module-action" href="'+safeTerritoryText(mapHref)+'" target="_blank" rel="noopener">Apri in Google Maps</a>':'<p>Nessuna posizione verificata disponibile.</p>')+'</div></section></div></div>';
+ return '<div class="module-detail" data-entity-type="'+safeTerritoryText(config.entityType)+'" data-entity-id="'+safeTerritoryText(item.id||'')+'" data-comune-id="'+safeTerritoryText(comuneId||municipalitySlug(municipalityName))+'" data-localita="'+safeTerritoryText(item.localita||'')+'" data-category="'+safeTerritoryText(item.categoria||'')+'" data-view="accommodation-detail"><div class="module-detail__topbar"><button class="territory-back" type="button" data-action="back-to-module-list" data-module-back-results data-module-back-type="'+safeTerritoryText(config.entityType==='restaurant'?'eat':'sleep')+'" data-module-back-municipality="'+safeTerritoryText(municipalityName||'')+'" data-module-back-comune-id="'+safeTerritoryText(comuneId||municipalitySlug(municipalityName))+'">← '+safeTerritoryText(config.entityType==='restaurant'?'Torna a Dove mangiare':'Torna a Dove dormire')+'</button><nav class="module-detail__breadcrumb" aria-label="Percorso struttura"><span>Castellabate</span><span aria-hidden="true">/</span><span>'+safeTerritoryText(config.entityType==='restaurant'?'Dove mangiare':'Dove dormire')+'</span><span aria-hidden="true">/</span><span>'+safeTerritoryText(item.nome||'Struttura')+'</span></nav></div><div class="module-detail__hero"><div class="module-detail__hero-media"><img class="module-detail__cover" src="'+safeTerritoryText(heroImage)+'" alt="'+safeTerritoryText(item.nome||'Struttura')+'" loading="lazy" onerror="this.style.display=\'none\'"></div><div class="module-detail__hero-copy"><div class="module-detail__hero-meta">'+badge+starBadge+'<span class="module-card__category">'+safeTerritoryText(item.categoria||'')+'</span></div><h2>'+safeTerritoryText(item.nome||'')+'</h2><p class="module-detail__meta">'+safeTerritoryText(item.localita||'')+'</p>'+claim+'<div class="module-detail__actions module-detail__actions--hero">'+actionsMarkup+'</div></div></div><div class="module-detail__body"><section class="module-detail__section"><h3>Presentazione</h3><p class="module-detail__description">'+safeTerritoryText(item.descrizione_completa||item.descrizione_breve||'')+'</p></section>'+(detailServices.length?'<section class="module-detail__section"><h3>Servizi</h3>'+servicesMarkup+'</section>':'')+(idealFor.length?'<section class="module-detail__section"><h3>Ideale per</h3><div class="module-detail__chips">'+idealFor.map(value=>'<span class="module-chip">'+safeTerritoryText(value)+'</span>').join('')+'</div></section>':'')+(roomTypes.length||treatments.length||experiences.length?'<section class="module-detail__section"><h3>Camere e trattamenti</h3><div class="module-detail__stack">'+(roomTypes.length?'<div><strong>Tipologie camere</strong><ul class="module-card__services">'+roomTypes.map(value=>'<li>'+safeTerritoryText(value)+'</li>').join('')+'</ul></div>':'')+(treatments.length?'<div><strong>Trattamenti disponibili</strong><ul class="module-card__services">'+treatments.map(value=>'<li>'+safeTerritoryText(value)+'</li>').join('')+'</ul></div>':'')+(experiences.length?'<div><strong>Esperienze interne</strong><ul class="module-card__services">'+experiences.map(value=>'<li>'+safeTerritoryText(value)+'</li>').join('')+'</ul></div>':'')+'</div></section>':'')+(gallery.length?'<section class="module-detail__section"><h3>Galleria</h3>'+galleryMarkup+'</section>':'')+'<section class="module-detail__section"><h3>Informazioni pratiche</h3><div class="module-detail__info">'+practical+'</div></section>'+(linkedSections?'<section class="module-detail__section"><h3>Collegamenti al territorio</h3>'+linkedSections+'</section>':'')+'<section class="module-detail__section"><h3>Mappa</h3><div class="module-map">'+(mapHref?'<a class="module-action" href="'+safeTerritoryText(mapHref)+'" target="_blank" rel="noopener">Apri in Google Maps</a>':'<p>Nessuna posizione verificata disponibile.</p>')+'</div></section></div></div>';
 }
-async function openMunicipalityModule(type,municipalityName,comuneId){
+async function openMunicipalityModule(type,municipalityName,comuneId,state={}){
  const records=await loadMunicipalityModuleData(type);
- const filteredRecords=records.filter(item=>municipalityModuleMatches(item,municipalityName,comuneId));
+ const config=municipalityModuleConfig(type);
+ const initialFilters=state.filters||{search:'',locality:'',category:'',price:'',boolean:[]};
+ const filteredRecords=municipalityModuleFilterRecords(records,initialFilters,config).filter(item=>municipalityModuleMatches(item,municipalityName,comuneId));
  const title=type==='eat'?'Dove mangiare a '+municipalityName:'Dove dormire a '+municipalityName;
- openPanel(title,municipalityModuleViewHtml(type,municipalityName,comuneId,filteredRecords));
+ openPanel(title,municipalityModuleViewHtml(type,municipalityName,comuneId,filteredRecords,initialFilters));
  const container=panelContent.querySelector('[data-module-experience]');
  if(container){
-  container.setAttribute('data-module-records',JSON.stringify(filteredRecords));
+  container.setAttribute('data-module-records',JSON.stringify(records.filter(item=>municipalityModuleMatches(item,municipalityName,comuneId))));
+  container.setAttribute('data-module-filters',JSON.stringify(initialFilters));
   bindMunicipalityModuleInteractions(container);
+  const scrollTop=Number(state.scrollTop||0);
+  requestAnimationFrame(()=>overlay.scrollTo({top:scrollTop,left:0,behavior:'auto'}));
  }
+}
+function municipalityModuleCollectFilters(root){
+ const search=root.querySelector('[data-module-search]');
+ const locality=root.querySelector('[data-module-locality]');
+ const category=root.querySelector('[data-module-category]');
+ const price=root.querySelector('[data-module-price]');
+ const booleans=root.querySelectorAll('[data-module-boolean]');
+ return {search:search?.value||'',locality:locality?.value||'',category:category?.value||'',price:price?.value||'',boolean:Array.from(booleans).filter(input=>input.checked).map(input=>input.getAttribute('data-module-boolean'))};
 }
 function bindMunicipalityModuleInteractions(root){
  if(!root)return;
@@ -412,7 +518,8 @@ function bindMunicipalityModuleInteractions(root){
  const booleans=root.querySelectorAll('[data-module-boolean]');
  const updateResults=()=>{
   const records=JSON.parse(root.getAttribute('data-module-records')||'[]');
-  const filters={search:search?.value||'',locality:locality?.value||'',category:category?.value||'',price:price?.value||'',boolean:Array.from(booleans).filter(input=>input.checked).map(input=>input.getAttribute('data-module-boolean'))};
+  const filters=municipalityModuleCollectFilters(root);
+  root.setAttribute('data-module-filters',JSON.stringify(filters));
   const config=municipalityModuleConfig(root.getAttribute('data-module-type')||'sleep');
   const filtered=municipalityModuleFilterRecords(records,filters,config);
   const results=root.querySelector('[data-module-results-grid]');
@@ -427,8 +534,8 @@ function bindMunicipalityModuleInteractions(root){
    const config=municipalityModuleConfig(root.getAttribute('data-module-type')||'sleep');
    const item=records.find(record=>String(record.id)===String(itemId));
    if(item){
-    const title=item.nome||'Dettaglio';
-    openPanel(title,municipalityModuleDetailHtml(item,config,root.dataset.municipalityName||'',root.dataset.comuneId||''));
+    setMunicipalityModuleNavigationState(buildMunicipalityModuleNavigationState(root.getAttribute('data-module-type')||'sleep',root.dataset.municipalityName||'',root.dataset.comuneId||'',municipalityModuleCollectFilters(root),overlay.scrollTop));
+    openPanel('',municipalityModuleDetailHtml(item,config,root.dataset.municipalityName||'',root.dataset.comuneId||''));
    }
   }));
  };
@@ -443,15 +550,13 @@ function bindMunicipalityModuleInteractions(root){
   const config=municipalityModuleConfig(root.getAttribute('data-module-type')||'sleep');
   const item=records.find(record=>String(record.id)===String(itemId));
   if(item){
-   const title=item.nome||'Dettaglio';
-   openPanel(title,municipalityModuleDetailHtml(item,config,root.dataset.municipalityName||'',root.dataset.comuneId||''));
+    setMunicipalityModuleNavigationState(buildMunicipalityModuleNavigationState(root.getAttribute('data-module-type')||'sleep',root.dataset.municipalityName||'',root.dataset.comuneId||'',municipalityModuleCollectFilters(root),overlay.scrollTop));
+    openPanel('',municipalityModuleDetailHtml(item,config,root.dataset.municipalityName||'',root.dataset.comuneId||''));
   }
  });});
  root.querySelectorAll('[data-module-back-results]').forEach(button=>{button.onclick=null;button.addEventListener('click',()=>{
-  const municipalityName=root.dataset.municipalityName||'';
-  const comuneId=root.dataset.comuneId||'';
-  const type=root.getAttribute('data-module-type')||'sleep';
-  openMunicipalityModule(type,municipalityName,comuneId);
+  const state=municipalityModuleNavigationState||buildMunicipalityModuleNavigationState(root.getAttribute('data-module-type')||'sleep',root.dataset.municipalityName||'',root.dataset.comuneId||'',municipalityModuleCollectFilters(root),overlay.scrollTop);
+  openMunicipalityModule(state.type||'sleep',state.municipalityName||'',state.comuneId||'',state);
  });});
 }
 function municipalitySectionHtml(type,name){
@@ -464,7 +569,7 @@ function municipalitySectionHtml(type,name){
  if(type==='events'){
   if(typeof eventsArchive!=='undefined'&&!eventsArchive.length&&typeof embeddedEvents!=='undefined')eventsArchive=[...embeddedEvents];
   const events=typeof activeEvents==='function'?activeEvents().filter(event=>event.municipality===name):[];
-  const experiences=typeof seasonalEventProjects!=='undefined'?seasonalEventProjects.filter(item=>item.municipality===name||String(item.place||'').includes(name)):[{}];
+    const experiences=typeof seasonalEventProjects!=='undefined'?seasonalEventProjects.filter(item=>item.municipality===name||String(item.place||'').includes(name)):[];
   const eventHtml=events.length?'<div class="events-grid">'+events.map(eventCard).join('')+'</div>':'';
   const experienceHtml=experiences.length?'<div class="panel-grid">'+experiences.map(item=>'<article class="item"><h3>'+safeTerritoryText(item.title)+'</h3><p>'+safeTerritoryText(item.description)+'</p></article>').join('')+'</div>':'';
   content=eventHtml+experienceHtml||'<div class="notice">Nessun evento o esperienza verificata disponibile per questo Comune.</div>';
@@ -563,6 +668,7 @@ function openPanel(title,html){
  const wasOpen=overlay.classList.contains('open');
  panelContent.innerHTML=(title?'<h2>'+title+'</h2>':'')+html;
  bindTerritoryImages(panelContent);
+ bindMunicipalityModuleBackDelegation();
  const municipalityToolbar=panelContent.querySelector('[data-municipality-toolbar]');
  const isMunicipalitySheet=Boolean(municipalityToolbar);
  const isTerritoryList=Boolean(panelContent.querySelector('.territory-grid'));
@@ -643,48 +749,6 @@ function municipalityModuleCards(records){
   const description=item.description||item.address||item.indirizzo||'';
   return '<article class="item"><h3>'+safeTerritoryText(title)+'</h3>'+(description?'<p>'+safeTerritoryText(description)+'</p>':'')+'</article>';
  }).filter(Boolean).join('');
-}
-function municipalitySectionHtml(type,name){
- const labels={sights:'Cosa vedere',events:'Eventi ed esperienze',eat:'Dove mangiare',sleep:'Dove dormire'};
- let content='';
- if(type==='sights'){
-  const matches=featured.filter(item=>item[1]===name);
-  content=matches.length?'<div class="panel-grid">'+matches.map(item=>'<article class="item"><h3>'+safeTerritoryText(item[0])+'</h3><p>'+safeTerritoryText(item[3])+'</p></article>').join('')+'</div>':'<div class="notice">Nessun contenuto verificato disponibile per questo Comune.</div>';
- }
- if(type==='events'){
-  if(typeof eventsArchive!=='undefined'&&!eventsArchive.length&&typeof embeddedEvents!=='undefined')eventsArchive=[...embeddedEvents];
-  const events=typeof activeEvents==='function'?activeEvents().filter(event=>event.municipality===name):[];
-  const experiences=typeof seasonalEventProjects!=='undefined'?seasonalEventProjects.filter(item=>item.municipality===name||String(item.place||'').includes(name)):[];
-  const eventHtml=events.length?'<div class="events-grid">'+events.map(eventCard).join('')+'</div>':'';
-  const experienceHtml=experiences.length?'<div class="panel-grid">'+experiences.map(item=>'<article class="item"><h3>'+safeTerritoryText(item.title)+'</h3><p>'+safeTerritoryText(item.description)+'</p></article>').join('')+'</div>':'';
-  content=eventHtml+experienceHtml||'<div class="notice">Nessun evento o esperienza verificata disponibile per questo Comune.</div>';
- }
- if(type==='eat'||type==='sleep'){
-  const records=municipalityModuleRecords(type,name);
-  const cards=municipalityModuleCards(records);
-  content=cards?'<div class="panel-grid">'+cards+'</div>':'<div class="notice">Nessun contenuto verificato disponibile per questo Comune.</div>';
- }
- return '<button class="territory-back" type="button" data-municipality-back="'+safeTerritoryText(name)+'">← Torna alla scheda</button><section class="territory-filtered"><p class="territory-filter-label">Risultati esclusivi per '+safeTerritoryText(name)+'</p><h2>'+labels[type]+'</h2>'+content+'</section>';
-}
-function bindTerritoryInteractions(){
- bindTerritoryGallery();
- const municipalityBack=document.querySelector('[data-municipality-back]');if(municipalityBack)municipalityBack.addEventListener('click',()=>openTerritoryMunicipality(municipalityBack.dataset.municipalityBack));
- document.querySelectorAll('[data-municipality-action]').forEach(button=>button.addEventListener('click',()=>{
-  const action=button.dataset.municipalityAction;
-  const municipality=button.dataset.municipality||'';
-  const comuneId=button.dataset.comuneId||municipalitySlug(municipality);
-  if(action==='eat'||action==='sleep'){
-   openMunicipalityModule(action,municipality,comuneId);
-  }else{
-   openPanel('',municipalitySectionHtml(action,municipality));
-  }
- }));
- const toggle=document.querySelector('[data-infopoint-toggle]');
- const panel=document.querySelector('[data-infopoint-panel]');
- if(!toggle||!panel)return;
- const setOpen=open=>{panel.classList.toggle('hidden',!open);toggle.setAttribute('aria-expanded',String(open));if(open)panel.scrollIntoView({behavior:'smooth',block:'nearest'});};
- toggle.addEventListener('click',()=>setOpen(toggle.getAttribute('aria-expanded')!=='true'));
- const close=document.querySelector('[data-infopoint-close]');if(close)close.addEventListener('click',()=>setOpen(false));
 }
 function bindTerritoryGallery(){
  document.querySelectorAll('[data-gallery-real-image]').forEach(image=>image.addEventListener('error',()=>{
