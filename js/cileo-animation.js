@@ -2,15 +2,15 @@
   'use strict';
 
   const CILEO_STATES = Object.freeze({
-    welcome: { file: 'Avatar_Cileo_Ciao.png', alt: 'Velio ti dà il benvenuto' },
-    thinking: { file: 'Avatar_Cileo_Pensa.png', alt: 'Velio sta pensando' },
-    searching: { file: 'Avatar_Cileo_Cerca.png', alt: 'Velio sta cercando' },
-    map: { file: 'Avatar_Cileo_Cartina.png', alt: 'Velio consulta la cartina' },
-    idea: { file: 'Avatar_Cileo_Idea.png', alt: 'Velio ha un suggerimento' },
-    pointing: { file: 'Avatar_Cileo_Indica.png', alt: 'Velio indica una direzione' },
-    success: { file: 'Avatar_Cileo_Ok.png', alt: 'Velio ha completato la risposta' },
-    goodbye: { file: 'Avatar_Cileo_Arrivederci.png', alt: 'Velio ti saluta' },
-    hug: { file: 'Avatar_Cileo_Abbraccio.png', alt: 'Velio ti manda un abbraccio' }
+    welcome: { file: 'Avatar_Cileo_Ciao.png', alt: 'Cilentino ti dà il benvenuto' },
+    thinking: { file: 'Avatar_Cileo_Pensa.png', alt: 'Cilentino sta pensando' },
+    searching: { file: 'Avatar_Cileo_Cerca.png', alt: 'Cilentino sta cercando' },
+    map: { file: 'Avatar_Cileo_Cartina.png', alt: 'Cilentino consulta la cartina' },
+    idea: { file: 'Avatar_Cileo_Idea.png', alt: 'Cilentino ha un suggerimento' },
+    pointing: { file: 'Avatar_Cileo_Indica.png', alt: 'Cilentino indica una direzione' },
+    success: { file: 'Avatar_Cileo_Ok.png', alt: 'Cilentino ha completato la risposta' },
+    goodbye: { file: 'Avatar_Cileo_Arrivederci.png', alt: 'Cilentino ti saluta' },
+    hug: { file: 'Avatar_Cileo_Abbraccio.png', alt: 'Cilentino ti manda un abbraccio' }
   });
 
   const LEGACY_STATES = Object.freeze({

@@ -36,17 +36,17 @@
     build() {
       const root = document.createElement('aside');
       root.className = 'cileo';
-      root.setAttribute('aria-label', 'Velio, guida digitale di Cilentomania');
+      root.setAttribute('aria-label', 'Cilentino, guida digitale di Cilentomania');
       root.innerHTML = `
         <div class="cileo__bubble" data-cileo-bubble role="status" hidden>
           <strong>Ciao e benvenuto! <span aria-hidden="true">👋</span></strong>
-          <span>Io sono Velio, la guida digitale di Cilentomania.</span>
-          <span>Scopri il Parco Nazionale del Cilento, Vallo di Diano e Alburni.</span>
+          <span>Io sono Cilentino, la guida digitale di Cilentomania.</span>
+          <span>Il tuo compagno di viaggio nel Parco Nazionale del Cilento, Vallo di Diano e Alburni.</span>
         </div>
         <section class="cileo__panel" data-cileo-panel role="dialog" aria-modal="false" aria-labelledby="cileo-title" hidden>
           <header class="cileo__header">
-            <div><h2 id="cileo-title">Velio</h2><p>La guida digitale di Cilentomania<br>Scopri il Parco Nazionale del Cilento, Vallo di Diano e Alburni</p></div>
-            <button class="cileo__close" data-cileo-close type="button" aria-label="Chiudi Velio">&times;</button>
+            <div><h2 id="cileo-title">Cilentino</h2><p>La guida digitale di Cilentomania<br>Il tuo compagno di viaggio nel Parco Nazionale del Cilento, Vallo di Diano e Alburni</p></div>
+            <button class="cileo__close" data-cileo-close type="button" aria-label="Chiudi Cilentino">&times;</button>
           </header>
           <div class="cileo__content" data-cileo-content>
             <div class="cileo__messages" data-cileo-messages aria-live="polite"></div>
@@ -54,14 +54,14 @@
             <button class="cileo__suggestions-toggle" data-cileo-suggestions-toggle type="button" aria-expanded="false" aria-controls="cileo-suggestions" hidden>Suggerimenti</button>
           </div>
           <form class="cileo__form" data-cileo-form>
-            <label class="cileo__sr-only" for="cileo-input">Scrivi a Velio</label>
-            <input id="cileo-input" data-cileo-input autocomplete="off" placeholder="Chiedi a Velio..." maxlength="300">
+            <label class="cileo__sr-only" for="cileo-input">Scrivi a Cilentino</label>
+            <input id="cileo-input" data-cileo-input autocomplete="off" placeholder="Chiedi a Cilentino..." maxlength="300">
             <button type="submit" aria-label="Invia messaggio"><span aria-hidden="true">&#8593;</span></button>
           </form>
         </section>
-        <button class="cileo__launcher" data-cileo-launcher type="button" aria-label="Apri Velio" aria-expanded="false"></button>
+        <button class="cileo__launcher" data-cileo-launcher type="button" aria-label="Apri Cilentino" aria-expanded="false"></button>
         <div class="cileo__avatar-visual" aria-hidden="true">
-          <img data-cileo-avatar alt="Velio, guida digitale di Cilentomania">
+          <img data-cileo-avatar alt="Cilentino, guida digitale di Cilentomania">
           <span class="cileo__online" aria-hidden="true"></span>
         </div>`;
       return root;
@@ -211,7 +211,7 @@
     showTyping() {
       const typing = document.createElement('div');
       typing.className = 'cileo__message cileo__message--assistant cileo__typing';
-      typing.setAttribute('aria-label', 'Velio sta scrivendo');
+      typing.setAttribute('aria-label', 'Cilentino sta scrivendo');
       typing.innerHTML = '<i></i><i></i><i></i>';
       this.elements.messages.appendChild(typing);
       this.scheduleContentScroll();
@@ -235,7 +235,7 @@
       this.hideBubble();
       this.elements.panel.hidden = false;
       this.elements.launcher.setAttribute('aria-expanded', 'true');
-      this.elements.launcher.setAttribute('aria-label', 'Velio aperto');
+      this.elements.launcher.setAttribute('aria-label', 'Cilentino aperto');
       this.root.classList.add('is-open');
       this.lockPageScroll();
       this.updateViewport();
@@ -258,7 +258,7 @@
       }
       this.elements.panel.hidden = true;
       this.elements.launcher.setAttribute('aria-expanded', 'false');
-      this.elements.launcher.setAttribute('aria-label', 'Apri Velio');
+      this.elements.launcher.setAttribute('aria-label', 'Apri Cilentino');
       this.unlockPageScroll();
       this.options.onClose();
       this.lastFocus?.focus?.();

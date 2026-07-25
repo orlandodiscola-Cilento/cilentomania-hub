@@ -12,8 +12,8 @@ function createModules(itineraries){
   infopoints:{title:'I nostri Infopoint',html:buildInfopointsHtml()},
   events:{title:'Eventi',html:buildEventsHtml()},
   experiences:{title:'Esperienze',html:'<div class="panel-grid"><article class="item"><h3>Mare e outdoor</h3><p>Escursioni in barca, kayak, diving e trekking.</p></article><article class="item"><h3>Gusto e tradizioni</h3><p>Degustazioni, laboratori e visite ai produttori.</p></article></div>'},
-  sleep:{title:'Dove dormire',html:townSelector('Scegli il Comune in cui cercare una struttura ricettiva.')},
-  eat:{title:'Dove mangiare',html:townSelector('Scegli il Comune in cui cercare ristoranti e locali.')},
+  sleep:{title:'Dove dormire',html:townSelector('Scegli il Comune in cui cercare una struttura ricettiva.','home-module','sleep')},
+  eat:{title:'Dove mangiare',html:townSelector('Scegli il Comune in cui cercare ristoranti e locali.','home-module','eat')},
   routes:{title:'Itinerari',html:'<div class="panel-grid">'+itineraries.map(x=>'<article class="item"><h3>'+x.title+'</h3><p>'+x.description+'</p></article>').join('')+'</div>'},
   services:{title:'Servizi',html:'<div class="panel-grid"><article class="item"><h3>Noleggio</h3><p>Auto, bici, scooter e imbarcazioni.</p></article><article class="item"><h3>Guide e accompagnatori</h3><p>Professionisti e servizi per scoprire il territorio.</p></article></div>'}
  };
