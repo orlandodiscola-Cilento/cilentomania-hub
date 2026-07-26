@@ -53,8 +53,16 @@
           <header class="cileo__header">
             <div class="cileo__header-copy"><h2 id="cileo-title">Ciao, sono Cilentino</h2><p>La guida digitale di Cilentomania</p><p>Sarò il tuo compagno di viaggio alla scoperta del Parco Nazionale del Cilento, Vallo di Diano e Alburni.</p></div>
             <div class="cileo__header-actions">
-              <button class="cileo__close" data-cileo-close type="button" aria-label="Chiudi Cilentino">&times;</button>
-              <button class="cileo__clear" data-cileo-clear type="button" aria-label="Cancella chat"><span aria-hidden="true">🗑</span><span>Cancella chat</span></button>
+              <button class="cileo-header-action cileo__close" data-cileo-close type="button" aria-label="Chiudi Cilentino">
+                <svg aria-hidden="true" viewBox="0 0 20 20" focusable="false">
+                  <path d="M5 5 15 15M15 5 5 15" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2.1"/>
+                </svg>
+              </button>
+              <button class="cileo-header-action cileo__clear" data-cileo-clear type="button" aria-label="Cancella chat" title="Cancella chat">
+                <svg aria-hidden="true" viewBox="0 0 20 20" focusable="false">
+                  <path d="M7.25 3.75h5.5m-8 1.75h10.5m-9.25 0 .6 9a1.5 1.5 0 0 0 1.5 1.4h3.8a1.5 1.5 0 0 0 1.5-1.4l.6-9m-5.1 2.2v5.1m2.6-5.1v5.1" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                </svg>
+              </button>
             </div>
           </header>
           <div class="cileo__content" data-cileo-content>

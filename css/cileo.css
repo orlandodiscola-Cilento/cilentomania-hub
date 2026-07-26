@@ -47,10 +47,9 @@ html.cileo-page-locked { overflow: hidden; overscroll-behavior: none; }
 .cileo__header-copy p:first-of-type { margin-top: 5px; font-size: .8rem; line-height: 1.35; }
 .cileo__header-copy p:last-of-type { margin-top: 6px; color: rgba(255, 255, 255, .82); font-size: .72rem; line-height: 1.45; }
 .cileo__header-actions { display: flex; min-width: 108px; flex-direction: column; align-items: flex-end; gap: 6px; flex: 0 0 auto; }
-.cileo__clear { display: inline-flex; min-height: 34px; border: 1px solid rgba(255, 255, 255, .24); border-radius: 999px; padding: 0 9px; align-items: center; justify-content: center; gap: 5px; background: rgba(255, 255, 255, .12); color: #fff; font: inherit; font-size: .67rem; font-weight: 800; white-space: nowrap; cursor: pointer; }
-.cileo__clear:hover { background: rgba(255, 255, 255, .2); }
-.cileo__close { display: grid; width: 39px; height: 39px; flex: 0 0 39px; border: 1px solid rgba(255, 255, 255, .2); border-radius: 50%; padding: 0; place-items: center; background: rgba(255, 255, 255, .12); color: #fff; font-size: 1.55rem; line-height: 1; cursor: pointer; }
-.cileo__close:hover { background: rgba(255, 255, 255, .22); }
+.cileo-header-action { display: grid; width: 42px; height: 42px; flex: 0 0 42px; border: 1px solid rgba(255, 255, 255, .22); border-radius: 50%; padding: 0; place-items: center; background: rgba(255, 255, 255, .12); color: #fff; line-height: 1; cursor: pointer; }
+.cileo-header-action:hover { background: rgba(255, 255, 255, .22); }
+.cileo-header-action svg { width: 20px; height: 20px; display: block; }
 .cileo__close:focus-visible, .cileo__clear:focus-visible, .cileo__actions button:focus-visible, .cileo__suggestions-toggle:focus-visible, .cileo__form button:focus-visible, .cileo__confirm-dialog button:focus-visible { outline: 3px solid #ffca3a; outline-offset: 2px; }
 .cileo__content { min-width: 0; min-height: 0; flex: 1 1 auto; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; background: linear-gradient(#f7fbfd, #fff); }
 .cileo__messages { display: flex; min-width: 0; min-height: 0; padding: 19px 17px 12px; flex-direction: column; gap: 11px; overflow: visible; background: transparent; }
@@ -100,7 +99,8 @@ html.cileo-page-locked { overflow: hidden; overscroll-behavior: none; }
   .cileo__header-copy p:first-of-type { margin-top: 4px; font-size: .72rem; line-height: 1.33; }
   .cileo__header-copy p:last-of-type { margin-top: 5px; font-size: .66rem; line-height: 1.37; }
   .cileo__header-actions { min-width: 94px; gap: 5px; }
-  .cileo__clear { min-height: 31px; padding: 0 8px; font-size: .62rem; }
+  .cileo-header-action { width: 40px; height: 40px; flex-basis: 40px; }
+  .cileo-header-action svg { width: 19px; height: 19px; }
   .cileo.is-keyboard-open .cileo__header { min-height: 110px; padding: 14px 13px 13px 16px; }
   .cileo.is-keyboard-open .cileo__content { flex-basis: 72px; }
   .cileo__actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -119,8 +119,8 @@ html.cileo-page-locked { overflow: hidden; overscroll-behavior: none; }
   .cileo__header-copy p:first-of-type { font-size: .69rem; }
   .cileo__header-copy p:last-of-type { font-size: .63rem; }
   .cileo__header-actions { min-width: 88px; }
-  .cileo__close { width: 36px; height: 36px; flex-basis: 36px; font-size: 1.35rem; }
-  .cileo__clear { min-height: 30px; font-size: .59rem; }
+  .cileo-header-action { width: 40px; height: 40px; flex-basis: 40px; }
+  .cileo-header-action svg { width: 19px; height: 19px; }
   .cileo__actions { gap: 5px; padding-right: 10px; padding-left: 10px; }
   .cileo__actions button { min-height: 38px; padding: 6px; font-size: .67rem; }
 }

@@ -6,6 +6,18 @@
     sessionState: 'cileo:chat:runtime:v1'
   };
 
+  const CILEO_DEFAULT_WELCOME = 'Posso aiutarti a trovare borghi, spiagge, eventi, esperienze, itinerari, ristoranti, strutture ricettive e Infopoint.\n\nDa dove vuoi iniziare?';
+  const CILEO_DEFAULT_ACTIONS = [
+    { id: 'territorio', label: 'Esplora il territorio', query: 'Aiutami a esplorare il territorio del Cilento' },
+    { id: 'eventi', label: 'Eventi', query: 'Quali eventi posso trovare nel Cilento?' },
+    { id: 'esperienze', label: 'Esperienze', query: 'Quali esperienze posso vivere nel Cilento?' },
+    { id: 'mangiare', label: 'Dove mangiare', query: 'Aiutami a trovare dove mangiare nel Cilento' },
+    { id: 'dormire', label: 'Dove dormire', query: 'Aiutami a trovare dove dormire nel Cilento' },
+    { id: 'itinerari', label: 'Itinerari', query: 'Consigliami un itinerario nel Cilento' },
+    { id: 'infopoint', label: 'Infopoint', query: 'Mostrami gli Infopoint di Cilentomania' },
+    { id: 'vicino', label: "Cosa c\'e vicino a me", query: 'Cosa c\'e vicino a me nel Cilento?' }
+  ];
+
   function sanitizeCilentinoContextValue(value) {
     const trimmed = String(value || '').trim();
     return trimmed || null;
@@ -226,6 +238,12 @@
     constructor(options = {}) {
       const script = document.currentScript || [...document.scripts].find(item => /(?:^|\/)cileo\.js(?:\?|$)/.test(item.src));
       this.baseUrl = options.baseUrl || new URL('../', script?.src || document.baseURI);
+      this.config = Object.assign({
+        apiBaseUrl: '',
+        enableDemoFallback: true,
+        requestTimeoutMs: 7000
+      }, global.CILENTINO_CONFIG || {});
+      this.apiClient = global.CilentinoApiClient || null;
       this.demo = new global.CileoDemoProvider(new URL('data/cileo-demo.json', this.baseUrl));
       this.ui = new global.CileoUI({
         onOpen: () => this.animation.play([{ state: 'welcome', duration: 1000 }, { state: 'idea', duration: 1200 }]),
@@ -244,6 +262,79 @@
       this.conversationRevision = 0;
       this.started = false;
       this.observeNavigationContext();
+    }
+
+    shouldUseGeolocation(message) {
+      return /vicino a me|infopoint piu vicino|infopoint più vicino/i.test(String(message || ''));
+    }
+
+    async getEphemeralLocation(message) {
+      if (!this.shouldUseGeolocation(message) || !navigator.geolocation) return null;
+      return new Promise(resolve => {
+        const timeout = window.setTimeout(() => resolve(null), 1200);
+        navigator.geolocation.getCurrentPosition(
+          position => {
+            window.clearTimeout(timeout);
+            resolve({
+              lat: Number(position.coords.latitude),
+              lon: Number(position.coords.longitude),
+              accuracy: Number(position.coords.accuracy || 0)
+            });
+          },
+          () => {
+            window.clearTimeout(timeout);
+            resolve(null);
+          },
+          { enableHighAccuracy: false, timeout: 1000, maximumAge: 0 }
+        );
+      });
+    }
+
+    formatSources(sources) {
+      if (!Array.isArray(sources) || !sources.length) return '';
+      const summary = sources
+        .slice(0, 3)
+        .map(source => {
+          const type = source.record_type ? `${source.record_type}` : 'record';
+          const id = source.record_id ? `#${source.record_id}` : '';
+          return `${type}${id}`;
+        })
+        .join(' | ');
+      return summary ? `\n\nFonti interne: ${summary}` : '';
+    }
+
+    async requestBackendResponse(message) {
+      const apiBase = String(this.config.apiBaseUrl || '').trim();
+      if (!apiBase) return null;
+      const payload = {
+        message,
+        conversation: this.messages.slice(-12).map(entry => ({ sender: entry.sender, text: entry.text })),
+        location: await this.getEphemeralLocation(message),
+        language: 'it'
+      };
+      let response;
+      if (this.apiClient?.requestChat) {
+        response = await this.apiClient.requestChat(this.config, payload);
+      } else {
+        const timeoutMs = Number(this.config.requestTimeoutMs) || 7000;
+        response = await new Promise((resolve, reject) => {
+          const timer = window.setTimeout(() => reject(new Error('timeout')), timeoutMs);
+          fetch(`${apiBase.replace(/\/$/, '')}/api/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          }).then(async result => {
+            window.clearTimeout(timer);
+            if (!result.ok) throw new Error(`chat-http-${result.status}`);
+            resolve(await result.json());
+          }).catch(error => {
+            window.clearTimeout(timer);
+            reject(error);
+          });
+        });
+      }
+      if (!response || typeof response.answer !== 'string') return null;
+      return response;
     }
 
     readStorageState() {
@@ -347,8 +438,8 @@
       this.animation.setCileoState('welcome', { minDuration: 2000 });
       try {
         const data = await this.demo.load();
-        this.initialWelcome = String(data.welcome || '');
-        this.initialActions = Array.isArray(data.actions) ? data.actions : [];
+        this.initialWelcome = String(data.welcome || CILEO_DEFAULT_WELCOME);
+        this.initialActions = Array.isArray(data.actions) && data.actions.length ? data.actions : CILEO_DEFAULT_ACTIONS;
         const restored = this.readStorageState();
         const restoredOk = this.restoreChatFromState(restored);
         if (!restoredOk) {
@@ -358,10 +449,10 @@
         }
       } catch (error) {
         console.error('Cileo:', error);
-        this.initialWelcome = 'Posso aiutarti a trovare borghi, spiagge, eventi, esperienze, itinerari, ristoranti, strutture ricettive e Infopoint.\n\nDa dove vuoi iniziare?';
-        this.initialActions = [];
+        this.initialWelcome = CILEO_DEFAULT_WELCOME;
+        this.initialActions = CILEO_DEFAULT_ACTIONS;
         this.setChatActions(this.initialActions);
-        this.addChatMessage('In questo momento non riesco a mostrarti i miei consigli. Torna presto: il Cilento ha ancora tanto da raccontare.', 'assistant');
+        this.addChatMessage(this.initialWelcome, 'assistant');
       }
       this.ui.root.classList.add('is-ready');
       this.started = true;
@@ -385,16 +476,58 @@
       this.animation.play([{ state: 'thinking', duration: 900 }, { state: 'searching', duration: 900 }]);
       const stopTyping = this.ui.showTyping();
       try {
-        const [response] = await Promise.all([
-          this.demo.reply(message, actionId),
-          new Promise(resolve => window.setTimeout(resolve, 2200))
-        ]);
+        let response = null;
+        let fromBackend = false;
+        try {
+          response = await this.requestBackendResponse(message);
+          fromBackend = Boolean(response);
+        } catch (error) {
+          response = null;
+        }
+
+        if (!response && this.config.enableDemoFallback) {
+          const demoResponse = await this.demo.reply(message, actionId);
+          response = {
+            answer: demoResponse.text,
+            actions: demoResponse.actions || this.demo.getActions(),
+            sources: [],
+            fallback: true,
+            intent: demoResponse.intent || null,
+            pose: demoResponse.pose || 'idea'
+          };
+          fromBackend = false;
+        }
+
+        await new Promise(resolve => window.setTimeout(resolve, fromBackend ? 700 : 1200));
         stopTyping();
         if (responseRevision !== this.conversationRevision) return;
-        this.addChatMessage(response.text, 'assistant');
-        this.setChatActions(response.actions || this.demo.getActions());
+
+        if (!response) {
+          this.addChatMessage('Questo consiglio per ora mi sfugge. Possiamo continuare esplorando luoghi, eventi e itinerari del Cilento.', 'assistant');
+          this.setChatActions(this.demo.getActions());
+          this.animation.setCileoState('thinking', { duration: 1200, nextState: 'welcome' });
+          return;
+        }
+
+        const answerText = fromBackend
+          ? `${response.answer}${this.formatSources(response.sources)}`
+          : response.answer;
+
+        this.addChatMessage(answerText, 'assistant');
+        this.setChatActions(Array.isArray(response.actions) && response.actions.length ? response.actions : this.demo.getActions());
         const positive = /\b(?:grazie|perfetto|perfetta|bellissimo|bellissima)\b/i.test(message);
-        const contextualState = positive ? 'hug' : response.pose;
+        const intentPoseMap = {
+          accommodation: 'pointing',
+          food: 'pointing',
+          events: 'idea',
+          experiences: 'idea',
+          itineraries: 'map',
+          attractions: 'map',
+          infopoints: 'pointing',
+          useful_contacts: 'pointing',
+          general_territory: 'map'
+        };
+        const contextualState = positive ? 'hug' : (response.pose || intentPoseMap[response.intent] || 'idea');
         const sequence = [{ state: contextualState, duration: 1300 }];
         if (!positive && response.actions?.length && contextualState !== 'pointing') {
           sequence.push({ state: 'pointing', duration: 1200 });
