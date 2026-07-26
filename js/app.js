@@ -8,14 +8,14 @@ const useful='<div class="notice">In caso di emergenza chiama direttamente il nu
 
 function createModules(itineraries){
  return {
-  useful:{title:'Numeri utili',html:useful},
-  infopoints:{title:'I nostri Infopoint',html:buildInfopointsHtml()},
-  events:{title:'Eventi',html:buildEventsHtml()},
-  experiences:{title:'Esperienze',html:'<div class="panel-grid"><article class="item"><h3>Mare e outdoor</h3><p>Escursioni in barca, kayak, diving e trekking.</p></article><article class="item"><h3>Gusto e tradizioni</h3><p>Degustazioni, laboratori e visite ai produttori.</p></article></div>'},
-  sleep:{title:'Dove dormire',html:townSelector('Scegli il Comune in cui cercare una struttura ricettiva.','home-module','sleep')},
-  eat:{title:'Dove mangiare',html:townSelector('Scegli il Comune in cui cercare ristoranti e locali.','home-module','eat')},
-  routes:{title:'Itinerari',html:'<div class="panel-grid">'+itineraries.map(x=>'<article class="item"><h3>'+x.title+'</h3><p>'+x.description+'</p></article>').join('')+'</div>'},
-  services:{title:'Servizi',html:'<div class="panel-grid"><article class="item"><h3>Noleggio</h3><p>Auto, bici, scooter e imbarcazioni.</p></article><article class="item"><h3>Guide e accompagnatori</h3><p>Professionisti e servizi per scoprire il territorio.</p></article></div>'}
+  useful:{title:'Numeri utili',html:'<section data-hub-section="useful">'+useful+'</section>'},
+  infopoints:{title:'I nostri Infopoint',html:'<section data-hub-section="infopoints">'+buildInfopointsHtml()+'</section>'},
+  events:{title:'Eventi',html:'<section data-hub-section="events">'+buildEventsHtml()+'</section>'},
+  experiences:{title:'Esperienze',html:'<section data-hub-section="experiences"><div class="panel-grid"><article class="item"><h3>Mare e outdoor</h3><p>Escursioni in barca, kayak, diving e trekking.</p></article><article class="item"><h3>Gusto e tradizioni</h3><p>Degustazioni, laboratori e visite ai produttori.</p></article></div></section>'},
+  sleep:{title:'Dove dormire',html:'<section data-hub-section="sleep">'+townSelector('Scegli il Comune in cui cercare una struttura ricettiva.','home-module','sleep')+'</section>'},
+  eat:{title:'Dove mangiare',html:'<section data-hub-section="eat">'+townSelector('Scegli il Comune in cui cercare ristoranti e locali.','home-module','eat')+'</section>'},
+  routes:{title:'Itinerari',html:'<section data-hub-section="itineraries"><div class="panel-grid">'+itineraries.map(x=>'<article class="item"><h3>'+x.title+'</h3><p>'+x.description+'</p></article>').join('')+'</div></section>'},
+  services:{title:'Servizi',html:'<section data-hub-section="services"><div class="panel-grid"><article class="item"><h3>Noleggio</h3><p>Auto, bici, scooter e imbarcazioni.</p></article><article class="item"><h3>Guide e accompagnatori</h3><p>Professionisti e servizi per scoprire il territorio.</p></article></div></section>'}
  };
 }
 

@@ -55,7 +55,7 @@ html.cileo-page-locked { overflow: hidden; overscroll-behavior: none; }
 .cileo__actions { display: grid; min-width: 0; padding: 8px 14px 10px; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; overflow: visible; background: #fff; }
 .cileo__actions button { display: inline-flex; min-width: 0; min-height: 42px; border: 1px solid #cde3ef; border-radius: 13px; padding: 7px 9px; align-items: center; justify-content: center; gap: 5px; background: #f7fcff; color: #075d8b; font: inherit; font-size: .71rem; font-weight: 800; line-height: 1.2; text-align: center; white-space: normal; overflow-wrap: anywhere; cursor: pointer; transition: background .18s ease, border-color .18s ease, transform .18s ease; }
 .cileo__actions button:hover { border-color: #91c9e5; background: #eaf7ff; transform: translateY(-1px); }
-.cileo[data-suggestions-state="conversation"] .cileo__actions { display: none; }
+.cileo:not([data-suggestions-state="suggestions-open"]) .cileo__actions { display: none; }
 .cileo__suggestions-toggle { display: block; min-width: 0; min-height: 44px; margin: 4px auto 8px; border: 1px solid #cde3ef; border-radius: 13px; padding: 7px 12px; background: #f7fcff; color: #075d8b; font: inherit; font-size: .75rem; font-weight: 800; cursor: pointer; }
 .cileo__suggestions-toggle[hidden] { display: none; }
 .cileo__form { display: flex; min-width: 0; margin: 0 14px 12px; border: 1px solid #cddfe8; border-radius: 16px; padding: 5px 5px 5px 13px; flex: 0 0 auto; align-items: center; gap: 8px; background: #fff; box-shadow: 0 5px 18px rgba(7, 59, 96, .07); }
@@ -82,7 +82,7 @@ html.cileo-page-locked { overflow: hidden; overscroll-behavior: none; }
   .cileo.is-keyboard-open .cileo__content { flex-basis: 72px; }
   .cileo__actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .cileo__actions button:last-child:nth-child(odd) { grid-column: 1 / -1; }
-  .cileo.is-keyboard-open[data-suggestions-state="initial"] .cileo__actions { display: none; }
+  .cileo.is-keyboard-open:not([data-suggestions-state="suggestions-open"]) .cileo__actions { display: none; }
   .cileo__form { margin: 0 12px max(8px, env(safe-area-inset-bottom)); padding: 3px 3px 3px 11px; gap: 6px; }
   .cileo__form input { height: 36px; font-size: 16px; line-height: 1.25; }
   .cileo__form button { width: 44px; height: 44px; flex-basis: 44px; }
