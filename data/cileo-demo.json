@@ -1,5 +1,5 @@
 {
-  "welcome": "Ciao e benvenuto!\n\nIo sono Cilentino, la guida digitale di Cilentomania.\n\nSarò il tuo compagno di viaggio alla scoperta del Parco Nazionale del Cilento, Vallo di Diano e Alburni.\n\nPosso aiutarti a trovare borghi, spiagge, eventi, esperienze, itinerari, ristoranti, strutture ricettive e Infopoint.\n\nDa dove vuoi iniziare?",
+  "welcome": "Posso aiutarti a trovare borghi, spiagge, eventi, esperienze, itinerari, ristoranti, strutture ricettive e Infopoint.\n\nDa dove vuoi iniziare?",
   "fallback": "Il Cilento ha sempre qualcosa di nuovo da raccontare. Ti accompagno volentieri tra borghi, spiagge, eventi, esperienze, itinerari, Infopoint e sapori del territorio: da dove vuoi iniziare?", 
   "actions": [
     { "id": "territorio", "label": "Esplora il territorio", "icon": "🗺️", "pose": "cartina", "intent": "explore", "target": { "type": "site-section", "key": "territorio" }, "reply": "Tra borghi affacciati sul mare, siti archeologici e paesaggi del Parco, ogni angolo ha una storia. Possiamo iniziare da Agropoli, Castellabate, Paestum, Palinuro o Acciaroli." },

@@ -1,6 +1,11 @@
 (function (global) {
   'use strict';
 
+  const CILEO_STORAGE_KEYS = {
+    localState: 'cileo:chat:state:v1',
+    sessionState: 'cileo:chat:runtime:v1'
+  };
+
   function sanitizeCilentinoContextValue(value) {
     const trimmed = String(value || '').trim();
     return trimmed || null;
@@ -227,13 +232,96 @@
         onClose: () => this.animation.play([{ state: 'goodbye', duration: 1500 }, { state: 'welcome', duration: 2000 }]),
         onAction: action => this.handleAction(action),
         onMessage: message => this.handleMessage(message),
-        onSuggestionsRequest: () => this.getContextualSuggestions()
+        onSuggestionsRequest: () => this.getContextualSuggestions(),
+        onClearChat: () => this.clearChat()
       });
       this.animation = new global.CileoAnimation(this.ui.elements.avatar, {
         assetBase: new URL('assets/cileo/avatar/', this.baseUrl)
       });
+      this.messages = [];
+      this.initialWelcome = '';
+      this.initialActions = [];
+      this.conversationRevision = 0;
       this.started = false;
       this.observeNavigationContext();
+    }
+
+    readStorageState() {
+      const parseStored = value => {
+        if (!value) return null;
+        try {
+          return JSON.parse(value);
+        } catch (error) {
+          return null;
+        }
+      };
+      try {
+        const localState = parseStored(localStorage.getItem(CILEO_STORAGE_KEYS.localState));
+        const sessionState = parseStored(sessionStorage.getItem(CILEO_STORAGE_KEYS.sessionState));
+        return localState || sessionState || null;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    saveStorageState() {
+      const state = {
+        messages: this.messages,
+        actions: this.ui.currentActions || this.initialActions,
+        inputValue: this.ui.elements.input.value || ''
+      };
+      const serialized = JSON.stringify(state);
+      try {
+        localStorage.setItem(CILEO_STORAGE_KEYS.localState, serialized);
+      } catch (error) {
+        // Ignore storage quota or availability errors.
+      }
+      try {
+        sessionStorage.setItem(CILEO_STORAGE_KEYS.sessionState, serialized);
+      } catch (error) {
+        // Ignore storage quota or availability errors.
+      }
+    }
+
+    removeStorageState() {
+      try {
+        localStorage.removeItem(CILEO_STORAGE_KEYS.localState);
+      } catch (error) {
+        // Ignore storage availability errors.
+      }
+      try {
+        sessionStorage.removeItem(CILEO_STORAGE_KEYS.sessionState);
+      } catch (error) {
+        // Ignore storage availability errors.
+      }
+    }
+
+    addChatMessage(text, sender) {
+      const content = String(text || '');
+      this.messages.push({ sender, text: content });
+      this.ui.addMessage(content, sender);
+      this.saveStorageState();
+    }
+
+    setChatActions(actions) {
+      this.ui.setActions(actions);
+      this.saveStorageState();
+    }
+
+    restoreChatFromState(state) {
+      const restoredMessages = Array.isArray(state?.messages)
+        ? state.messages.filter(entry => entry && (entry.sender === 'assistant' || entry.sender === 'user')).map(entry => ({
+            sender: entry.sender,
+            text: String(entry.text || '')
+          }))
+        : [];
+      if (!restoredMessages.length) return false;
+      this.messages = restoredMessages;
+      this.ui.restoreMessages(restoredMessages);
+      this.setChatActions(state.actions || this.initialActions);
+      this.ui.setSuggestionState('conversation');
+      this.ui.elements.input.value = typeof state.inputValue === 'string' ? state.inputValue : '';
+      return true;
     }
 
     getContextualSuggestions() {
@@ -259,11 +347,21 @@
       this.animation.setCileoState('welcome', { minDuration: 2000 });
       try {
         const data = await this.demo.load();
-        this.ui.setActions(data.actions || []);
-        this.ui.addMessage(data.welcome, 'assistant');
+        this.initialWelcome = String(data.welcome || '');
+        this.initialActions = Array.isArray(data.actions) ? data.actions : [];
+        const restored = this.readStorageState();
+        const restoredOk = this.restoreChatFromState(restored);
+        if (!restoredOk) {
+          this.setChatActions(this.initialActions);
+          this.addChatMessage(this.initialWelcome, 'assistant');
+          this.ui.elements.input.value = '';
+        }
       } catch (error) {
         console.error('Cileo:', error);
-        this.ui.addMessage('In questo momento non riesco a mostrarti i miei consigli. Torna presto: il Cilento ha ancora tanto da raccontare.', 'assistant');
+        this.initialWelcome = 'Posso aiutarti a trovare borghi, spiagge, eventi, esperienze, itinerari, ristoranti, strutture ricettive e Infopoint.\n\nDa dove vuoi iniziare?';
+        this.initialActions = [];
+        this.setChatActions(this.initialActions);
+        this.addChatMessage('In questo momento non riesco a mostrarti i miei consigli. Torna presto: il Cilento ha ancora tanto da raccontare.', 'assistant');
       }
       this.ui.root.classList.add('is-ready');
       this.started = true;
@@ -273,16 +371,17 @@
 
     async handleAction(action) {
       if (!action) return;
-      this.ui.addMessage(action.label, 'user');
+      this.addChatMessage(action.label, 'user');
       await this.respond(action.query || action.label, action.id);
     }
 
     async handleMessage(message) {
-      this.ui.addMessage(message, 'user');
+      this.addChatMessage(message, 'user');
       await this.respond(message);
     }
 
     async respond(message, actionId) {
+      const responseRevision = this.conversationRevision;
       this.animation.play([{ state: 'thinking', duration: 900 }, { state: 'searching', duration: 900 }]);
       const stopTyping = this.ui.showTyping();
       try {
@@ -291,8 +390,9 @@
           new Promise(resolve => window.setTimeout(resolve, 2200))
         ]);
         stopTyping();
-        this.ui.addMessage(response.text, 'assistant');
-        this.ui.setActions(response.actions || this.demo.getActions());
+        if (responseRevision !== this.conversationRevision) return;
+        this.addChatMessage(response.text, 'assistant');
+        this.setChatActions(response.actions || this.demo.getActions());
         const positive = /\b(?:grazie|perfetto|perfetta|bellissimo|bellissima)\b/i.test(message);
         const contextualState = positive ? 'hug' : response.pose;
         const sequence = [{ state: contextualState, duration: 1300 }];
@@ -303,9 +403,22 @@
         this.animation.play(sequence);
       } catch (error) {
         stopTyping();
-        this.ui.addMessage('Questo consiglio per ora mi sfugge. Possiamo continuare esplorando luoghi, eventi e itinerari del Cilento.', 'assistant');
+        if (responseRevision !== this.conversationRevision) return;
+        this.addChatMessage('Questo consiglio per ora mi sfugge. Possiamo continuare esplorando luoghi, eventi e itinerari del Cilento.', 'assistant');
         this.animation.setCileoState('thinking', { duration: 1400, nextState: 'welcome' });
       }
+    }
+
+    clearChat() {
+      this.conversationRevision += 1;
+      this.messages = [];
+      this.ui.clearMessages();
+      this.ui.elements.input.value = '';
+      this.ui.setSuggestionState('conversation');
+      this.setChatActions(this.initialActions);
+      this.removeStorageState();
+      this.addChatMessage(this.initialWelcome, 'assistant');
+      this.ui.elements.input.focus({ preventScroll: true });
     }
 
     setCileoState(state, options) {

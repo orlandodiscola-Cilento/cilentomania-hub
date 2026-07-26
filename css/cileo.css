@@ -40,12 +40,18 @@ html.cileo-page-locked { overflow: hidden; overscroll-behavior: none; }
 .cileo__panel[hidden] { display: none; }
 .cileo.is-open .cileo__panel { opacity: 1; transform: none; }
 .cileo__panel, .cileo__panel * { min-width: 0; max-width: 100%; }
-.cileo__header { display: flex; min-height: 88px; padding: 19px 18px 17px 21px; flex: 0 0 auto; align-items: center; justify-content: space-between; gap: 15px; background: linear-gradient(135deg, #0879bd, #07577f); color: #fff; }
-.cileo__header h2 { margin: 0; font-size: 1.25rem; line-height: 1.2; }
-.cileo__header p { margin: 4px 0 0; color: rgba(255, 255, 255, .82); font-size: .78rem; }
+.cileo__header { display: flex; min-height: 98px; padding: 17px 18px 16px 21px; flex: 0 0 auto; align-items: flex-start; justify-content: space-between; gap: 14px; background: linear-gradient(135deg, #0879bd, #07577f); color: #fff; }
+.cileo__header-copy { min-width: 0; flex: 1 1 auto; padding-right: 10px; text-align: left; }
+.cileo__header h2 { margin: 0; font-size: 1.25rem; line-height: 1.2; font-weight: 800; }
+.cileo__header p { margin: 0; color: rgba(255, 255, 255, .88); }
+.cileo__header-copy p:first-of-type { margin-top: 5px; font-size: .8rem; line-height: 1.35; }
+.cileo__header-copy p:last-of-type { margin-top: 6px; color: rgba(255, 255, 255, .82); font-size: .72rem; line-height: 1.45; }
+.cileo__header-actions { display: flex; min-width: 108px; flex-direction: column; align-items: flex-end; gap: 6px; flex: 0 0 auto; }
+.cileo__clear { display: inline-flex; min-height: 34px; border: 1px solid rgba(255, 255, 255, .24); border-radius: 999px; padding: 0 9px; align-items: center; justify-content: center; gap: 5px; background: rgba(255, 255, 255, .12); color: #fff; font: inherit; font-size: .67rem; font-weight: 800; white-space: nowrap; cursor: pointer; }
+.cileo__clear:hover { background: rgba(255, 255, 255, .2); }
 .cileo__close { display: grid; width: 39px; height: 39px; flex: 0 0 39px; border: 1px solid rgba(255, 255, 255, .2); border-radius: 50%; padding: 0; place-items: center; background: rgba(255, 255, 255, .12); color: #fff; font-size: 1.55rem; line-height: 1; cursor: pointer; }
 .cileo__close:hover { background: rgba(255, 255, 255, .22); }
-.cileo__close:focus-visible, .cileo__actions button:focus-visible, .cileo__suggestions-toggle:focus-visible, .cileo__form button:focus-visible { outline: 3px solid #ffca3a; outline-offset: 2px; }
+.cileo__close:focus-visible, .cileo__clear:focus-visible, .cileo__actions button:focus-visible, .cileo__suggestions-toggle:focus-visible, .cileo__form button:focus-visible, .cileo__confirm-dialog button:focus-visible { outline: 3px solid #ffca3a; outline-offset: 2px; }
 .cileo__content { min-width: 0; min-height: 0; flex: 1 1 auto; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; background: linear-gradient(#f7fbfd, #fff); }
 .cileo__messages { display: flex; min-width: 0; min-height: 0; padding: 19px 17px 12px; flex-direction: column; gap: 11px; overflow: visible; background: transparent; }
 .cileo__message { max-width: 85%; border-radius: 17px; padding: 11px 13px; font-size: .88rem; line-height: 1.45; overflow-wrap: anywhere; white-space: pre-line; }
@@ -67,18 +73,35 @@ html.cileo-page-locked { overflow: hidden; overscroll-behavior: none; }
 .cileo__typing i:nth-child(2) { animation-delay: .15s; }
 .cileo__typing i:nth-child(3) { animation-delay: .3s; }
 .cileo__sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+.cileo__confirm { position: absolute; inset: 0; z-index: 7; display: grid; place-items: center; padding: 16px; }
+.cileo__confirm[hidden] { display: none; }
+.cileo__confirm-backdrop { position: absolute; inset: 0; border: 0; background: rgba(7, 30, 46, .45); }
+.cileo__confirm-dialog { position: relative; width: min(320px, 100%); border-radius: 16px; padding: 16px; background: #fff; color: #17384d; box-shadow: 0 18px 48px rgba(1, 35, 59, .28); }
+.cileo__confirm-dialog h3 { margin: 0; font-size: 1rem; line-height: 1.25; }
+.cileo__confirm-dialog p { margin: 8px 0 0; font-size: .86rem; line-height: 1.45; color: #35566b; }
+.cileo__confirm-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+.cileo__confirm-cancel, .cileo__confirm-delete { min-height: 38px; border-radius: 11px; padding: 0 12px; font: inherit; font-size: .78rem; font-weight: 800; cursor: pointer; }
+.cileo__confirm-cancel { border: 1px solid #cde3ef; background: #fff; color: #21495f; }
+.cileo__confirm-delete { border: 1px solid #dc4b4b; background: #e94e4e; color: #fff; }
 
 @keyframes cileoTyping { 0%, 60%, 100% { transform: translateY(0); opacity: .45; } 30% { transform: translateY(-4px); opacity: 1; } }
 
 @media (max-width: 560px) {
   .cileo { right: 10px; bottom: 8px; width: 88px; height: 104px; }
-  .cileo.is-open .cileo__launcher, .cileo.is-open .cileo__avatar-visual { transform: translate(-4px, -13px); }
+  .cileo.is-open .cileo__launcher { transform: translate(-4px, -13px); }
+  .cileo.is-open .cileo__avatar-visual { transform: none; }
   .cileo__panel { right: auto; bottom: calc(var(--cileo-vv-bottom, 0px) + 116px); left: calc(var(--cileo-vv-left, 0px) + 12px + env(safe-area-inset-left)); width: calc(var(--cileo-vv-width, 100%) - 24px - env(safe-area-inset-left) - env(safe-area-inset-right)); max-width: calc(100% - 24px); height: min(80dvh, calc(var(--cileo-vv-height, 100dvh) - 132px), 590px); min-height: min(390px, calc(var(--cileo-vv-height, 100dvh) - 132px)); border-radius: 22px; }
   .cileo.is-keyboard-open .cileo__panel { top: calc(var(--cileo-vv-top, 0px) + 12px + env(safe-area-inset-top)); bottom: auto; height: min(590px, calc(var(--cileo-vv-height, 100dvh) - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom))); min-height: 0; }
   .cileo__bubble { right: 79px; bottom: 96px; width: min(270px, calc(100vw - 100px)); padding: 13px 14px; font-size: .79rem; }
-  .cileo__header { min-height: 78px; padding: 15px 14px 14px 18px; }
-  .cileo.is-keyboard-open .cileo__header { min-height: 54px; padding: 8px 14px 7px 18px; }
-  .cileo.is-keyboard-open .cileo__header p { display: none; }
+  .cileo__avatar-visual { position: static; inset: auto; width: 88px; height: 104px; margin: 8px 0 0; opacity: 1; filter: drop-shadow(0 8px 10px rgba(3, 45, 70, .22)); }
+  .cileo__header { min-height: 110px; padding: 14px 13px 13px 16px; gap: 11px; }
+  .cileo__header-copy { padding-right: 6px; }
+  .cileo__header h2 { font-size: 1.03rem; }
+  .cileo__header-copy p:first-of-type { margin-top: 4px; font-size: .72rem; line-height: 1.33; }
+  .cileo__header-copy p:last-of-type { margin-top: 5px; font-size: .66rem; line-height: 1.37; }
+  .cileo__header-actions { min-width: 94px; gap: 5px; }
+  .cileo__clear { min-height: 31px; padding: 0 8px; font-size: .62rem; }
+  .cileo.is-keyboard-open .cileo__header { min-height: 110px; padding: 14px 13px 13px 16px; }
   .cileo.is-keyboard-open .cileo__content { flex-basis: 72px; }
   .cileo__actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .cileo__actions button:last-child:nth-child(odd) { grid-column: 1 / -1; }
@@ -91,6 +114,13 @@ html.cileo-page-locked { overflow: hidden; overscroll-behavior: none; }
 
 @media (max-width: 360px) {
   .cileo:not(.is-keyboard-open) .cileo__panel { height: min(80dvh, calc(100dvh - 132px), 540px); }
+  .cileo__header { min-height: 114px; }
+  .cileo__header h2 { font-size: .98rem; }
+  .cileo__header-copy p:first-of-type { font-size: .69rem; }
+  .cileo__header-copy p:last-of-type { font-size: .63rem; }
+  .cileo__header-actions { min-width: 88px; }
+  .cileo__close { width: 36px; height: 36px; flex-basis: 36px; font-size: 1.35rem; }
+  .cileo__clear { min-height: 30px; font-size: .59rem; }
   .cileo__actions { gap: 5px; padding-right: 10px; padding-left: 10px; }
   .cileo__actions button { min-height: 38px; padding: 6px; font-size: .67rem; }
 }

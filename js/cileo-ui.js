@@ -17,16 +17,22 @@
         avatar: this.root.querySelector('[data-cileo-avatar]'),
         bubble: this.root.querySelector('[data-cileo-bubble]'),
         panel: this.root.querySelector('[data-cileo-panel]'),
+        clear: this.root.querySelector('[data-cileo-clear]'),
         close: this.root.querySelector('[data-cileo-close]'),
         content: this.root.querySelector('[data-cileo-content]'),
         messages: this.root.querySelector('[data-cileo-messages]'),
         actions: this.root.querySelector('[data-cileo-actions]'),
         suggestionsToggle: this.root.querySelector('[data-cileo-suggestions-toggle]'),
         form: this.root.querySelector('[data-cileo-form]'),
-        input: this.root.querySelector('[data-cileo-input]')
+        input: this.root.querySelector('[data-cileo-input]'),
+        confirmOverlay: this.root.querySelector('[data-cileo-confirm]'),
+        confirmCancel: this.root.querySelector('[data-cileo-confirm-cancel]'),
+        confirmDelete: this.root.querySelector('[data-cileo-confirm-delete]')
       };
       this.hasConversation = false;
       this.suggestionState = 'conversation';
+      this.confirmOpen = false;
+      this.lastConfirmFocus = null;
       this.viewportFrame = 0;
       this.bind();
       this.setSuggestionState('conversation');
@@ -39,14 +45,17 @@
       root.setAttribute('aria-label', 'Cilentino, guida digitale di Cilentomania');
       root.innerHTML = `
         <div class="cileo__bubble" data-cileo-bubble role="status" hidden>
-          <strong>Ciao e benvenuto! <span aria-hidden="true">👋</span></strong>
-          <span>Io sono Cilentino, la guida digitale di Cilentomania.</span>
-          <span>Il tuo compagno di viaggio nel Parco Nazionale del Cilento, Vallo di Diano e Alburni.</span>
+          <strong>Ciao, sono Cilentino <span aria-hidden="true">👋</span></strong>
+          <span>La guida digitale di Cilentomania.</span>
+          <span>Sarò il tuo compagno di viaggio alla scoperta del Parco Nazionale del Cilento, Vallo di Diano e Alburni.</span>
         </div>
         <section class="cileo__panel" data-cileo-panel role="dialog" aria-modal="false" aria-labelledby="cileo-title" hidden>
           <header class="cileo__header">
-            <div><h2 id="cileo-title">Cilentino</h2><p>La guida digitale di Cilentomania<br>Il tuo compagno di viaggio nel Parco Nazionale del Cilento, Vallo di Diano e Alburni</p></div>
-            <button class="cileo__close" data-cileo-close type="button" aria-label="Chiudi Cilentino">&times;</button>
+            <div class="cileo__header-copy"><h2 id="cileo-title">Ciao, sono Cilentino</h2><p>La guida digitale di Cilentomania</p><p>Sarò il tuo compagno di viaggio alla scoperta del Parco Nazionale del Cilento, Vallo di Diano e Alburni.</p></div>
+            <div class="cileo__header-actions">
+              <button class="cileo__close" data-cileo-close type="button" aria-label="Chiudi Cilentino">&times;</button>
+              <button class="cileo__clear" data-cileo-clear type="button" aria-label="Cancella chat"><span aria-hidden="true">🗑</span><span>Cancella chat</span></button>
+            </div>
           </header>
           <div class="cileo__content" data-cileo-content>
             <div class="cileo__messages" data-cileo-messages aria-live="polite"></div>
@@ -58,6 +67,17 @@
             <input id="cileo-input" data-cileo-input autocomplete="off" placeholder="Chiedi a Cilentino..." maxlength="300">
             <button type="submit" aria-label="Invia messaggio"><span aria-hidden="true">&#8593;</span></button>
           </form>
+          <div class="cileo__confirm" data-cileo-confirm hidden>
+            <div class="cileo__confirm-backdrop" data-cileo-confirm-cancel></div>
+            <section class="cileo__confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="cileo-confirm-title" aria-describedby="cileo-confirm-description">
+              <h3 id="cileo-confirm-title">Cancella chat</h3>
+              <p id="cileo-confirm-description">Vuoi cancellare questa conversazione?</p>
+              <div class="cileo__confirm-actions">
+                <button type="button" class="cileo__confirm-cancel" data-cileo-confirm-cancel>Annulla</button>
+                <button type="button" class="cileo__confirm-delete" data-cileo-confirm-delete>Cancella</button>
+              </div>
+            </section>
+          </div>
         </section>
         <button class="cileo__launcher" data-cileo-launcher type="button" aria-label="Apri Cilentino" aria-expanded="false"></button>
         <div class="cileo__avatar-visual" aria-hidden="true">
@@ -70,6 +90,14 @@
     bind() {
       this.elements.launcher.addEventListener('click', () => this.toggle());
       this.elements.close.addEventListener('click', () => this.close());
+      this.elements.clear.addEventListener('click', () => this.openConfirm());
+      this.root.querySelectorAll('[data-cileo-confirm-cancel]').forEach(element => {
+        element.addEventListener('click', () => this.closeConfirm(true));
+      });
+      this.elements.confirmDelete.addEventListener('click', () => {
+        this.closeConfirm(false);
+        this.options.onClearChat?.();
+      });
       this.elements.suggestionsToggle.addEventListener('click', () => {
         const collapsedState = 'conversation';
         const nextState = this.suggestionState === 'suggestions-open' ? collapsedState : 'suggestions-open';
@@ -99,6 +127,11 @@
       });
       this.root.addEventListener('keydown', event => {
         if (event.key !== 'Escape' || !this.isOpen) return;
+        if (this.confirmOpen) {
+          event.preventDefault();
+          this.closeConfirm(true);
+          return;
+        }
         if (this.suggestionState === 'suggestions-open') {
           event.preventDefault();
           this.setSuggestionState('conversation');
@@ -123,6 +156,43 @@
         scheduleViewportUpdate();
       });
       this.elements.input.addEventListener('blur', scheduleViewportUpdate);
+      this.elements.confirmOverlay.addEventListener('keydown', event => this.handleConfirmKeydown(event));
+    }
+
+    handleConfirmKeydown(event) {
+      if (!this.confirmOpen || event.key !== 'Tab') return;
+      const focusable = this.getConfirmFocusable();
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    getConfirmFocusable() {
+      return Array.from(this.elements.confirmOverlay.querySelectorAll('button:not([disabled])'));
+    }
+
+    openConfirm() {
+      if (this.confirmOpen) return;
+      this.confirmOpen = true;
+      this.lastConfirmFocus = document.activeElement;
+      this.elements.confirmOverlay.hidden = false;
+      this.elements.confirmDelete.focus({ preventScroll: true });
+    }
+
+    closeConfirm(restoreFocus) {
+      if (!this.confirmOpen) return;
+      this.confirmOpen = false;
+      this.elements.confirmOverlay.hidden = true;
+      if (restoreFocus) {
+        (this.lastConfirmFocus || this.elements.clear)?.focus?.({ preventScroll: true });
+      }
     }
 
     updateViewport() {
@@ -162,7 +232,8 @@
       const isExpanded = this.suggestionState === 'suggestions-open';
       const availableActions = (this.currentActions || this.primaryActions || []).length;
       this.elements.suggestionsToggle.hidden = availableActions === 0;
-      this.elements.suggestionsToggle.textContent = 'Suggerimenti';
+      this.elements.suggestionsToggle.textContent = isExpanded ? 'Chiudi suggerimenti' : 'Suggerimenti';
+      this.elements.suggestionsToggle.setAttribute('aria-label', isExpanded ? 'Chiudi suggerimenti' : 'Apri suggerimenti');
       this.elements.suggestionsToggle.setAttribute('aria-expanded', String(isExpanded));
     }
 
@@ -226,6 +297,19 @@
       return message;
     }
 
+    clearMessages() {
+      this.elements.messages.innerHTML = '';
+      this.hasConversation = false;
+    }
+
+    restoreMessages(messages) {
+      this.clearMessages();
+      (Array.isArray(messages) ? messages : []).forEach(entry => {
+        if (!entry || (entry.sender !== 'assistant' && entry.sender !== 'user')) return;
+        this.addMessage(entry.text || '', entry.sender);
+      });
+    }
+
     showTyping() {
       const typing = document.createElement('div');
       typing.className = 'cileo__message cileo__message--assistant cileo__typing';
@@ -257,10 +341,7 @@
       this.root.classList.add('is-open');
       this.lockPageScroll();
       this.updateViewport();
-      this.focusTimer = window.setTimeout(() => {
-        this.focusTimer = 0;
-        if (this.isOpen) this.elements.input.focus();
-      }, 240);
+      this.focusTimer = 0;
       this.options.onOpen();
     }
 
@@ -269,6 +350,7 @@
       this.isOpen = false;
       window.clearTimeout(this.focusTimer);
       this.focusTimer = 0;
+      this.closeConfirm(false);
       this.root.classList.remove('is-open');
       this.root.classList.remove('is-keyboard-open');
       if (this.suggestionState === 'suggestions-open') {
