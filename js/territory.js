@@ -898,6 +898,7 @@ function configureNavigationDock(level,backMunicipality=''){
 function openPanel(title,html){
  const wasOpen=overlay.classList.contains('open');
  panelContent.innerHTML=(title?'<h2>'+title+'</h2>':'')+html;
+ globalThis.CilentomaniaI18n?.applyTranslations?.(panelContent);
  bindTerritoryImages(panelContent);
  bindMunicipalityModuleBackDelegation();
  const municipalityToolbar=panelContent.querySelector('[data-municipality-toolbar]');
@@ -961,7 +962,9 @@ function bindTownFilter(){
 }
 function openTerritoryList(){
  const restoreScroll=territoryListScrollY;
- openPanel('Esplora il Territorio',territoryExplorer('Cerca e seleziona un Comune.'));
+ const i18n=globalThis.CilentomaniaI18n;
+ const panelTitle=i18n?.t?i18n.t('overlay.exploreTerritory','Esplora il Territorio'):'Esplora il Territorio';
+ openPanel(panelTitle,territoryExplorer('Cerca e seleziona un Comune.'));
  requestAnimationFrame(()=>overlay.scrollTo({top:restoreScroll,left:0,behavior:'auto'}));
 }
 function openTerritoryMunicipality(name){openPanel('',municipalitySheet(name,true));}

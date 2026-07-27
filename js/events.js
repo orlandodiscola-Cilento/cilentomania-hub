@@ -7,6 +7,8 @@ let CILENTOMANIA_EVENTS_URL = '';
 const MAX_EVENTS_HOME = 8;
 let eventsVisibleLimit = MAX_EVENTS_HOME;
 let eventsArchive = [];
+const eventsI18n = window.CilentomaniaI18n;
+const eventsT = (key, fallback, params) => eventsI18n?.t ? eventsI18n.t(key, fallback, params) : fallback;
 
 // Struttura richiesta per ogni evento:
 // {id,title,municipality,place,startDate,endDate,time,category,description,image,url,source,status}
@@ -28,24 +30,25 @@ function activeEvents(){
 }
 function eventDateBox(e){
  const d=new Date(e.startDate+'T12:00:00');
- const day=new Intl.DateTimeFormat('it-IT',{day:'2-digit'}).format(d);
- const month=new Intl.DateTimeFormat('it-IT',{month:'short'}).format(d).replace('.','');
+ const locale=(eventsI18n?.getCurrentLanguage?.()||'it')+'-'+(eventsI18n?.getCurrentLanguage?.()||'it').toUpperCase();
+ const day=new Intl.DateTimeFormat(locale,{day:'2-digit'}).format(d);
+ const month=new Intl.DateTimeFormat(locale,{month:'short'}).format(d).replace('.','');
  const year=d.getFullYear();
  return `<div class="event-date"><strong>${day}</strong><span>${safeText(month)}</span><small>${year}${e.time?' · '+safeText(e.time):''}</small></div>`;
 }
 function eventCard(e){
  const destination=[e.place,e.municipality].filter(Boolean).join(' · ');
  const tags=[e.category,e.source].filter(Boolean).map(x=>`<span class="event-tag">${safeText(x)}</span>`).join('');
- const detail=e.url?`<a href="${safeText(e.url)}" target="_blank" rel="noopener">Dettagli</a>`:'';
- const map=destination?`<a class="secondary" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(destination)}" target="_blank" rel="noopener">Mappa</a>`:'';
- return `<article class="event-card">${eventDateBox(e)}<div class="event-copy"><div class="event-place">${safeText(destination||'Cilento')}</div><h3>${safeText(e.title||e.name||'Evento')}</h3><p>${safeText(e.description||'')}</p><div class="event-tags">${tags}</div><div class="event-actions">${detail}${map}</div></div></article>`;
+ const detail=e.url?`<a href="${safeText(e.url)}" target="_blank" rel="noopener">${eventsT('events.details','Dettagli')}</a>`:'';
+ const map=destination?`<a class="secondary" href="https://www.google.com/maps/dir/?api=1&query=${encodeURIComponent(destination)}" target="_blank" rel="noopener">${eventsT('events.map','Mappa')}</a>`:'';
+ return `<article class="event-card">${eventDateBox(e)}<div class="event-copy"><div class="event-place">${safeText(destination||eventsT('events.fallbackPlace','Cilento'))}</div><h3>${safeText(e.title||e.name||'Evento')}</h3><p>${safeText(e.description||'')}</p><div class="event-tags">${tags}</div><div class="event-actions">${detail}${map}</div></div></article>`;
 }
-function eventProjectCards(){return seasonalEventProjects.map(e=>`<article class="item"><small>PROGETTO STAGIONALE</small><h3>${safeText(e.title)}</h3><p><strong>${safeText(e.place)}</strong></p><p>${safeText(e.description)}</p></article>`).join('');}
+function eventProjectCards(){return seasonalEventProjects.map(e=>`<article class="item"><small>${eventsT('events.seasonalProject','PROGETTO STAGIONALE')}</small><h3>${safeText(e.title)}</h3><p><strong>${safeText(e.place)}</strong></p><p>${safeText(e.description)}</p></article>`).join('');}
 function buildEventsHtml(){
  const all=activeEvents();
  const municipalities=[...new Set(all.map(e=>e.municipality).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'it'));
  const options=municipalities.map(x=>`<option value="${safeText(x)}">${safeText(x)}</option>`).join('');
- return `<div class="events-toolbar"><input id="eventSearch" placeholder="Cerca evento o località" oninput="refreshEventsView()"><select id="eventTown" onchange="refreshEventsView()"><option value="">Tutti i Comuni</option>${options}</select></div><div class="events-summary"><span id="eventsCount"></span><span>Massimo 8 eventi per schermata</span></div><div class="events-grid" id="eventsGrid"></div><button class="events-more" id="eventsMore" onclick="showMoreEvents()" hidden>Mostra altri eventi</button><div class="events-source-note"><strong>Aggiornamento intelligente:</strong> gli eventi vengono ordinati per data e quelli terminati spariscono automaticamente. L'archivio è già predisposto per ricevere dati da fonti esterne, mantenendo un controllo centrale Cilentomania.</div>${all.length?'':`<div class="panel-grid" style="margin-top:18px">${eventProjectCards()}</div>`}`;
+ return `<div class="events-toolbar"><input id="eventSearch" placeholder="${safeText(eventsT('events.searchPlaceholder','Cerca evento o località'))}" oninput="refreshEventsView()"><select id="eventTown" onchange="refreshEventsView()"><option value="">${safeText(eventsT('events.allMunicipalities','Tutti i Comuni'))}</option>${options}</select></div><div class="events-summary"><span id="eventsCount"></span><span>${safeText(eventsT('events.maxPerPage','Massimo 8 eventi per schermata'))}</span></div><div class="events-grid" id="eventsGrid"></div><button class="events-more" id="eventsMore" onclick="showMoreEvents()" hidden>${safeText(eventsT('events.showMore','Mostra altri eventi'))}</button><div class="events-source-note">${safeText(eventsT('events.sourceNote','Aggiornamento intelligente: gli eventi vengono ordinati per data e quelli terminati spariscono automaticamente. L\'archivio è già predisposto per ricevere dati da fonti esterne, mantenendo un controllo centrale Cilentomania.'))}</div>${all.length?'':`<div class="panel-grid" style="margin-top:18px">${eventProjectCards()}</div>`}`;
 }
 function refreshEventsView(){
  const grid=document.getElementById('eventsGrid'); if(!grid)return;
@@ -53,8 +56,8 @@ function refreshEventsView(){
  const town=document.getElementById('eventTown')?.value||'';
  const filtered=activeEvents().filter(e=>(!town||e.municipality===town)&&(!q||[e.title,e.name,e.municipality,e.place,e.description,e.category].join(' ').toLowerCase().includes(q)));
  const shown=filtered.slice(0,eventsVisibleLimit);
- grid.innerHTML=shown.length?shown.map(eventCard).join(''):`<div class="events-empty"><h3>Nessun evento pubblicato</h3><p>Il calendario è pronto. Appena collegheremo l'archivio online, qui compariranno automaticamente gli eventi futuri verificati.</p></div>`;
- const count=document.getElementById('eventsCount'); if(count)count.textContent=filtered.length===1?'1 evento disponibile':filtered.length+' eventi disponibili';
+ grid.innerHTML=shown.length?shown.map(eventCard).join(''):`<div class="events-empty"><h3>${eventsT('events.emptyTitle','Nessun evento pubblicato')}</h3><p>${eventsT('events.emptyDescription','Il calendario è pronto. Appena collegheremo l\'archivio online, qui compariranno automaticamente gli eventi futuri verificati.')}</p></div>`;
+ const count=document.getElementById('eventsCount'); if(count)count.textContent=filtered.length===1?eventsT('events.countOne','1 evento disponibile'):eventsT('events.countMany','{count} eventi disponibili',{count:filtered.length});
  const more=document.getElementById('eventsMore'); if(more)more.hidden=filtered.length<=eventsVisibleLimit;
 }
 function showMoreEvents(){eventsVisibleLimit+=MAX_EVENTS_HOME;refreshEventsView();}
@@ -65,3 +68,7 @@ async function loadEventsArchive(){
  }
  refreshEventsView();
 }
+
+document.addEventListener('cilentomania:languagechange',()=>{
+ refreshEventsView();
+});

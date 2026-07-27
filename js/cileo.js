@@ -6,17 +6,35 @@
     sessionState: 'cileo:chat:runtime:v1'
   };
 
-  const CILEO_DEFAULT_WELCOME = 'Posso aiutarti a trovare borghi, spiagge, eventi, esperienze, itinerari, ristoranti, strutture ricettive e Infopoint.\n\nDa dove vuoi iniziare?';
-  const CILEO_DEFAULT_ACTIONS = [
-    { id: 'territorio', label: 'Esplora il territorio', query: 'Aiutami a esplorare il territorio del Cilento' },
-    { id: 'eventi', label: 'Eventi', query: 'Quali eventi posso trovare nel Cilento?' },
-    { id: 'esperienze', label: 'Esperienze', query: 'Quali esperienze posso vivere nel Cilento?' },
-    { id: 'mangiare', label: 'Dove mangiare', query: 'Aiutami a trovare dove mangiare nel Cilento' },
-    { id: 'dormire', label: 'Dove dormire', query: 'Aiutami a trovare dove dormire nel Cilento' },
-    { id: 'itinerari', label: 'Itinerari', query: 'Consigliami un itinerario nel Cilento' },
-    { id: 'infopoint', label: 'Infopoint', query: 'Mostrami gli Infopoint di Cilentomania' },
-    { id: 'vicino', label: "Cosa c\'e vicino a me", query: 'Cosa c\'e vicino a me nel Cilento?' }
-  ];
+  function t(key, fallback, params) {
+    const i18n = global.CilentomaniaI18n;
+    return i18n?.t ? i18n.t(key, fallback, params) : fallback;
+  }
+
+  function getChatLanguage() {
+    const i18n = global.CilentomaniaI18n;
+    const language = i18n?.normalizeLanguage
+      ? i18n.normalizeLanguage(i18n.getCurrentLanguage?.() || 'it')
+      : 'it';
+    return language || 'it';
+  }
+
+  function getDefaultWelcome() {
+    return t('chat.welcome', 'Posso aiutarti a trovare borghi, spiagge, eventi, esperienze, itinerari, ristoranti, strutture ricettive e Infopoint.\n\nDa dove vuoi iniziare?');
+  }
+
+  function getDefaultActions() {
+    return [
+      { id: 'territorio', label: t('chat.actions.territory', 'Esplora il territorio'), query: t('chat.queries.territory', 'Aiutami a esplorare il territorio del Cilento') },
+      { id: 'eventi', label: t('chat.actions.events', 'Eventi'), query: t('chat.queries.events', 'Quali eventi posso trovare nel Cilento?') },
+      { id: 'esperienze', label: t('chat.actions.experiences', 'Esperienze'), query: t('chat.queries.experiences', 'Quali esperienze posso vivere nel Cilento?') },
+      { id: 'mangiare', label: t('chat.actions.eat', 'Dove mangiare'), query: t('chat.queries.eat', 'Aiutami a trovare dove mangiare nel Cilento') },
+      { id: 'dormire', label: t('chat.actions.sleep', 'Dove dormire'), query: t('chat.queries.sleep', 'Aiutami a trovare dove dormire nel Cilento') },
+      { id: 'itinerari', label: t('chat.actions.itineraries', 'Itinerari'), query: t('chat.queries.itineraries', 'Consigliami un itinerario nel Cilento') },
+      { id: 'infopoint', label: t('chat.actions.infopoint', 'Infopoint'), query: t('chat.queries.infopoint', 'Mostrami gli Infopoint di Cilentomania') },
+      { id: 'vicino', label: t('chat.actions.nearby', "Cosa c'e vicino a me"), query: t('chat.queries.nearby', "Cosa c'e vicino a me nel Cilento?") }
+    ];
+  }
 
   function sanitizeCilentinoContextValue(value) {
     const trimmed = String(value || '').trim();
@@ -310,7 +328,7 @@
         message,
         conversation: this.messages.slice(-12).map(entry => ({ sender: entry.sender, text: entry.text })),
         location: await this.getEphemeralLocation(message),
-        language: 'it'
+        language: getChatLanguage()
       };
       let response;
       if (this.apiClient?.requestChat) {
@@ -420,6 +438,17 @@
       return getCilentinoContextualSuggestions(context);
     }
 
+    syncLocalizedDefaults(refreshCurrentMessage = false) {
+      this.initialWelcome = getDefaultWelcome();
+      this.initialActions = getDefaultActions();
+      if (refreshCurrentMessage && this.messages.length === 1 && this.messages[0].sender === 'assistant') {
+        this.messages = [];
+        this.ui.clearMessages();
+        this.setChatActions(this.initialActions);
+        this.addChatMessage(this.initialWelcome, 'assistant');
+      }
+    }
+
     observeNavigationContext() {
       const panelContent = document.getElementById('panelContent');
       const overlay = document.getElementById('overlay');
@@ -435,11 +464,19 @@
     }
 
     async init() {
+      if (global.CilentomaniaI18n?.init) {
+        await global.CilentomaniaI18n.init();
+      }
       this.animation.setCileoState('welcome', { minDuration: 2000 });
       try {
         const data = await this.demo.load();
-        this.initialWelcome = String(data.welcome || CILEO_DEFAULT_WELCOME);
-        this.initialActions = Array.isArray(data.actions) && data.actions.length ? data.actions : CILEO_DEFAULT_ACTIONS;
+        const useLocalizedDemo = getChatLanguage() !== 'it';
+        this.initialWelcome = useLocalizedDemo
+          ? getDefaultWelcome()
+          : String(data.welcome || getDefaultWelcome());
+        this.initialActions = useLocalizedDemo
+          ? getDefaultActions()
+          : (Array.isArray(data.actions) && data.actions.length ? data.actions : getDefaultActions());
         const restored = this.readStorageState();
         const restoredOk = this.restoreChatFromState(restored);
         if (!restoredOk) {
@@ -449,13 +486,27 @@
         }
       } catch (error) {
         console.error('Cileo:', error);
-        this.initialWelcome = CILEO_DEFAULT_WELCOME;
-        this.initialActions = CILEO_DEFAULT_ACTIONS;
+        this.initialWelcome = getDefaultWelcome();
+        this.initialActions = getDefaultActions();
         this.setChatActions(this.initialActions);
         this.addChatMessage(this.initialWelcome, 'assistant');
       }
+
+      document.addEventListener('cilentomania:languagechange', () => {
+        this.syncLocalizedDefaults(true);
+        if (!this.started) return;
+        if (!this.messages.length || (this.messages.length === 1 && this.messages[0].sender === 'assistant')) {
+          this.clearChat();
+          return;
+        }
+        if (Array.isArray(this.ui.currentActions) && this.ui.currentActions.length) {
+          this.ui.setActions(this.ui.currentActions.map(action => ({ ...action })));
+        }
+      });
+
       this.ui.root.classList.add('is-ready');
       this.started = true;
+      this.syncLocalizedDefaults(true);
       document.dispatchEvent(new CustomEvent('cileo:ready', { detail: { instance: this } }));
       return this;
     }
@@ -503,8 +554,8 @@
         if (responseRevision !== this.conversationRevision) return;
 
         if (!response) {
-          this.addChatMessage('Questo consiglio per ora mi sfugge. Possiamo continuare esplorando luoghi, eventi e itinerari del Cilento.', 'assistant');
-          this.setChatActions(this.demo.getActions());
+          this.addChatMessage(t('chat.fallback', 'Questo consiglio per ora mi sfugge. Possiamo continuare esplorando luoghi, eventi e itinerari del Cilento.'), 'assistant');
+          this.setChatActions(this.initialActions);
           this.animation.setCileoState('thinking', { duration: 1200, nextState: 'welcome' });
           return;
         }
@@ -537,7 +588,7 @@
       } catch (error) {
         stopTyping();
         if (responseRevision !== this.conversationRevision) return;
-        this.addChatMessage('Questo consiglio per ora mi sfugge. Possiamo continuare esplorando luoghi, eventi e itinerari del Cilento.', 'assistant');
+        this.addChatMessage(t('chat.fallback', 'Questo consiglio per ora mi sfugge. Possiamo continuare esplorando luoghi, eventi e itinerari del Cilento.'), 'assistant');
         this.animation.setCileoState('thinking', { duration: 1400, nextState: 'welcome' });
       }
     }

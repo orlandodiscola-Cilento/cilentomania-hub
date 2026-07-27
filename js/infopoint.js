@@ -3,18 +3,21 @@ function initInfopointData(data){
 }
 
 let infopoints=[];
-function buildInfopointsHtml(){ return `<button class="nearby-infopoint" type="button" onclick="findNearestInfopoint()">Trova l'Infopoint più vicino</button>
+const infopointI18n=window.CilentomaniaI18n;
+const infopointT=(key,fallback,params)=>infopointI18n?.t?infopointI18n.t(key,fallback,params):fallback;
+
+function buildInfopointsHtml(){ return `<button class="nearby-infopoint" type="button" onclick="findNearestInfopoint()">${infopointT('infopoints.findNearest',"Trova l'Infopoint più vicino")}</button>
 <div id="infopointGeoStatus" class="notice" style="display:none"></div>
-<div class="notice">Consulta indirizzi e contatti ufficiali della rete Infopoint Cilentomania.</div>
+<div class="notice">${infopointT('infopoints.networkNotice','Consulta indirizzi e contatti ufficiali della rete Infopoint Cilentomania.')}</div>
 <div class="panel-grid">${infopoints.map((x,i)=>`<article class="item infopoint-item" data-infopoint="${i}">
 <h3>${x.name}</h3>
-<p><strong>Indirizzo</strong><br>${x.address}</p>
-${x.phone?`<p><strong>Telefono</strong><br>${x.phone}</p>`:''}
-<p><strong>Email</strong><br><a href="mailto:${x.email}" style="color:var(--blue2);font-weight:800">${x.email}</a></p>
+<p><strong>${infopointT('infopoints.address','Indirizzo')}</strong><br>${x.address}</p>
+${x.phone?`<p><strong>${infopointT('infopoints.phone','Telefono')}</strong><br>${x.phone}</p>`:''}
+<p><strong>${infopointT('infopoints.email','Email')}</strong><br><a href="mailto:${x.email}" style="color:var(--blue2);font-weight:800">${x.email}</a></p>
 <div class="actions">
-${x.phone?`<a href="tel:${x.phone}">Chiama</a>`:''}
-<a href="mailto:${x.email}">Scrivi</a>
-<a href="https://www.google.com/maps/dir/?api=1&destination=${x.coordinates}" target="_blank" rel="noopener">Come raggiungerci</a>
+${x.phone?`<a href="tel:${x.phone}">${infopointT('infopoints.call','Chiama')}</a>`:''}
+<a href="mailto:${x.email}">${infopointT('infopoints.write','Scrivi')}</a>
+<a href="https://www.google.com/maps/dir/?api=1&destination=${x.coordinates}" target="_blank" rel="noopener">${infopointT('infopoints.directions','Come raggiungerci')}</a>
 </div></article>`).join('')}</div>`; }
 
 function distanceKm(lat1,lon1,lat2,lon2){
@@ -31,11 +34,11 @@ function findNearestInfopoint(){
  const status=document.getElementById('infopointGeoStatus');
  if(!navigator.geolocation){
    status.style.display='block';
-   status.textContent='La geolocalizzazione non è supportata da questo dispositivo.';
+   status.textContent=infopointT('infopoints.geoUnsupported','La geolocalizzazione non è supportata da questo dispositivo.');
    return;
  }
  status.style.display='block';
- status.textContent='Sto cercando l’Infopoint più vicino…';
+ status.textContent=infopointT('infopoints.geoSearching','Sto cercando l\'Infopoint più vicino…');
  navigator.geolocation.getCurrentPosition(position=>{
    let nearestIndex=0;
    let nearestDistance=Infinity;
@@ -58,8 +61,8 @@ function findNearestInfopoint(){
      card.classList.add('nearest');
      card.scrollIntoView({behavior:'smooth',block:'center'});
    }
-   status.innerHTML=`L’Infopoint più vicino è <strong>${infopoints[nearestIndex].name}</strong>, a circa ${nearestDistance.toFixed(1)} km.`;
+   status.textContent=infopointT('infopoints.geoNearest',"L'Infopoint più vicino è {name}, a circa {distance} km.",{name:infopoints[nearestIndex].name,distance:nearestDistance.toFixed(1)});
  },()=>{
-   status.textContent='Non è stato possibile rilevare la posizione. Verifica di aver autorizzato la geolocalizzazione.';
+   status.textContent=infopointT('infopoints.geoDenied','Non è stato possibile rilevare la posizione. Verifica di aver autorizzato la geolocalizzazione.');
  },{enableHighAccuracy:true,timeout:10000,maximumAge:60000});
 }

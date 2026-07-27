@@ -18,7 +18,7 @@
 <meta name="twitter:title" content="Cilentomania | Il tuo assistente di viaggio nel Cilento">
 <meta name="twitter:description" content="Scopri il Cilento con Cilentomania: Comuni, borghi, eventi, esperienze, itinerari, infopoint, strutture, ristorazione e servizi utili per il tuo viaggio.">
 <meta name="twitter:image" content="https://www.cilentomania.it/assets/hero-palinuro.jpg">
-<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/main.css?v=20260727-4">
 <link rel="stylesheet" href="css/territory.css">
 <link rel="stylesheet" href="css/infopoint.css">
 <link rel="stylesheet" href="css/events.css">
@@ -27,37 +27,46 @@
 <link rel="stylesheet" href="css/cileo.css?v=20260726-2">
 </head>
 <body>
-<header class="topbar"><img src="images/logo-cilentomania-hub.png" alt="Cilentomania HUB"></header>
+<header class="topbar">
+  <img src="images/logo-cilentomania-hub.png" alt="Cilentomania HUB">
+  <div class="language-selector" data-language-selector>
+    <button type="button" class="language-selector__trigger" data-language-trigger aria-haspopup="menu" aria-expanded="false" data-i18n-aria-label="language.selector" data-i18n-title="language.selector">
+      <img class="language-selector__current language-selector-current-flag" data-language-current src="assets/flags/it.svg" alt="" aria-hidden="true">
+      <span class="language-selector__chevron" aria-hidden="true">▾</span>
+    </button>
+    <div class="language-selector__menu" data-language-menu role="menu" aria-label="Lingue disponibili"></div>
+  </div>
+</header>
 <section class="hero" data-hero-slider data-hero-config="data/home-hero.json">
   <div class="hero__slides" aria-hidden="true">
     <img class="hero__slide" data-hero-slide alt="" aria-hidden="true">
     <img class="hero__slide" data-hero-slide alt="" aria-hidden="true">
   </div>
   <div class="hero-inner">
-    <h1>Il tuo assistente di viaggio nel Cilento</h1>
-    <p class="lead">Scopri il Cilento, il Vallo di Diano e gli Alburni attraverso luoghi, esperienze e servizi selezionati.</p>
+    <h1 data-i18n="home.title">Il tuo assistente di viaggio nel Cilento</h1>
+    <p class="lead" data-i18n="home.subtitle">Scopri il Cilento, il Vallo di Diano e gli Alburni attraverso luoghi, esperienze e servizi selezionati.</p>
     <div class="quick">
       <a data-site-contact="whatsapp"><span class="contact-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20.5 3.5A11.8 11.8 0 0 0 12.1 0C5.6 0 .3 5.3.3 11.8c0 2.1.5 4.1 1.6 5.9L.2 24l6.5-1.7a11.8 11.8 0 0 0 5.4 1.4c6.5 0 11.8-5.3 11.8-11.8 0-3.2-1.2-6.1-3.4-8.4Zm-8.4 18.2c-1.8 0-3.6-.5-5.1-1.4l-.4-.2-3.8 1 1-3.7-.2-.4a9.8 9.8 0 1 1 8.5 4.7Zm5.4-7.3c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.2-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-1.7-.8-2.8-1.5-4-3.4-.3-.5.3-.5.8-1.5.1-.2 0-.4 0-.6L9.3 7c-.2-.6-.5-.5-.7-.5H8c-.2 0-.6.1-.9.4-.3.3-1.2 1.2-1.2 2.9s1.2 3.3 1.4 3.5c.2.2 2.4 3.7 5.9 5.2 2.2.9 3 .9 4.1.8.7-.1 1.7-.7 1.9-1.3.2-.6.2-1.2.2-1.3-.1-.1-.3-.2-.6-.4Z"/></svg></span><span>WhatsApp</span></a>
       <a data-site-contact="email"><span class="contact-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h16a2 2 0 0 0 2-2V6c0-1.1-.9-2-2-2Zm0 4-8 5-8-5V6l8 5 8-5v2Z"/></svg></span><span>Mail</span></a>
       <a data-site-contact="numeroVerde"><span class="contact-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6.6 10.8a15.5 15.5 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1l-2.3 2.2Z"/></svg></span><span>Numero Verde</span></a>
     </div>
-    <div class="social"><span>Seguici</span><a data-site-contact="facebook" aria-label="Facebook"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M14 8h3V4h-3c-3.3 0-5 2-5 5v2H6v4h3v9h4v-9h3.4l.6-4h-4V9c0-.7.3-1 1-1Z"/></svg></a><a data-site-contact="instagram" aria-label="Instagram"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm10.5 1.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/></svg></a></div>
-    <div class="search-row"><input id="globalSearch" placeholder="Cerca un Comune, un luogo o un'esperienza"><button id="searchBtn">Cerca</button></div>
-    <button class="nearby" id="nearbyBtn">⌖ Cosa c'è vicino a me?</button>
+    <div class="social"><span data-i18n="home.followUs">Seguici</span><a data-site-contact="facebook" aria-label="Facebook"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M14 8h3V4h-3c-3.3 0-5 2-5 5v2H6v4h3v9h4v-9h3.4l.6-4h-4V9c0-.7.3-1 1-1Z"/></svg></a><a data-site-contact="instagram" aria-label="Instagram"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm10.5 1.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/></svg></a></div>
+    <div class="search-row"><input id="globalSearch" data-i18n-placeholder="home.searchPlaceholder" placeholder="Cerca un Comune, un luogo o un'esperienza"><button id="searchBtn" data-i18n="home.searchButton">Cerca</button></div>
+    <button class="nearby" id="nearbyBtn" data-i18n="home.nearby">⌖ Cosa c'è vicino a me?</button>
   </div>
 </section>
 
 <main>
-<section class="modules" id="homeModules" aria-label="Servizi principali"></section>
+<section class="modules" id="homeModules" aria-label="Servizi principali" data-i18n-aria-label="home.mainServices"></section>
 
 <section class="explore ds-banner" aria-labelledby="explore-title">
   <img class="explore__image ds-banner__media" src="assets/hero-palinuro.jpg" alt="" aria-hidden="true" loading="lazy">
   <span class="explore__overlay ds-banner__overlay" aria-hidden="true"></span>
   <span class="explore__content ds-banner__content">
-    <span class="explore__kicker">Cilento, Vallo di Diano e Alburni</span>
-    <span class="explore__title" id="explore-title">Esplora il Territorio</span>
-    <span class="explore__description">Scopri Comuni, borghi e località del Cilento.</span>
-    <button class="explore__cta ds-cta" id="exploreBtn" type="button">Inizia a esplorare <span aria-hidden="true">→</span></button>
+    <span class="explore__kicker" data-i18n="home.exploreKicker">Cilento, Vallo di Diano e Alburni</span>
+    <span class="explore__title" id="explore-title" data-i18n="home.exploreTitle">Esplora il Territorio</span>
+    <span class="explore__description" data-i18n="home.exploreDescription">Scopri Comuni, borghi e località del Cilento.</span>
+    <button class="explore__cta ds-cta" id="exploreBtn" type="button"><span data-i18n="home.exploreCta">Inizia a esplorare</span> <span aria-hidden="true">→</span></button>
   </span>
 </section>
 
@@ -73,7 +82,7 @@
   </div>
 </section>
 
-<div class="section-head ds-section-heading"><div><h2>Da non perdere</h2><p>Luoghi simbolo e grandi attrattori da inserire nel tuo viaggio.</p></div></div>
+<div class="section-head ds-section-heading"><div><h2 data-i18n="home.highlightsTitle">Da non perdere</h2><p data-i18n="home.highlightsSubtitle">Luoghi simbolo e grandi attrattori da inserire nel tuo viaggio.</p></div></div>
 <section class="features">
     <article class="feature-card">
       <img src="https://parchipaestumvelia.cultura.gov.it/wp-content/uploads/2024/04/tempionettuno-1024x626.jpg" alt="Parco archeologico di Paestum" loading="lazy" onerror="this.style.display='none'">
@@ -81,7 +90,7 @@
         <small>Capaccio Paestum</small>
         <h3>Parco archeologico di Paestum</h3>
         <p>Templi, museo e storia della Magna Grecia.</p>
-        <button class="text-btn" data-detail="0">Apri scheda</button>
+        <button class="text-btn" data-detail="0" data-i18n="overlay.openSheet">Apri scheda</button>
       </div>
     </article>
 
@@ -91,7 +100,7 @@
         <small>Castellabate</small>
         <h3>Borgo di Castellabate</h3>
         <p>Uno dei borghi più suggestivi della costa cilentana.</p>
-        <button class="text-btn" data-detail="1">Apri scheda</button>
+        <button class="text-btn" data-detail="1" data-i18n="overlay.openSheet">Apri scheda</button>
       </div>
     </article>
 
@@ -101,7 +110,7 @@
         <small>Ascea</small>
         <h3>Area archeologica di Velia</h3>
         <p>La città di Parmenide, tra archeologia e paesaggio.</p>
-        <button class="text-btn" data-detail="2">Apri scheda</button>
+        <button class="text-btn" data-detail="2" data-i18n="overlay.openSheet">Apri scheda</button>
       </div>
     </article>
 
@@ -111,7 +120,7 @@
         <small>Padula</small>
         <h3>Certosa di San Lorenzo</h3>
         <p>Un capolavoro monumentale nel Vallo di Diano.</p>
-        <button class="text-btn" data-detail="3">Apri scheda</button>
+        <button class="text-btn" data-detail="3" data-i18n="overlay.openSheet">Apri scheda</button>
       </div>
     </article>
 
@@ -121,7 +130,7 @@
         <small>Pertosa</small>
         <h3>Grotte di Pertosa-Auletta</h3>
         <p>Un viaggio sotterraneo tra acqua, roccia e natura.</p>
-        <button class="text-btn" data-detail="4">Apri scheda</button>
+        <button class="text-btn" data-detail="4" data-i18n="overlay.openSheet">Apri scheda</button>
       </div>
     </article>
 
@@ -131,7 +140,7 @@
         <small>Castelcivita</small>
         <h3>Grotte di Castelcivita</h3>
         <p>Tra le cavità più affascinanti degli Alburni.</p>
-        <button class="text-btn" data-detail="5">Apri scheda</button>
+        <button class="text-btn" data-detail="5" data-i18n="overlay.openSheet">Apri scheda</button>
       </div>
     </article>
 
@@ -141,7 +150,7 @@
         <small>Camerota</small>
         <h3>Baia degli Infreschi</h3>
         <p>Mare cristallino e costa protetta.</p>
-        <button class="text-btn" data-detail="6">Apri scheda</button>
+        <button class="text-btn" data-detail="6" data-i18n="overlay.openSheet">Apri scheda</button>
       </div>
     </article>
 
@@ -151,46 +160,52 @@
         <small>Centola</small>
         <h3>Capo Palinuro</h3>
         <p>Falesie, grotte marine e panorami iconici.</p>
-        <button class="text-btn" data-detail="7">Apri scheda</button>
+        <button class="text-btn" data-detail="7" data-i18n="overlay.openSheet">Apri scheda</button>
       </div>
     </article></section>
 
 <section data-customer-satisfaction data-customer-satisfaction-config="data/customer-satisfaction.json" hidden aria-live="polite"></section>
 
 <section class="partners">
-<h2>I nostri Partner</h2>
+<h2 data-i18n="home.partnersTitle">I nostri Partner</h2>
 <div class="partner-grid" id="partnerGridContent">
 </div>
 </section>
 </main>
-<footer>Cilentomania APS · Promozione e accoglienza turistica nel Cilento</footer>
+<footer data-i18n="home.footer">Cilentomania APS · Promozione e accoglienza turistica nel Cilento</footer>
 
 <nav class="navigation-dock territory-fixed-nav navigation-dock--page" data-navigation-dock data-navigation-scope="page" data-top-threshold="320" data-scroll-container="window" aria-label="Navigazione pagina">
-  <button class="scroll-navigation-button territory-fixed-button territory-fixed-top hidden" id="homeTop" type="button" data-navigation-action="top" aria-label="Torna in alto" title="Torna in alto"><span aria-hidden="true">↑</span></button>
+  <button class="scroll-navigation-button territory-fixed-button territory-fixed-top hidden" id="homeTop" type="button" data-navigation-action="top" aria-label="Torna in alto" title="Torna in alto" data-i18n-aria-label="home.backToTop" data-i18n-title="home.backToTop"><span aria-hidden="true">↑</span></button>
 </nav>
 
 <div class="overlay" id="overlay">
   <section class="panel ds-modal-surface">
-    <button class="close" id="closePanel">×</button>
+    <button class="close" id="closePanel" data-i18n-aria-label="overlay.close" data-i18n-title="overlay.close" aria-label="Chiudi" title="Chiudi">×</button>
     <div id="panelContent"></div>
   </section>
 </div>
 
-<script src="js/territory.js"></script>
-<script src="js/infopoint.js"></script>
-<script src="js/events.js"></script>
-<script src="js/search.js"></script>
+<script src="js/i18n.js?v=20260727-4"></script>
+<script>
+window.CilentomaniaI18n?.init?.().catch(function (error) {
+  console.warn('i18n: inizializzazione non disponibile', error);
+});
+</script>
+<script src="js/territory.js?v=20260727-4"></script>
+<script src="js/infopoint.js?v=20260727-4"></script>
+<script src="js/events.js?v=20260727-4"></script>
+<script src="js/search.js?v=20260727-4"></script>
 <script src="js/design-system.js"></script>
 <script src="js/site-config.js"></script>
 <script src="js/hero-slider.js"></script>
 <script src="js/customer-satisfaction.js"></script>
 <script src="js/seo-manager.js"></script>
 <script src="js/seo-bootstrap.js"></script>
-<script src="js/app.js"></script>
+<script src="js/app.js?v=20260727-4"></script>
 <script src="js/cileo-animation.js?v=20260726-2"></script>
 <script src="js/cileo-demo.js?v=20260726-2"></script>
-<script src="js/cileo-ui.js?v=20260727-2"></script>
+<script src="js/cileo-ui.js?v=20260727-4"></script>
 <script src="js/cileo-api-client.js?v=20260727-1"></script>
-<script src="js/cileo.js?v=20260727-2"></script>
+<script src="js/cileo.js?v=20260727-4"></script>
 </body>
 </html>

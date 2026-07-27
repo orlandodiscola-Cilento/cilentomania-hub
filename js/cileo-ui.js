@@ -37,28 +37,41 @@
       this.bind();
       this.setSuggestionState('conversation');
       this.updateViewport();
+      this.applyI18n();
+      document.addEventListener('cilentomania:languagechange', () => this.applyI18n());
+    }
+
+    t(key, fallback, params) {
+      const i18n = window.CilentomaniaI18n;
+      return i18n?.t ? i18n.t(key, fallback, params) : fallback;
+    }
+
+    applyI18n() {
+      window.CilentomaniaI18n?.applyTranslations?.(this.root);
+      this.syncSuggestionControls();
     }
 
     build() {
       const root = document.createElement('aside');
       root.className = 'cileo';
       root.setAttribute('aria-label', 'Cilentino, guida digitale di Cilentomania');
+      root.setAttribute('data-i18n-aria-label', 'chat.ariaRoot');
       root.innerHTML = `
         <div class="cileo__bubble" data-cileo-bubble role="status" hidden>
-          <strong>Ciao, sono Cilentino <span aria-hidden="true">👋</span></strong>
-          <span>La guida digitale di Cilentomania.</span>
-          <span>Sarò il tuo compagno di viaggio alla scoperta del Parco Nazionale del Cilento, Vallo di Diano e Alburni.</span>
+          <strong><span data-i18n="chat.greeting">Ciao, sono Cilentino</span> <span aria-hidden="true">👋</span></strong>
+          <span data-i18n="chat.subtitle">La guida digitale di Cilentomania.</span>
+          <span data-i18n="chat.intro">Sarò il tuo compagno di viaggio alla scoperta del Parco Nazionale del Cilento, Vallo di Diano e Alburni.</span>
         </div>
         <section class="cileo__panel" data-cileo-panel role="dialog" aria-modal="false" aria-labelledby="cileo-title" hidden>
           <header class="cileo__header">
-            <div class="cileo__header-copy"><h2 id="cileo-title">Ciao, sono Cilentino</h2><p>La guida digitale di Cilentomania</p><p>Sarò il tuo compagno di viaggio alla scoperta del Parco Nazionale del Cilento, Vallo di Diano e Alburni.</p></div>
+            <div class="cileo__header-copy"><h2 id="cileo-title" data-i18n="chat.greeting">Ciao, sono Cilentino</h2><p data-i18n="chat.subtitle">La guida digitale di Cilentomania</p><p data-i18n="chat.intro">Sarò il tuo compagno di viaggio alla scoperta del Parco Nazionale del Cilento, Vallo di Diano e Alburni.</p></div>
             <div class="cileo__header-actions">
-              <button class="cileo-header-action cileo__close" data-cileo-close type="button" aria-label="Chiudi Cilentino">
+              <button class="cileo-header-action cileo__close" data-cileo-close type="button" aria-label="Chiudi chat" data-i18n-aria-label="chat.closeAria">
                 <svg aria-hidden="true" viewBox="0 0 20 20" focusable="false">
                   <path d="M5 5 15 15M15 5 5 15" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2.1"/>
                 </svg>
               </button>
-              <button class="cileo-header-action cileo__clear" data-cileo-clear type="button" aria-label="Cancella chat" title="Cancella chat">
+              <button class="cileo-header-action cileo__clear" data-cileo-clear type="button" aria-label="Cancella chat" title="Cancella chat" data-i18n-aria-label="chat.clearAria" data-i18n-title="chat.clearTitle">
                 <svg aria-hidden="true" viewBox="0 0 20 20" focusable="false">
                   <path d="M7.25 3.75h5.5m-8 1.75h10.5m-9.25 0 .6 9a1.5 1.5 0 0 0 1.5 1.4h3.8a1.5 1.5 0 0 0 1.5-1.4l.6-9m-5.1 2.2v5.1m2.6-5.1v5.1" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
                 </svg>
@@ -67,27 +80,27 @@
           </header>
           <div class="cileo__content" data-cileo-content>
             <div class="cileo__messages" data-cileo-messages aria-live="polite"></div>
-            <div class="cileo__actions" id="cileo-suggestions" data-cileo-actions aria-label="Azioni rapide"></div>
-            <button class="cileo__suggestions-toggle" data-cileo-suggestions-toggle type="button" aria-expanded="false" aria-controls="cileo-suggestions">Suggerimenti</button>
+            <div class="cileo__actions" id="cileo-suggestions" data-cileo-actions aria-label="Azioni rapide" data-i18n-aria-label="chat.quickActionsAria"></div>
+            <button class="cileo__suggestions-toggle" data-cileo-suggestions-toggle type="button" aria-expanded="false" aria-controls="cileo-suggestions" data-i18n="chat.suggestionsOpen">Suggerimenti</button>
           </div>
           <form class="cileo__form" data-cileo-form>
-            <label class="cileo__sr-only" for="cileo-input">Scrivi a Cilentino</label>
-            <input id="cileo-input" data-cileo-input autocomplete="off" placeholder="Chiedi a Cilentino..." maxlength="300">
-            <button type="submit" aria-label="Invia messaggio"><span aria-hidden="true">&#8593;</span></button>
+            <label class="cileo__sr-only" for="cileo-input" data-i18n="chat.inputLabel">Scrivi a Cilentino</label>
+            <input id="cileo-input" data-cileo-input autocomplete="off" placeholder="Chiedi a Cilentino..." maxlength="300" data-i18n-placeholder="chat.inputPlaceholder">
+            <button type="submit" aria-label="Invia messaggio" data-i18n-aria-label="chat.sendAria"><span aria-hidden="true">&#8593;</span></button>
           </form>
           <div class="cileo__confirm" data-cileo-confirm hidden>
             <div class="cileo__confirm-backdrop" data-cileo-confirm-cancel></div>
             <section class="cileo__confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="cileo-confirm-title" aria-describedby="cileo-confirm-description">
-              <h3 id="cileo-confirm-title">Cancella chat</h3>
-              <p id="cileo-confirm-description">Vuoi cancellare questa conversazione?</p>
+              <h3 id="cileo-confirm-title" data-i18n="chat.confirmTitle">Cancella chat</h3>
+              <p id="cileo-confirm-description" data-i18n="chat.confirmDescription">Vuoi cancellare questa conversazione?</p>
               <div class="cileo__confirm-actions">
-                <button type="button" class="cileo__confirm-cancel" data-cileo-confirm-cancel>Annulla</button>
-                <button type="button" class="cileo__confirm-delete" data-cileo-confirm-delete>Cancella</button>
+                <button type="button" class="cileo__confirm-cancel" data-cileo-confirm-cancel data-i18n="chat.confirmCancel">Annulla</button>
+                <button type="button" class="cileo__confirm-delete" data-cileo-confirm-delete data-i18n="chat.confirmDelete">Cancella</button>
               </div>
             </section>
           </div>
         </section>
-        <button class="cileo__launcher" data-cileo-launcher type="button" aria-label="Apri Cilentino" aria-expanded="false"></button>
+        <button class="cileo__launcher" data-cileo-launcher type="button" aria-label="Apri chat" aria-expanded="false" data-i18n-aria-label="chat.launcherOpenAria"></button>
         <div class="cileo__avatar-visual" aria-hidden="true">
           <img data-cileo-avatar alt="Cilentino, guida digitale di Cilentomania">
           <span class="cileo__online" aria-hidden="true"></span>
@@ -240,8 +253,12 @@
       const isExpanded = this.suggestionState === 'suggestions-open';
       const availableActions = (this.currentActions || this.primaryActions || []).length;
       this.elements.suggestionsToggle.hidden = availableActions === 0;
-      this.elements.suggestionsToggle.textContent = isExpanded ? 'Chiudi suggerimenti' : 'Suggerimenti';
-      this.elements.suggestionsToggle.setAttribute('aria-label', isExpanded ? 'Chiudi suggerimenti' : 'Apri suggerimenti');
+      this.elements.suggestionsToggle.textContent = isExpanded
+        ? this.t('chat.suggestionsClose', 'Chiudi suggerimenti')
+        : this.t('chat.suggestionsOpen', 'Suggerimenti');
+      this.elements.suggestionsToggle.setAttribute('aria-label', isExpanded
+        ? this.t('chat.suggestionsClose', 'Chiudi suggerimenti')
+        : this.t('chat.suggestionsOpen', 'Suggerimenti'));
       this.elements.suggestionsToggle.setAttribute('aria-expanded', String(isExpanded));
     }
 
@@ -321,7 +338,7 @@
     showTyping() {
       const typing = document.createElement('div');
       typing.className = 'cileo__message cileo__message--assistant cileo__typing';
-      typing.setAttribute('aria-label', 'Cilentino sta scrivendo');
+      typing.setAttribute('aria-label', this.t('chat.typingAria', 'Cilentino sta scrivendo'));
       typing.innerHTML = '<i></i><i></i><i></i>';
       this.elements.messages.appendChild(typing);
       this.scheduleContentScroll();
@@ -345,7 +362,7 @@
       this.hideBubble();
       this.elements.panel.hidden = false;
       this.elements.launcher.setAttribute('aria-expanded', 'true');
-      this.elements.launcher.setAttribute('aria-label', 'Cilentino aperto');
+      this.elements.launcher.setAttribute('aria-label', this.t('chat.launcherCloseAria', 'Chat aperta'));
       this.root.classList.add('is-open');
       this.lockPageScroll();
       this.updateViewport();
@@ -366,7 +383,7 @@
       }
       this.elements.panel.hidden = true;
       this.elements.launcher.setAttribute('aria-expanded', 'false');
-      this.elements.launcher.setAttribute('aria-label', 'Apri Cilentino');
+      this.elements.launcher.setAttribute('aria-label', this.t('chat.launcherOpenAria', 'Apri chat'));
       this.unlockPageScroll();
       this.options.onClose();
       this.lastFocus?.focus?.();
