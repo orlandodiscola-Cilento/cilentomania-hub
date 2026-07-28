@@ -28,6 +28,48 @@
     "adatto_famiglie": true,
     "opzioni_vegetariane": true,
     "opzioni_senza_glutine": true,
+    "translations": {
+      "en": {
+        "nome": "Technical Demo Restaurant 1",
+        "categoria": "Restaurant",
+        "localita": "Castellabate historic center",
+        "descrizione_breve": "Technical draft used to test the dedicated view and cuisine/time filters.",
+        "descrizione_completa": "This demo business is used to validate the full detail layout and practical information links without introducing unverified commercial data.",
+        "tipologie_cucina": ["Cilento cuisine", "seafood"],
+        "servizi": ["Vegetarian menu", "Lunch service", "Booking"],
+        "periodo_apertura": "All year"
+      },
+      "de": {
+        "nome": "Technisches Demo-Restaurant 1",
+        "categoria": "Restaurant",
+        "localita": "Historisches Zentrum von Castellabate",
+        "descrizione_breve": "Technischer Entwurf zum Testen der Detailansicht sowie der Kuche- und Zeitfilter.",
+        "descrizione_completa": "Dieser Demodatensatz dient zur Prufung der vollstandigen Detailseite und der praktischen Informationen, ohne nicht verifizierte kommerzielle Inhalte zu verwenden.",
+        "tipologie_cucina": ["Cilento-Kuche", "Fisch"],
+        "servizi": ["Vegetarisches Menu", "Mittagsservice", "Reservierung"],
+        "periodo_apertura": "Ganzjahrig"
+      },
+      "fr": {
+        "nome": "Restaurant de demonstration technique 1",
+        "categoria": "Restaurant",
+        "localita": "Centre historique de Castellabate",
+        "descrizione_breve": "Brouillon technique pour tester la vue dediee et les filtres cuisine/horaires.",
+        "descrizione_completa": "Cette activite de demonstration permet de verifier la structure de la fiche detaillee et les liens vers les informations pratiques, sans ajouter de donnees commerciales non verifiees.",
+        "tipologie_cucina": ["cuisine du Cilento", "poisson"],
+        "servizi": ["Menu vegetarien", "Service du midi", "Reservation"],
+        "periodo_apertura": "Toute l'annee"
+      },
+      "es": {
+        "nome": "Restaurante de demostracion tecnica 1",
+        "categoria": "Restaurante",
+        "localita": "Centro historico de Castellabate",
+        "descrizione_breve": "Borrador tecnico para probar la vista dedicada y los filtros de cocina y horario.",
+        "descrizione_completa": "Este negocio de demostracion permite comprobar la estructura completa de la ficha y los enlaces a informacion practica, sin introducir datos comerciales no verificados.",
+        "tipologie_cucina": ["cocina del Cilento", "pescado"],
+        "servizi": ["Menu vegetariano", "Servicio de almuerzo", "Reserva"],
+        "periodo_apertura": "Todo el ano"
+      }
+    },
     "stato_pubblicazione": "bozza tecnica"
   },
   {
@@ -58,6 +100,48 @@
     "adatto_famiglie": true,
     "opzioni_vegetariane": false,
     "opzioni_senza_glutine": false,
+    "translations": {
+      "en": {
+        "nome": "Technical Demo Restaurant 2",
+        "categoria": "Pizzeria",
+        "localita": "Santa Maria di Castellabate",
+        "descrizione_breve": "Technical draft to test filters for pizza, meat, and dinner opening.",
+        "descrizione_completa": "This demo record is used to verify rendering for service and price filters without using real commercial references.",
+        "tipologie_cucina": ["pizza", "meat"],
+        "servizi": ["Wood-fired pizza", "Takeaway", "Evening service"],
+        "periodo_apertura": "From May to September"
+      },
+      "de": {
+        "nome": "Technisches Demo-Restaurant 2",
+        "categoria": "Pizzeria",
+        "localita": "Santa Maria di Castellabate",
+        "descrizione_breve": "Technischer Entwurf zum Testen der Filter fur Pizza, Fleisch und Abendoffnung.",
+        "descrizione_completa": "Dieser Demodatensatz dient zur Prufung der Darstellung von Service- und Preisfiltern ohne reale kommerzielle Angaben.",
+        "tipologie_cucina": ["Pizza", "Fleisch"],
+        "servizi": ["Pizza aus dem Holzofen", "Zum Mitnehmen", "Abendservice"],
+        "periodo_apertura": "Von Mai bis September"
+      },
+      "fr": {
+        "nome": "Restaurant de demonstration technique 2",
+        "categoria": "Pizzeria",
+        "localita": "Santa Maria di Castellabate",
+        "descrizione_breve": "Brouillon technique pour tester les filtres pizza, viande et ouverture le soir.",
+        "descrizione_completa": "Cet enregistrement de demonstration sert a verifier le rendu des filtres services et prix sans references commerciales reelles.",
+        "tipologie_cucina": ["pizza", "viande"],
+        "servizi": ["Pizza au four a bois", "A emporter", "Service du soir"],
+        "periodo_apertura": "De mai a septembre"
+      },
+      "es": {
+        "nome": "Restaurante de demostracion tecnica 2",
+        "categoria": "Pizzeria",
+        "localita": "Santa Maria di Castellabate",
+        "descrizione_breve": "Borrador tecnico para probar filtros de pizza, carne y apertura por la noche.",
+        "descrizione_completa": "Este registro de demostracion sirve para verificar el renderizado de filtros de servicios y precios sin referencias comerciales reales.",
+        "tipologie_cucina": ["pizza", "carne"],
+        "servizi": ["Pizza en horno de lena", "Para llevar", "Servicio nocturno"],
+        "periodo_apertura": "De mayo a septiembre"
+      }
+    },
     "stato_pubblicazione": "bozza tecnica"
   },
   {
@@ -88,6 +172,48 @@
     "adatto_famiglie": false,
     "opzioni_vegetariane": true,
     "opzioni_senza_glutine": false,
+    "translations": {
+      "en": {
+        "nome": "Technical Demo Restaurant 3",
+        "categoria": "Trattoria",
+        "localita": "Licosa",
+        "descrizione_breve": "Technical draft to verify the full detail view with gallery and contacts.",
+        "descrizione_completa": "This demo business is used to test call, contact, and directions actions inside the dedicated detail page.",
+        "tipologie_cucina": ["Cilento cuisine", "seafood", "vegetarian"],
+        "servizi": ["Terrace", "Family menu", "Booking"],
+        "periodo_apertura": "All year"
+      },
+      "de": {
+        "nome": "Technisches Demo-Restaurant 3",
+        "categoria": "Trattoria",
+        "localita": "Licosa",
+        "descrizione_breve": "Technischer Entwurf zur Prufung der vollstandigen Detailseite mit Galerie und Kontakten.",
+        "descrizione_completa": "Dieser Demodatensatz dient zum Testen von Anruf-, Kontakt- und Routenaktionen in der Detailansicht.",
+        "tipologie_cucina": ["Cilento-Kuche", "Fisch", "Vegetarisch"],
+        "servizi": ["Terrasse", "Familienmenu", "Reservierung"],
+        "periodo_apertura": "Ganzjahrig"
+      },
+      "fr": {
+        "nome": "Restaurant de demonstration technique 3",
+        "categoria": "Trattoria",
+        "localita": "Licosa",
+        "descrizione_breve": "Brouillon technique pour verifier la fiche complete avec galerie et contacts.",
+        "descrizione_completa": "Cette activite de demonstration permet de tester les actions d'appel, de contact et d'itineraire dans la fiche detaillee.",
+        "tipologie_cucina": ["cuisine du Cilento", "poisson", "vegetarien"],
+        "servizi": ["Terrasse", "Menu famille", "Reservation"],
+        "periodo_apertura": "Toute l'annee"
+      },
+      "es": {
+        "nome": "Restaurante de demostracion tecnica 3",
+        "categoria": "Trattoria",
+        "localita": "Licosa",
+        "descrizione_breve": "Borrador tecnico para verificar la ficha completa con galeria y contactos.",
+        "descrizione_completa": "Este negocio de demostracion sirve para probar acciones de llamada, contacto e indicaciones dentro de la ficha detallada.",
+        "tipologie_cucina": ["cocina del Cilento", "pescado", "vegetariano"],
+        "servizi": ["Terraza", "Menu familiar", "Reserva"],
+        "periodo_apertura": "Todo el ano"
+      }
+    },
     "stato_pubblicazione": "bozza tecnica"
   }
 ]

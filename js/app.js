@@ -23,11 +23,26 @@ function createModules(itineraries){
  };
 }
 
-function bindApplication(modules){
+function bindModuleLaunchers(getModules){
+ document.querySelectorAll('[data-module]').forEach(button=>button.addEventListener('click',()=>{
+  const key=button.dataset.module;
+  const modules=getModules();
+  const module=modules[key];
+  if(!module)return;
+  if(key==='events'){
+   eventsVisibleLimit=MAX_EVENTS_HOME;
+   module.html=buildEventsHtml();
+  }
+  openPanel(module.title,module.html);
+  if(key==='events')setTimeout(()=>{loadEventsArchive();},0);
+ }));
+}
+
+function bindApplication(getModules){
  document.getElementById('closePanel').addEventListener('click',closePanel);
 overlay.addEventListener('click',e=>{if(e.target===overlay)closePanel();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closePanel();});
-document.querySelectorAll('[data-module]').forEach(b=>b.addEventListener('click',()=>{const key=b.dataset.module,m=modules[key];if(key==='events'){eventsVisibleLimit=MAX_EVENTS_HOME;m.html=buildEventsHtml();}openPanel(m.title,m.html);if(key==='events')setTimeout(()=>{loadEventsArchive();},0);}));
+bindModuleLaunchers(getModules);
 document.getElementById('exploreBtn').addEventListener('click',()=>openPanel(t('overlay.exploreTerritory','Esplora il Territorio'),townSelector('Cerca e seleziona un Comune.')));
 document.querySelectorAll('[data-detail]').forEach(b=>b.addEventListener('click',()=>{
  const i=Number(b.dataset.detail),x=featured[i];
@@ -82,10 +97,12 @@ async function initApplication(){
  initEventsData(eventData);
  renderPartners(partners);
  renderHomeModules(homeModules);
- bindApplication(createModules(itineraries));
+ const getModules=()=>createModules(itineraries);
+ bindApplication(getModules);
 
  document.addEventListener('cilentomania:languagechange',()=>{
   renderHomeModules(homeModules);
+  bindModuleLaunchers(getModules);
  });
 }
 

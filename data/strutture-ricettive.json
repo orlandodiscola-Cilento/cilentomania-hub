@@ -26,6 +26,48 @@
     "adatto_famiglie": true,
     "aperto_tutto_anno": true,
     "distanza_mare_metri": 600,
+    "translations": {
+      "en": {
+        "nome": "Technical Demo Accommodation 1",
+        "categoria": "Bed and Breakfast",
+        "localita": "Castellabate historic center",
+        "descrizione_breve": "Technical draft to test section layout and dedicated filters.",
+        "descrizione_completa": "This record represents a technical draft entry used only to validate data structure and rendering of supporting information.",
+        "servizi": ["Wi-Fi", "Breakfast included", "Parking"],
+        "fascia_prezzo": "EUR EUR",
+        "periodo_apertura": "All year"
+      },
+      "de": {
+        "nome": "Technische Demo-Unterkunft 1",
+        "categoria": "Bed and Breakfast",
+        "localita": "Historisches Zentrum von Castellabate",
+        "descrizione_breve": "Technischer Entwurf zum Testen von Layout und Filtern der Detailansicht.",
+        "descrizione_completa": "Dieser Datensatz ist ein technischer Entwurf und dient ausschliesslich zur Prufung von Datenstruktur und Darstellung der Zusatzinformationen.",
+        "servizi": ["Wi-Fi", "Frustuck inklusive", "Parkplatz"],
+        "fascia_prezzo": "EUR EUR",
+        "periodo_apertura": "Ganzjahrig"
+      },
+      "fr": {
+        "nome": "Hebergement de demonstration technique 1",
+        "categoria": "Bed and Breakfast",
+        "localita": "Centre historique de Castellabate",
+        "descrizione_breve": "Brouillon technique pour tester la mise en page et les filtres dedies.",
+        "descrizione_completa": "Cette fiche est un enregistrement de demonstration technique, utilise uniquement pour valider la structure des donnees et le rendu des informations de support.",
+        "servizi": ["Wi-Fi", "Petit-dejeuner inclus", "Parking"],
+        "fascia_prezzo": "EUR EUR",
+        "periodo_apertura": "Toute l'annee"
+      },
+      "es": {
+        "nome": "Alojamiento de demostracion tecnica 1",
+        "categoria": "Bed and Breakfast",
+        "localita": "Centro historico de Castellabate",
+        "descrizione_breve": "Borrador tecnico para probar el diseno de la seccion y los filtros dedicados.",
+        "descrizione_completa": "Este registro representa una ficha de borrador tecnico, usada solo para validar la estructura de datos y el renderizado de informacion de apoyo.",
+        "servizi": ["Wi-Fi", "Desayuno incluido", "Aparcamiento"],
+        "fascia_prezzo": "EUR EUR",
+        "periodo_apertura": "Todo el ano"
+      }
+    },
     "stato_pubblicazione": "bozza tecnica"
   },
   {
@@ -54,6 +96,48 @@
     "adatto_famiglie": true,
     "aperto_tutto_anno": false,
     "distanza_mare_metri": 400,
+    "translations": {
+      "en": {
+        "nome": "Technical Demo Accommodation 2",
+        "categoria": "Holiday home",
+        "localita": "Santa Maria di Castellabate",
+        "descrizione_breve": "Technical draft to test filters for sea proximity, family suitability, and accessibility.",
+        "descrizione_completa": "This demo accommodation helps verify consistency between data, filters, and the detailed page without unverified commercial content.",
+        "servizi": ["Near the sea", "Pool", "Air conditioning"],
+        "fascia_prezzo": "EUR EUR EUR",
+        "periodo_apertura": "From April to October"
+      },
+      "de": {
+        "nome": "Technische Demo-Unterkunft 2",
+        "categoria": "Ferienhaus",
+        "localita": "Santa Maria di Castellabate",
+        "descrizione_breve": "Technischer Entwurf zum Testen der Filter fur Meeresnahe, Familienfreundlichkeit und Barrierefreiheit.",
+        "descrizione_completa": "Diese Demo-Unterkunft hilft, die Konsistenz zwischen Daten, Filtern und Detailseite ohne nicht verifizierte kommerzielle Inhalte zu prufen.",
+        "servizi": ["Nahe zum Meer", "Pool", "Klimaanlage"],
+        "fascia_prezzo": "EUR EUR EUR",
+        "periodo_apertura": "Von April bis Oktober"
+      },
+      "fr": {
+        "nome": "Hebergement de demonstration technique 2",
+        "categoria": "Maison de vacances",
+        "localita": "Santa Maria di Castellabate",
+        "descrizione_breve": "Brouillon technique pour tester les filtres proximite mer, familles et accessibilite.",
+        "descrizione_completa": "Cet hebergement de demonstration permet de verifier la coherence entre donnees, filtres et fiche detaillee sans contenu commercial non verifie.",
+        "servizi": ["Proche de la mer", "Piscine", "Climatisation"],
+        "fascia_prezzo": "EUR EUR EUR",
+        "periodo_apertura": "D'avril a octobre"
+      },
+      "es": {
+        "nome": "Alojamiento de demostracion tecnica 2",
+        "categoria": "Casa de vacaciones",
+        "localita": "Santa Maria di Castellabate",
+        "descrizione_breve": "Borrador tecnico para probar filtros de cercania al mar, familia y accesibilidad.",
+        "descrizione_completa": "Este alojamiento de demostracion permite verificar la coherencia entre datos, filtros y ficha detallada sin contenido comercial no verificado.",
+        "servizi": ["Cerca del mar", "Piscina", "Aire acondicionado"],
+        "fascia_prezzo": "EUR EUR EUR",
+        "periodo_apertura": "De abril a octubre"
+      }
+    },
     "stato_pubblicazione": "bozza tecnica"
   },
   {
@@ -82,6 +166,48 @@
     "adatto_famiglie": false,
     "aperto_tutto_anno": true,
     "distanza_mare_metri": 1200,
+    "translations": {
+      "en": {
+        "nome": "Technical Demo Accommodation 3",
+        "categoria": "Farm stay",
+        "localita": "Licosa",
+        "descrizione_breve": "Technical draft to test full detail view and links with the surrounding area.",
+        "descrizione_completa": "This record helps validate practical information handling, gallery behavior, and useful connected links for the future digital assistant.",
+        "servizi": ["Breakfast", "Parking", "Sea view"],
+        "fascia_prezzo": "EUR",
+        "periodo_apertura": "All year"
+      },
+      "de": {
+        "nome": "Technische Demo-Unterkunft 3",
+        "categoria": "Agriturismo",
+        "localita": "Licosa",
+        "descrizione_breve": "Technischer Entwurf zum Testen der kompletten Detailansicht und der Verknupfungen mit dem Gebiet.",
+        "descrizione_completa": "Dieser Datensatz hilft bei der Prufung praktischer Informationen, der Galerie und nutzlicher Verknupfungen fur den zukunftigen digitalen Assistenten.",
+        "servizi": ["Frustuck", "Parkplatz", "Meerblick"],
+        "fascia_prezzo": "EUR",
+        "periodo_apertura": "Ganzjahrig"
+      },
+      "fr": {
+        "nome": "Hebergement de demonstration technique 3",
+        "categoria": "Agritourisme",
+        "localita": "Licosa",
+        "descrizione_breve": "Brouillon technique pour tester la fiche complete et les liens avec le territoire.",
+        "descrizione_completa": "Cet enregistrement permet de verifier la gestion des informations pratiques, de la galerie et des liens utiles pour le futur assistant numerique.",
+        "servizi": ["Petit-dejeuner", "Parking", "Vue mer"],
+        "fascia_prezzo": "EUR",
+        "periodo_apertura": "Toute l'annee"
+      },
+      "es": {
+        "nome": "Alojamiento de demostracion tecnica 3",
+        "categoria": "Agroturismo",
+        "localita": "Licosa",
+        "descrizione_breve": "Borrador tecnico para probar la ficha completa y los enlaces con el territorio.",
+        "descrizione_completa": "Este registro permite verificar la gestion de informacion practica, galeria y enlaces utiles para el futuro asistente digital.",
+        "servizi": ["Desayuno", "Aparcamiento", "Vista al mar"],
+        "fascia_prezzo": "EUR",
+        "periodo_apertura": "Todo el ano"
+      }
+    },
     "stato_pubblicazione": "bozza tecnica"
   },
   {
@@ -134,6 +260,24 @@
     "seo": {
       "title": "",
       "description": ""
+    },
+    "translations": {
+      "en": {
+        "categoria": "Resort",
+        "localita": "San Marco di Castellabate"
+      },
+      "de": {
+        "categoria": "Resort",
+        "localita": "San Marco di Castellabate"
+      },
+      "fr": {
+        "categoria": "Resort",
+        "localita": "San Marco di Castellabate"
+      },
+      "es": {
+        "categoria": "Resort",
+        "localita": "San Marco di Castellabate"
+      }
     },
     "stato_pubblicazione": "bozza",
     "cta_label": "Scopri la struttura"
