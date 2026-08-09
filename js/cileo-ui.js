@@ -16,6 +16,8 @@
         launcher: this.root.querySelector('[data-cileo-launcher]'),
         avatar: this.root.querySelector('[data-cileo-avatar]'),
         bubble: this.root.querySelector('[data-cileo-bubble]'),
+        bubbleTitle: this.root.querySelector('[data-cileo-bubble-title]'),
+        bubbleMessage: this.root.querySelector('[data-cileo-bubble-message]'),
         panel: this.root.querySelector('[data-cileo-panel]'),
         clear: this.root.querySelector('[data-cileo-clear]'),
         close: this.root.querySelector('[data-cileo-close]'),
@@ -58,9 +60,8 @@
       root.setAttribute('data-i18n-aria-label', 'chat.ariaRoot');
       root.innerHTML = `
         <div class="cileo__bubble" data-cileo-bubble role="status" hidden>
-          <strong><span data-i18n="chat.greeting">Ciao, sono Cilentino</span> <span aria-hidden="true">👋</span></strong>
-          <span data-i18n="chat.subtitle">La guida digitale di Cilentomania.</span>
-          <span data-i18n="chat.intro">Sarò il tuo compagno di viaggio alla scoperta del Parco Nazionale del Cilento, Vallo di Diano e Alburni.</span>
+          <strong data-cileo-bubble-title data-i18n="chat.greeting">Ciao, sono Cilentino</strong>
+          <span data-cileo-bubble-message data-i18n="chat.intro">Sarò il tuo compagno di viaggio alla scoperta del Parco Nazionale del Cilento, Vallo di Diano e Alburni.</span>
         </div>
         <section class="cileo__panel" data-cileo-panel role="dialog" aria-modal="false" aria-labelledby="cileo-title" hidden>
           <header class="cileo__header">
@@ -102,14 +103,20 @@
         </section>
         <button class="cileo__launcher" data-cileo-launcher type="button" aria-label="Apri chat" aria-expanded="false" data-i18n-aria-label="chat.launcherOpenAria"></button>
         <div class="cileo__avatar-visual" aria-hidden="true">
-          <img data-cileo-avatar alt="Cilentino, guida digitale di Cilentomania">
+          <div class="cileo__avatar-layer" data-cileo-avatar-layer>
+            <img data-cileo-avatar alt="Cilentino, guida digitale di Cilentomania">
+          </div>
           <span class="cileo__online" aria-hidden="true"></span>
         </div>`;
       return root;
     }
 
     bind() {
-      this.elements.launcher.addEventListener('click', () => this.toggle());
+      this.elements.launcher.addEventListener('pointerenter', event => this.options.onLauncherPointerEnter?.(event));
+      this.elements.launcher.addEventListener('click', event => {
+        this.options.onLauncherClick?.(event);
+        this.toggle();
+      });
       this.elements.close.addEventListener('click', () => this.close());
       this.elements.clear.addEventListener('click', () => this.openConfirm());
       this.root.querySelectorAll('[data-cileo-confirm-cancel]').forEach(element => {
@@ -126,6 +133,7 @@
           const contextual = this.options.onSuggestionsRequest?.() || [];
           this.setActions(contextual);
         }
+        this.options.onInteraction?.('suggestions-toggle');
         this.setSuggestionState(nextState);
         this.scheduleContentScroll();
       });
@@ -136,6 +144,7 @@
         const action = this.currentActions?.[index];
         if (!action) return;
         this.setSuggestionState('conversation');
+        this.options.onInteraction?.('quick-action');
         this.options.onAction(action);
         this.elements.input.focus({ preventScroll: true });
       });
@@ -144,6 +153,7 @@
         const value = this.elements.input.value.trim();
         if (!value) return;
         this.elements.input.value = '';
+        this.options.onInteraction?.('submit');
         this.options.onMessage(value);
       });
       this.root.addEventListener('keydown', event => {
@@ -174,8 +184,11 @@
         if (this.suggestionState === 'suggestions-open') {
           this.setSuggestionState('conversation');
         }
+        this.options.onInteraction?.('input-focus');
         scheduleViewportUpdate();
       });
+      this.elements.input.addEventListener('input', () => this.options.onInteraction?.('input-change'));
+      this.elements.panel.addEventListener('pointerdown', () => this.options.onInteraction?.('panel-pointerdown'));
       this.elements.input.addEventListener('blur', scheduleViewportUpdate);
       this.elements.confirmOverlay.addEventListener('keydown', event => this.handleConfirmKeydown(event));
     }
@@ -345,7 +358,15 @@
       return () => typing.remove();
     }
 
-    showBubble() {
+    showBubble(content = {}) {
+      const title = typeof content.title === 'string' && content.title.trim()
+        ? content.title.trim()
+        : this.t('chat.greeting', 'Ciao, sono Cilentino');
+      const message = typeof content.message === 'string' && content.message.trim()
+        ? content.message.trim()
+        : this.t('chat.intro', 'Sarò il tuo compagno di viaggio alla scoperta del Parco Nazionale del Cilento, Vallo di Diano e Alburni.');
+      this.elements.bubbleTitle.textContent = title;
+      this.elements.bubbleMessage.textContent = message;
       this.elements.bubble.hidden = false;
       this.elements.bubble.classList.add('is-visible');
     }
@@ -359,7 +380,6 @@
       if (this.isOpen) return;
       this.lastFocus = document.activeElement;
       this.isOpen = true;
-      this.hideBubble();
       this.elements.panel.hidden = false;
       this.elements.launcher.setAttribute('aria-expanded', 'true');
       this.elements.launcher.setAttribute('aria-label', this.t('chat.launcherCloseAria', 'Chat aperta'));
@@ -367,6 +387,7 @@
       this.lockPageScroll();
       this.updateViewport();
       this.focusTimer = 0;
+      this.options.onInteraction?.('open');
       this.options.onOpen();
     }
 
@@ -385,6 +406,7 @@
       this.elements.launcher.setAttribute('aria-expanded', 'false');
       this.elements.launcher.setAttribute('aria-label', this.t('chat.launcherOpenAria', 'Apri chat'));
       this.unlockPageScroll();
+      this.options.onInteraction?.('close');
       this.options.onClose();
       this.lastFocus?.focus?.();
     }

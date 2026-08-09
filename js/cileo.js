@@ -36,6 +36,35 @@
     ];
   }
 
+  function normalizeForIntentMatch(value) {
+    return String(value || '')
+      .toLocaleLowerCase('it-IT')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, ' ')
+      .replace(/[^a-z0-9\s]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function includesAny(value, words) {
+    return words.some(word => value.includes(word));
+  }
+
+  function mapLegacyPose(pose) {
+    const legacyMap = {
+      welcome: 'ciao',
+      thinking: 'penso',
+      searching: 'cerco',
+      map: 'cartina',
+      idea: 'ho-un-idea',
+      pointing: 'indico',
+      success: 'ok',
+      goodbye: 'arrivederci',
+      hug: 'abbraccio'
+    };
+    return legacyMap[String(pose || '').trim()] || null;
+  }
+
   function sanitizeCilentinoContextValue(value) {
     const trimmed = String(value || '').trim();
     return trimmed || null;
@@ -264,8 +293,11 @@
       this.apiClient = global.CilentinoApiClient || null;
       this.demo = new global.CileoDemoProvider(new URL('data/cileo-demo.json', this.baseUrl));
       this.ui = new global.CileoUI({
-        onOpen: () => this.animation.play([{ state: 'welcome', duration: 1000 }, { state: 'idea', duration: 1200 }]),
-        onClose: () => this.animation.play([{ state: 'goodbye', duration: 1500 }, { state: 'welcome', duration: 2000 }]),
+        onOpen: () => this.handleChatOpen(),
+        onClose: () => this.handleChatClose(),
+        onLauncherPointerEnter: event => this.handleLauncherPointerEnter(event),
+        onLauncherClick: event => this.handleLauncherClick(event),
+        onInteraction: source => this.registerInteraction(source),
         onAction: action => this.handleAction(action),
         onMessage: message => this.handleMessage(message),
         onSuggestionsRequest: () => this.getContextualSuggestions(),
@@ -278,12 +310,254 @@
       this.initialWelcome = '';
       this.initialActions = [];
       this.conversationRevision = 0;
+      this.turnId = 0;
+      this.turnTimers = new Set();
+      this.sleepTimer = 0;
+      this.wakeBubbleTimer = 0;
+      this.stopTyping = null;
+      this.requestInFlight = false;
+      this.requestPhase = 'idle';
+      this.currentTopicAvatar = 'guida';
+      this.isSleeping = false;
+      this.sleepCycleId = 0;
+      this.wakeBubbleCycleId = 0;
       this.started = false;
       this.observeNavigationContext();
     }
 
+    scheduleTurnCallback(turnId, callback, delay) {
+      const timer = window.setTimeout(() => {
+        this.turnTimers.delete(timer);
+        if (turnId !== this.turnId) return;
+        callback();
+      }, delay);
+      this.turnTimers.add(timer);
+      return timer;
+    }
+
+    clearTurnTimers() {
+      this.turnTimers.forEach(timer => window.clearTimeout(timer));
+      this.turnTimers.clear();
+    }
+
+    clearSleepTimer() {
+      if (!this.sleepTimer) return;
+      window.clearTimeout(this.sleepTimer);
+      this.sleepTimer = 0;
+    }
+
+    clearWakeBubbleTimer() {
+      if (!this.wakeBubbleTimer) return;
+      window.clearTimeout(this.wakeBubbleTimer);
+      this.wakeBubbleTimer = 0;
+    }
+
+    hideWakeBubble() {
+      this.clearWakeBubbleTimer();
+      this.ui.hideBubble();
+    }
+
+    setAvatarMachineState(machineState, options = {}) {
+      return this.animation.setMachineState(machineState, options);
+    }
+
+    isChatBusy() {
+      return this.requestInFlight || this.requestPhase === 'waiting' || this.requestPhase === 'typing';
+    }
+
+    isSleepBlocked() {
+      return this.isChatBusy() || this.ui.confirmOpen || document.activeElement === this.ui.elements.input;
+    }
+
+    showWakeBubble() {
+      if (!this.sleepCycleId || this.wakeBubbleCycleId === this.sleepCycleId) return;
+      this.wakeBubbleCycleId = this.sleepCycleId;
+      this.ui.showBubble({
+        title: t('chat.wakePromptTitle', 'Ciao!'),
+        message: t('chat.wakePromptMessage', 'Cosa posso fare per te?')
+      });
+      this.clearWakeBubbleTimer();
+      this.wakeBubbleTimer = window.setTimeout(() => {
+        this.wakeBubbleTimer = 0;
+        this.ui.hideBubble();
+      }, 3000);
+    }
+
+    restartSleepTimer() {
+      this.clearSleepTimer();
+      if (!this.started || this.isSleepBlocked()) return;
+      this.sleepTimer = window.setTimeout(() => {
+        this.sleepTimer = 0;
+        if (this.isSleepBlocked()) {
+          this.restartSleepTimer();
+          return;
+        }
+        this.isSleeping = true;
+        this.sleepCycleId += 1;
+        this.setAvatarMachineState('SLEEPING');
+      }, 8000);
+    }
+
+    wakeFromSleep(showBubble = true) {
+      if (!this.isSleeping || this.isChatBusy()) return false;
+      this.isSleeping = false;
+      this.setAvatarMachineState('GREETING');
+      if (showBubble) this.showWakeBubble();
+      this.restartSleepTimer();
+      return true;
+    }
+
+    registerInteraction(source) {
+      if (source === 'submit' || source === 'quick-action') this.hideWakeBubble();
+      this.clearSleepTimer();
+      if (!this.isChatBusy()) this.restartSleepTimer();
+    }
+
+    cancelActiveTurn() {
+      this.turnId += 1;
+      this.clearTurnTimers();
+      this.clearSleepTimer();
+      this.hideWakeBubble();
+      if (this.stopTyping) {
+        this.stopTyping();
+        this.stopTyping = null;
+      }
+      this.animation.cancelTimers();
+      return this.turnId;
+    }
+
+    handleLauncherPointerEnter(event) {
+      if (event?.pointerType && event.pointerType !== 'mouse') return;
+      if (this.isChatBusy()) return;
+      this.registerInteraction('launcher-pointerenter');
+      this.wakeFromSleep(true);
+    }
+
+    handleLauncherClick() {
+      if (this.isChatBusy()) {
+        this.registerInteraction('launcher-click');
+        return;
+      }
+      const woke = this.wakeFromSleep(true);
+      if (!woke) this.registerInteraction('launcher-click');
+    }
+
+    handleChatOpen() {
+      this.registerInteraction('open');
+    }
+
+    handleChatClose() {
+      this.registerInteraction('close');
+    }
+
     shouldUseGeolocation(message) {
       return /vicino a me|infopoint piu vicino|infopoint più vicino/i.test(String(message || ''));
+    }
+
+    selectTopicAvatar(message, intent, context) {
+      const normalized = normalizeForIntentMatch(message);
+      const section = String(context?.section || '').toLocaleLowerCase('it-IT');
+      const intentKey = String(intent || '').toLocaleLowerCase('it-IT');
+
+      if (includesAny(normalized, ['ristor', 'mang', 'cena', 'pranzo', 'pizzeria', 'trattoria', 'cucina', 'menu'])) return 'chef';
+      if (includesAny(normalized, ['hotel', 'bb', 'b b', 'alloggio', 'camera', 'struttura ricettiva', 'dormire', 'infopoint', 'contatti utili'])) return 'concierge';
+      if (includesAny(normalized, ['trek', 'sentier', 'escurs', 'cammin', 'hiking', 'natura', 'bosco', 'montagna', 'outdoor'])) return 'escursionista';
+      if (includesAny(normalized, ['muse', 'archeolog', 'templ', 'rovine', 'storia antica', 'sito storico'])) return 'archeologo';
+      if (includesAny(normalized, ['agri', 'olio', 'vino', 'cantina', 'fattoria', 'rurale', 'prodotti tipici', 'caseificio'])) return 'agricoltore';
+      if (includesAny(normalized, ['event', 'sagra', 'festival', 'concerto'])) return 'eventi';
+
+      if (includesAny(normalized, ['spiaggia', 'spiagge', 'balne', 'lido', 'ombrellone'])) return 'bagnino';
+      if (includesAny(normalized, ['mare', 'porto', 'barca', 'barche', 'vela', 'navig', 'traversata', 'costa'])) return 'marinaio';
+
+      const byIntent = {
+        food: 'chef',
+        accommodation: 'concierge',
+        infopoints: 'concierge',
+        useful_contacts: 'concierge',
+        attractions: 'archeologo',
+        experiences: 'escursionista',
+        itineraries: 'guida',
+        general_territory: 'guida',
+        events: 'eventi'
+      };
+      if (byIntent[intentKey]) return byIntent[intentKey];
+
+      const bySection = {
+        eat: 'chef',
+        sleep: 'concierge',
+        infopoints: 'concierge',
+        events: 'eventi',
+        itineraries: 'guida',
+        experiences: 'escursionista',
+        territory: 'guida'
+      };
+      return bySection[section] || null;
+    }
+
+    async renderAssistantMessage(answerText, turnId) {
+      const text = String(answerText || '');
+      const messageNode = this.ui.addMessage('', 'assistant');
+      const messageEntry = { sender: 'assistant', text: '' };
+      this.messages.push(messageEntry);
+      this.saveStorageState();
+
+      const graphemes = Array.from(text);
+      if (!graphemes.length) {
+        messageEntry.text = text;
+        messageNode.textContent = text;
+        this.saveStorageState();
+        return true;
+      }
+
+      let index = 0;
+      let commitCounter = 0;
+      const updateChunk = () => {
+        if (turnId !== this.turnId) return false;
+        index = Math.min(graphemes.length, index + (graphemes.length > 180 ? 3 : 2));
+        const partialText = graphemes.slice(0, index).join('');
+        messageEntry.text = partialText;
+        messageNode.textContent = partialText;
+        commitCounter += 1;
+        if (commitCounter % 3 === 0 || index >= graphemes.length) this.saveStorageState();
+        return index >= graphemes.length;
+      };
+
+      return await new Promise(resolve => {
+        const tick = () => {
+          if (turnId !== this.turnId) {
+            resolve(false);
+            return;
+          }
+          const done = updateChunk();
+          if (done) {
+            messageEntry.text = text;
+            messageNode.textContent = text;
+            this.saveStorageState();
+            resolve(true);
+            return;
+          }
+          this.scheduleTurnCallback(turnId, tick, graphemes.length > 220 ? 12 : 18);
+        };
+        tick();
+      });
+    }
+
+    selectMomentPose(message, response, context, positive) {
+      if (positive) return 'festeggio';
+
+      const normalized = normalizeForIntentMatch(message);
+      const intentKey = String(response?.intent || '').toLocaleLowerCase('it-IT');
+      const section = String(context?.section || '').toLocaleLowerCase('it-IT');
+
+      if (includesAny(normalized, ['ciao', 'arrivederci', 'a presto', 'buonanotte'])) return 'arrivederci';
+      if (this.shouldUseGeolocation(message)) return 'geolocalizzo';
+      if (includesAny(normalized, ['foto', 'fotograf', 'immagin'])) return 'foto';
+      if (includesAny(normalized, ['navig', 'traghett', 'rotta', 'barca'])) return 'navigo';
+      if (intentKey === 'events' || section === 'events' || includesAny(normalized, ['event', 'sagra', 'festival', 'concerto'])) return 'eventi';
+      if (intentKey === 'accommodation' || section === 'sleep' || includesAny(normalized, ['dormire', 'hotel', 'alloggio', 'camera'])) return 'dormo';
+      if (response?.actions?.length) return 'letgo';
+
+      return mapLegacyPose(response?.pose) || 'ho-un-idea';
     }
 
     async getEphemeralLocation(message) {
@@ -467,7 +741,7 @@
       if (global.CilentomaniaI18n?.init) {
         await global.CilentomaniaI18n.init();
       }
-      this.animation.setCileoState('welcome', { minDuration: 2000 });
+      this.setAvatarMachineState('GREETING');
       try {
         const data = await this.demo.load();
         const useLocalizedDemo = getChatLanguage() !== 'it';
@@ -507,6 +781,7 @@
       this.ui.root.classList.add('is-ready');
       this.started = true;
       this.syncLocalizedDefaults(true);
+      this.restartSleepTimer();
       document.dispatchEvent(new CustomEvent('cileo:ready', { detail: { instance: this } }));
       return this;
     }
@@ -523,9 +798,18 @@
     }
 
     async respond(message, actionId) {
-      const responseRevision = this.conversationRevision;
-      this.animation.play([{ state: 'thinking', duration: 900 }, { state: 'searching', duration: 900 }]);
-      const stopTyping = this.ui.showTyping();
+      const turnId = this.cancelActiveTurn();
+      const context = getCilentinoNavigationContext();
+      const thematicAvatar = this.selectTopicAvatar(message, null, context);
+      this.currentTopicAvatar = thematicAvatar;
+      this.requestInFlight = true;
+      this.requestPhase = 'waiting';
+      this.isSleeping = false;
+      this.stopTyping = this.ui.showTyping();
+      this.scheduleTurnCallback(turnId, () => {
+        if (this.requestPhase !== 'waiting') return;
+        this.setAvatarMachineState('THINKING');
+      }, 300);
       try {
         let response = null;
         let fromBackend = false;
@@ -549,14 +833,17 @@
           fromBackend = false;
         }
 
-        await new Promise(resolve => window.setTimeout(resolve, fromBackend ? 700 : 1200));
-        stopTyping();
-        if (responseRevision !== this.conversationRevision) return;
+        if (turnId !== this.turnId) return;
 
         if (!response) {
+          this.stopTyping?.();
+          this.stopTyping = null;
           this.addChatMessage(t('chat.fallback', 'Questo consiglio per ora mi sfugge. Possiamo continuare esplorando luoghi, eventi e itinerari del Cilento.'), 'assistant');
           this.setChatActions(this.initialActions);
-          this.animation.setCileoState('thinking', { duration: 1200, nextState: 'welcome' });
+          this.requestInFlight = false;
+          this.requestPhase = 'idle';
+          this.setAvatarMachineState('ERROR');
+          this.restartSleepTimer();
           return;
         }
 
@@ -564,37 +851,48 @@
           ? `${response.answer}${this.formatSources(response.sources)}`
           : response.answer;
 
-        this.addChatMessage(answerText, 'assistant');
-        this.setChatActions(Array.isArray(response.actions) && response.actions.length ? response.actions : this.demo.getActions());
-        const positive = /\b(?:grazie|perfetto|perfetta|bellissimo|bellissima)\b/i.test(message);
-        const intentPoseMap = {
-          accommodation: 'pointing',
-          food: 'pointing',
-          events: 'idea',
-          experiences: 'idea',
-          itineraries: 'map',
-          attractions: 'map',
-          infopoints: 'pointing',
-          useful_contacts: 'pointing',
-          general_territory: 'map'
-        };
-        const contextualState = positive ? 'hug' : (response.pose || intentPoseMap[response.intent] || 'idea');
-        const sequence = [{ state: contextualState, duration: 1300 }];
-        if (!positive && response.actions?.length && contextualState !== 'pointing') {
-          sequence.push({ state: 'pointing', duration: 1200 });
+        this.requestPhase = 'typing';
+        let topicShownAt = 0;
+        if (thematicAvatar) {
+          this.setAvatarMachineState('TOPIC', { topicState: thematicAvatar });
+          topicShownAt = Date.now();
         }
-        sequence.push({ state: 'success', duration: 1200 }, { state: contextualState, duration: 1600 });
-        this.animation.play(sequence);
+        this.stopTyping?.();
+        this.stopTyping = null;
+        const rendered = await this.renderAssistantMessage(answerText, turnId);
+        if (!rendered || turnId !== this.turnId) return;
+
+        if (thematicAvatar && topicShownAt) {
+          const elapsed = Date.now() - topicShownAt;
+          if (elapsed < 1200) {
+            await new Promise(resolve => this.scheduleTurnCallback(turnId, resolve, 1200 - elapsed));
+            if (turnId !== this.turnId) return;
+          }
+        }
+
+        this.setChatActions(Array.isArray(response.actions) && response.actions.length ? response.actions : this.demo.getActions());
+        this.requestInFlight = false;
+        this.requestPhase = 'idle';
+        this.setAvatarMachineState('COMPLETE');
+        this.restartSleepTimer();
       } catch (error) {
-        stopTyping();
-        if (responseRevision !== this.conversationRevision) return;
+        this.stopTyping?.();
+        this.stopTyping = null;
+        if (turnId !== this.turnId) return;
         this.addChatMessage(t('chat.fallback', 'Questo consiglio per ora mi sfugge. Possiamo continuare esplorando luoghi, eventi e itinerari del Cilento.'), 'assistant');
-        this.animation.setCileoState('thinking', { duration: 1400, nextState: 'welcome' });
+        this.requestInFlight = false;
+        this.requestPhase = 'idle';
+        this.setAvatarMachineState('ERROR');
+        this.restartSleepTimer();
       }
     }
 
     clearChat() {
       this.conversationRevision += 1;
+      this.cancelActiveTurn();
+      this.requestInFlight = false;
+      this.requestPhase = 'idle';
+      this.isSleeping = false;
       this.messages = [];
       this.ui.clearMessages();
       this.ui.elements.input.value = '';
@@ -602,6 +900,8 @@
       this.setChatActions(this.initialActions);
       this.removeStorageState();
       this.addChatMessage(this.initialWelcome, 'assistant');
+      this.setAvatarMachineState('GREETING');
+      this.restartSleepTimer();
       this.ui.elements.input.focus({ preventScroll: true });
     }
 
@@ -611,9 +911,11 @@
 
     testPoses() {
       const poses = [
-        'welcome', 'thinking', 'searching', 'map', 'idea', 'pointing', 'success', 'hug', 'goodbye'
+        'benvenuto', 'ascolto', 'penso', 'cerco', 'cartina', 'ho-un-idea', 'indico', 'ok', 'arrivederci', 'abbraccio',
+        'eventi', 'foto', 'geolocalizzo', 'dormo', 'letgo', 'navigo', 'festeggio',
+        'chef', 'concierge', 'guida', 'escursionista', 'marinaio', 'bagnino', 'archeologo', 'agricoltore'
       ].map(state => ({ state, duration: 1200 }));
-      poses.push({ state: 'welcome', duration: 2000 });
+      poses.push({ state: 'ciao', duration: 2000 });
       return this.animation.play(poses);
     }
   }
