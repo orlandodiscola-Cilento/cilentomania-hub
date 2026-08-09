@@ -170,11 +170,19 @@
 
     setMachineAnimationClass(machineState) {
       const visualRoot = this.image.closest('.cileo__avatar-visual');
-      if (!visualRoot) return;
-      Array.from(visualRoot.classList)
-        .filter(className => className.indexOf('is-machine-') === 0)
-        .forEach(className => visualRoot.classList.remove(className));
-      visualRoot.classList.add(`is-machine-${String(machineState || '').toLowerCase()}`);
+      const widgetRoot = this.image.closest('.cileo');
+      if (visualRoot) {
+        Array.from(visualRoot.classList)
+          .filter(className => className.indexOf('is-machine-') === 0)
+          .forEach(className => visualRoot.classList.remove(className));
+        visualRoot.classList.add(`is-machine-${String(machineState || '').toLowerCase()}`);
+      }
+      if (widgetRoot) {
+        Array.from(widgetRoot.classList)
+          .filter(className => className.indexOf('is-machine-') === 0)
+          .forEach(className => widgetRoot.classList.remove(className));
+        widgetRoot.classList.add(`is-machine-${String(machineState || '').toLowerCase()}`);
+      }
     }
 
     applyVisualTransform(visual) {
