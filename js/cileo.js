@@ -36,6 +36,10 @@
     ];
   }
 
+  function getLocalizedDemoFallback() {
+    return t('chat.fallback', 'Questo consiglio per ora mi sfugge. Possiamo continuare esplorando luoghi, eventi e itinerari del Cilento.');
+  }
+
   function normalizeForIntentMatch(value) {
     return String(value || '')
       .toLocaleLowerCase('it-IT')
@@ -703,7 +707,7 @@
       this.ui.restoreMessages(restoredMessages);
       this.setChatActions(state.actions || this.initialActions);
       this.ui.setSuggestionState('conversation');
-      this.ui.elements.input.value = typeof state.inputValue === 'string' ? state.inputValue : '';
+      this.ui.resetInput();
       return true;
     }
 
@@ -744,13 +748,8 @@
       this.setAvatarMachineState('GREETING');
       try {
         const data = await this.demo.load();
-        const useLocalizedDemo = getChatLanguage() !== 'it';
-        this.initialWelcome = useLocalizedDemo
-          ? getDefaultWelcome()
-          : String(data.welcome || getDefaultWelcome());
-        this.initialActions = useLocalizedDemo
-          ? getDefaultActions()
-          : (Array.isArray(data.actions) && data.actions.length ? data.actions : getDefaultActions());
+        this.initialWelcome = getDefaultWelcome();
+        this.initialActions = getDefaultActions();
         const restored = this.readStorageState();
         const restoredOk = this.restoreChatFromState(restored);
         if (!restoredOk) {
@@ -838,7 +837,7 @@
         if (!response) {
           this.stopTyping?.();
           this.stopTyping = null;
-          this.addChatMessage(t('chat.fallback', 'Questo consiglio per ora mi sfugge. Possiamo continuare esplorando luoghi, eventi e itinerari del Cilento.'), 'assistant');
+          this.addChatMessage(getLocalizedDemoFallback(), 'assistant');
           this.setChatActions(this.initialActions);
           this.requestInFlight = false;
           this.requestPhase = 'idle';
@@ -873,13 +872,17 @@
         this.setChatActions(Array.isArray(response.actions) && response.actions.length ? response.actions : this.demo.getActions());
         this.requestInFlight = false;
         this.requestPhase = 'idle';
-        this.setAvatarMachineState('COMPLETE');
+        if (thematicAvatar) {
+          this.setAvatarMachineState('TOPIC', { topicState: thematicAvatar });
+        } else {
+          this.setAvatarMachineState('COMPLETE');
+        }
         this.restartSleepTimer();
       } catch (error) {
         this.stopTyping?.();
         this.stopTyping = null;
         if (turnId !== this.turnId) return;
-        this.addChatMessage(t('chat.fallback', 'Questo consiglio per ora mi sfugge. Possiamo continuare esplorando luoghi, eventi e itinerari del Cilento.'), 'assistant');
+        this.addChatMessage(getLocalizedDemoFallback(), 'assistant');
         this.requestInFlight = false;
         this.requestPhase = 'idle';
         this.setAvatarMachineState('ERROR');
@@ -895,7 +898,7 @@
       this.isSleeping = false;
       this.messages = [];
       this.ui.clearMessages();
-      this.ui.elements.input.value = '';
+      this.ui.resetInput();
       this.ui.setSuggestionState('conversation');
       this.setChatActions(this.initialActions);
       this.removeStorageState();

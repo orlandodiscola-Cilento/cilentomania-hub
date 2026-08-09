@@ -61,11 +61,11 @@
       root.innerHTML = `
         <div class="cileo__bubble" data-cileo-bubble role="status" hidden>
           <strong data-cileo-bubble-title data-i18n="chat.greeting">Ciao, sono Cilentino</strong>
-          <span data-cileo-bubble-message data-i18n="chat.intro">Sarò il tuo compagno di viaggio alla scoperta del Parco Nazionale del Cilento, Vallo di Diano e Alburni.</span>
+          <span data-cileo-bubble-message data-i18n="chat.intro">Sarò il tuo compagno di viaggio alla scoperta del Cilento, Vallo di Diano e Alburni.</span>
         </div>
         <section class="cileo__panel" data-cileo-panel role="dialog" aria-modal="false" aria-labelledby="cileo-title" hidden>
           <header class="cileo__header">
-            <div class="cileo__header-copy"><h2 id="cileo-title" data-i18n="chat.greeting">Ciao, sono Cilentino</h2><p data-i18n="chat.subtitle">La guida digitale di Cilentomania</p><p data-i18n="chat.intro">Sarò il tuo compagno di viaggio alla scoperta del Parco Nazionale del Cilento, Vallo di Diano e Alburni.</p></div>
+            <div class="cileo__header-copy"><h2 id="cileo-title" data-i18n="chat.greeting">Ciao, sono Cilentino</h2><p data-i18n="chat.subtitle">La guida digitale di Cilentomania</p><p data-i18n="chat.intro">Sarò il tuo compagno di viaggio alla scoperta del Cilento, Vallo di Diano e Alburni.</p></div>
             <div class="cileo__header-actions">
               <button class="cileo-header-action cileo__close" data-cileo-close type="button" aria-label="Chiudi chat" data-i18n-aria-label="chat.closeAria">
                 <svg aria-hidden="true" viewBox="0 0 20 20" focusable="false">
@@ -86,7 +86,7 @@
           </div>
           <form class="cileo__form" data-cileo-form>
             <label class="cileo__sr-only" for="cileo-input" data-i18n="chat.inputLabel">Scrivi a Cilentino</label>
-            <input id="cileo-input" data-cileo-input autocomplete="off" placeholder="Chiedi a Cilentino..." maxlength="300" data-i18n-placeholder="chat.inputPlaceholder">
+            <input id="cileo-input" data-cileo-input autocomplete="off" placeholder="Come posso aiutarti?" maxlength="300" data-i18n-placeholder="chat.inputPlaceholder">
             <button type="submit" aria-label="Invia messaggio" data-i18n-aria-label="chat.sendAria"><span aria-hidden="true">&#8593;</span></button>
           </form>
           <div class="cileo__confirm" data-cileo-confirm hidden>
@@ -101,7 +101,7 @@
             </section>
           </div>
         </section>
-        <button class="cileo__launcher" data-cileo-launcher type="button" aria-label="Apri chat" aria-expanded="false" data-i18n-aria-label="chat.launcherOpenAria"></button>
+        <button class="cileo__launcher" data-cileo-launcher type="button" aria-label="Apri chat" aria-expanded="false" data-i18n-aria-label="chat.launcherOpenAria"><span class="cileo__launcher-label" data-i18n="chat.inputPlaceholder">Come posso aiutarti?</span></button>
         <div class="cileo__avatar-visual" aria-hidden="true">
           <div class="cileo__avatar-layer" data-cileo-avatar-layer>
             <img data-cileo-avatar alt="Cilentino, guida digitale di Cilentomania">
@@ -152,7 +152,7 @@
         event.preventDefault();
         const value = this.elements.input.value.trim();
         if (!value) return;
-        this.elements.input.value = '';
+        this.resetInput();
         this.options.onInteraction?.('submit');
         this.options.onMessage(value);
       });
@@ -358,13 +358,20 @@
       return () => typing.remove();
     }
 
+    resetInput() {
+      if (!this.elements?.input) return;
+      this.elements.input.value = '';
+      this.elements.input.defaultValue = '';
+      this.elements.input.setAttribute('value', '');
+    }
+
     showBubble(content = {}) {
       const title = typeof content.title === 'string' && content.title.trim()
         ? content.title.trim()
         : this.t('chat.greeting', 'Ciao, sono Cilentino');
       const message = typeof content.message === 'string' && content.message.trim()
         ? content.message.trim()
-        : this.t('chat.intro', 'Sarò il tuo compagno di viaggio alla scoperta del Parco Nazionale del Cilento, Vallo di Diano e Alburni.');
+        : this.t('chat.intro', 'Sarò il tuo compagno di viaggio alla scoperta del Cilento, Vallo di Diano e Alburni.');
       this.elements.bubbleTitle.textContent = title;
       this.elements.bubbleMessage.textContent = message;
       this.elements.bubble.hidden = false;
@@ -379,6 +386,7 @@
     open() {
       if (this.isOpen) return;
       this.lastFocus = document.activeElement;
+      this.resetInput();
       this.isOpen = true;
       this.elements.panel.hidden = false;
       this.elements.launcher.setAttribute('aria-expanded', 'true');
