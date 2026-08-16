@@ -64,7 +64,11 @@
     "resultsEatSingular": "adresse trouvee",
     "resultsEatPlural": "adresses trouvees",
     "quickFilters": "Filtres rapides",
+    "filterByCategory": "Filtrer par categorie",
     "resetFilters": "Reinitialiser les filtres",
+    "sleepConciergeIntro": "Je t aide a trouver l hebergement le plus adapte a ton sejour.",
+    "discoverAccommodation": "Decouvrir l hebergement",
+    "backToMunicipalities": "Retour",
     "noResults": "Aucun resultat",
     "noResultsHint": "Essayez de retirer un ou plusieurs filtres pour elargir la recherche.",
     "openSheet": "Ouvrir la fiche",
@@ -92,6 +96,9 @@
     "email": "Email",
     "book": "Reserver",
     "yes": "Oui",
+    "categories": {
+      "bedAndBreakfast": "B&B"
+    },
     "filters": {
       "cucinaCilentana": "Cuisine cilentane",
       "pesce": "Poisson",

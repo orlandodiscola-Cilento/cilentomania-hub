@@ -64,7 +64,11 @@
     "resultsEatSingular": "Lokal gefunden",
     "resultsEatPlural": "Lokale gefunden",
     "quickFilters": "Schnellfilter",
+    "filterByCategory": "Nach Kategorie filtern",
     "resetFilters": "Filter zuruecksetzen",
+    "sleepConciergeIntro": "Ich helfe dir, die passende Unterkunft fuer deinen Aufenthalt zu finden.",
+    "discoverAccommodation": "Unterkunft entdecken",
+    "backToMunicipalities": "Zurueck",
     "noResults": "Keine Ergebnisse",
     "noResultsHint": "Entfernen Sie einen oder mehrere Filter fuer mehr Ergebnisse.",
     "openSheet": "Details oeffnen",
@@ -92,6 +96,9 @@
     "email": "E-Mail",
     "book": "Buchen",
     "yes": "Ja",
+    "categories": {
+      "bedAndBreakfast": "B&B"
+    },
     "filters": {
       "cucinaCilentana": "Cilento-Kueche",
       "pesce": "Fisch",

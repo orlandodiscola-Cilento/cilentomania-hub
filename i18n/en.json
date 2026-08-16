@@ -64,7 +64,11 @@
     "resultsEatSingular": "venue found",
     "resultsEatPlural": "venues found",
     "quickFilters": "Quick filters",
+    "filterByCategory": "Filter by category",
     "resetFilters": "Reset filters",
+    "sleepConciergeIntro": "I can help you find the best place to stay for your trip.",
+    "discoverAccommodation": "Discover the property",
+    "backToMunicipalities": "Back",
     "noResults": "No results",
     "noResultsHint": "Try removing one or more filters to broaden your search.",
     "openSheet": "Open details",
@@ -92,6 +96,9 @@
     "email": "Email",
     "book": "Book",
     "yes": "Yes",
+    "categories": {
+      "bedAndBreakfast": "B&B"
+    },
     "filters": {
       "cucinaCilentana": "Cilento cuisine",
       "pesce": "Fish",

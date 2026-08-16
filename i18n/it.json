@@ -64,7 +64,11 @@
     "resultsEatSingular": "attivita trovata",
     "resultsEatPlural": "attivita trovate",
     "quickFilters": "Filtri rapidi",
+    "filterByCategory": "Filtra per categoria",
     "resetFilters": "Azzera filtri",
+    "sleepConciergeIntro": "Ti aiuto a trovare la struttura piu adatta al tuo soggiorno.",
+    "discoverAccommodation": "Scopri la struttura",
+    "backToMunicipalities": "Torna",
     "noResults": "Nessun risultato",
     "noResultsHint": "Prova a rimuovere uno o piu filtri per ampliare la ricerca.",
     "openSheet": "Apri scheda",
@@ -92,6 +96,9 @@
     "email": "Email",
     "book": "Prenota",
     "yes": "Si",
+    "categories": {
+      "bedAndBreakfast": "B&B"
+    },
     "filters": {
       "cucinaCilentana": "Cucina cilentana",
       "pesce": "Pesce",

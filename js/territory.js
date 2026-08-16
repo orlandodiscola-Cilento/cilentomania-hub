@@ -481,7 +481,8 @@ function municipalityModuleConfig(type){
    entityType:'accommodation',
     placeholder:territoryTranslate('hospitality.searchSleepPlaceholder','Cerca una struttura o una localita...'),
    empty:territoryTranslate('hospitality.noResults','Nessun risultato'),
-   categories:['Hotel','Resort','Bed and Breakfast','Case vacanza','Agriturismo','Residence','Campeggi e villaggi','Ospitalità nel borgo'],
+  categories:['Hotel','Resort','Bed and Breakfast','Case vacanza','Agriturismo','Residence','Campeggi e villaggi','Ospitalità nel borgo'],
+  categoryOrder:['Bed and Breakfast','Hotel','Casa vacanza','Agriturismo','Resort'],
    localities:['Castellabate centro storico','Santa Maria di Castellabate','San Marco di Castellabate','Lago','Ogliastro Marina','Licosa','Alano'],
   resultNoun:{singular:territoryTranslate('hospitality.resultsSleepSingular','struttura trovata'),plural:territoryTranslate('hospitality.resultsSleepPlural','strutture trovate')},
    booleanFilters:[
@@ -546,9 +547,26 @@ function municipalityModuleBooleanPredicate(flag,item){
 function municipalityModuleResolveQuickFilters(config,records){
  return config.booleanFilters.filter(filter=>!filter.optional||records.some(record=>municipalityModuleBooleanPredicate(filter.key,record)));
 }
+function municipalityModuleCategoryValues(records,config){
+ const values=Array.isArray(records)?records.map(item=>territoryLocalizedText(item,'categoria')).filter(Boolean):[];
+ const uniqueValues=territoryUniqueList(values);
+ if(config?.entityType!=='accommodation')return uniqueValues;
+ const ordered=(config.categoryOrder||[]).map(category=>{
+  const match=uniqueValues.find(value=>normalizeMunicipalityModuleText(value)===normalizeMunicipalityModuleText(category));
+  return match||category;
+ });
+ return territoryUniqueList([...ordered,...uniqueValues]);
+}
+function municipalityModuleCategoryLabel(category){
+ if(/^bed(?:\s+and\s+|\s*&\s*)breakfast$/i.test(String(category||'').trim())){
+  return territoryTranslate('hospitality.categories.bedAndBreakfast','B&B');
+ }
+ return String(category||'');
+}
 function municipalityModuleHasActiveFilters(filters){
  const selected=Array.isArray(filters.boolean)?filters.boolean:[];
- return Boolean(String(filters.search||'').trim())||selected.length>0;
+ const categories=Array.isArray(filters.categories)?filters.categories:[];
+ return Boolean(String(filters.search||'').trim())||selected.length>0||categories.length>0;
 }
 function municipalityModuleCountLabel(count,config){
  const nouns=config.resultNoun||{singular:'risultato trovato',plural:'risultati trovati'};
@@ -591,8 +609,9 @@ function municipalityModuleChipIcon(value){
  return '•';
 }
 function municipalityModuleCardContent(item,config){
+ const isSleep=config.entityType==='accommodation';
  const badge=item.partner_cilentomania?'<span class="module-card__badge">Partner Cilentomania</span>':'';
- const typeLabel=safeTerritoryText(territoryLocalizedText(item,'categoria',{neutralFallback:true}));
+ const typeLabel=safeTerritoryText(municipalityModuleCategoryLabel(territoryLocalizedText(item,'categoria',{neutralFallback:true})));
  const locality=territoryLocalizedText(item,'localita');
  const summary=territoryLocalizedText(item,'descrizione_breve');
  const localizedCuisines=territoryLocalizedList(item,'tipologie_cucina');
@@ -600,10 +619,19 @@ function municipalityModuleCardContent(item,config){
  const localizedServices=territoryLocalizedList(item,'servizi');
  const cuisine=localizedCuisines[0]||municipalityModuleAsArray(item.tipologie_cucina)[0]||'';
  const service=localizedServicesHighlight[0]||localizedServices[0]||municipalityModuleAsArray(item.servizi_in_evidenza)[0]||municipalityModuleAsArray(item.servizi)[0]||'';
+ const sleepServices=territoryUniqueList([...localizedServicesHighlight,...localizedServices,...municipalityModuleAsArray(item.servizi_in_evidenza),...municipalityModuleAsArray(item.servizi)]).slice(0,3);
  const highlight=territoryText(config.entityType==='restaurant'?cuisine:service);
  const displayName=territoryLocalizedText(item,'nome',{neutralFallback:true});
  const cardLabel=territoryTranslate('hospitality.openSheet','Apri scheda')+': '+displayName;
- return '<article class="module-card" role="button" tabindex="0" aria-label="'+safeTerritoryText(cardLabel)+'" data-module-discover-card="'+safeTerritoryText(item.id||'')+'" data-entity-type="'+safeTerritoryText(config.entityType)+'" data-entity-id="'+safeTerritoryText(item.id||'')+'" data-comune-id="'+safeTerritoryText(item.comune_id||'')+'" data-category="'+safeTerritoryText(item.categoria||'')+'" data-localita="'+safeTerritoryText(item.localita||'')+'"><div class="module-card__media"><img src="'+safeTerritoryText(item.immagine_copertina||item.image||'assets/placeholder-comune.svg')+'" alt="'+safeTerritoryText(displayName||territoryTranslate('hospitality.imageUnavailable','Immagine non disponibile'))+'" loading="lazy" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><div class="module-card__media-fallback" hidden aria-hidden="true"><span>'+safeTerritoryText(territoryTranslate('hospitality.imageUnavailable','Immagine non disponibile'))+'</span></div></div><div class="module-card__copy"><h3>'+safeTerritoryText(displayName)+'</h3><div class="module-card__meta-row"><span class="module-card__type">'+typeLabel+'</span>'+badge+'</div>'+(locality?'<p class="module-card__location"><span class="module-card__location-icon" aria-hidden="true">⌖</span><span>'+safeTerritoryText(locality)+'</span></p>':'')+(highlight?'<p class="module-card__highlight">'+safeTerritoryText(highlight)+'</p>':'')+(summary?'<p class="module-card__description">'+safeTerritoryText(summary)+'</p>':'')+'<button class="module-card__cta" type="button" data-module-discover="'+safeTerritoryText(item.id||'')+'">'+safeTerritoryText(territoryTranslate('common.discover','Scopri'))+' <span aria-hidden="true">→</span></button></div></article>';
+ const heroTitle=safeTerritoryText(displayName||territoryTranslate('hospitality.imageUnavailable','Immagine non disponibile'));
+ const heroImage=safeTerritoryText(item.immagine_copertina||item.image||'assets/placeholder-comune.svg');
+ if(isSleep){
+  const serviceMarkup=sleepServices.length
+   ?'<div class="module-card__service-list">'+sleepServices.map(value=>'<span class="module-card__service-chip">'+safeTerritoryText(value)+'</span>').join('')+'</div>'
+   :'';
+   return '<article class="module-card module-card--sleep" role="button" tabindex="0" aria-label="'+safeTerritoryText(cardLabel)+'" data-module-discover-card="'+safeTerritoryText(item.id||'')+'" data-entity-type="'+safeTerritoryText(config.entityType)+'" data-entity-id="'+safeTerritoryText(item.id||'')+'" data-comune-id="'+safeTerritoryText(item.comune_id||'')+'" data-category="'+safeTerritoryText(item.categoria||'')+'" data-localita="'+safeTerritoryText(item.localita||'')+'"><div class="module-card__media"><img src="'+heroImage+'" alt="'+heroTitle+'" loading="lazy" onerror="this.hidden=true;this.parentElement.classList.add(\'has-image-fallback\');this.nextElementSibling.hidden=false"><div class="module-card__media-fallback" hidden aria-hidden="true"><span>'+safeTerritoryText(territoryTranslate('hospitality.imageUnavailable','Immagine non disponibile'))+'</span></div><div class="module-card__media-shade" aria-hidden="true"></div>'+(typeLabel?'<span class="module-card__media-badge">'+typeLabel+'</span>':'')+'<div class="module-card__media-caption"><h3>'+heroTitle+'</h3>'+(locality?'<p class="module-card__location"><span class="module-card__location-icon" aria-hidden="true">⌖</span><span>'+safeTerritoryText(locality)+'</span></p>':'')+'</div></div><div class="module-card__copy">'+badge+(summary?'<p class="module-card__description">'+safeTerritoryText(summary)+'</p>':'')+serviceMarkup+'<button class="module-card__cta" type="button" data-module-discover="'+safeTerritoryText(item.id||'')+'">'+safeTerritoryText(territoryTranslate('hospitality.discoverAccommodation','Scopri la struttura'))+' <span aria-hidden="true">→</span></button></div></article>';
+ }
+ return '<article class="module-card" role="button" tabindex="0" aria-label="'+safeTerritoryText(cardLabel)+'" data-module-discover-card="'+safeTerritoryText(item.id||'')+'" data-entity-type="'+safeTerritoryText(config.entityType)+'" data-entity-id="'+safeTerritoryText(item.id||'')+'" data-comune-id="'+safeTerritoryText(item.comune_id||'')+'" data-category="'+safeTerritoryText(item.categoria||'')+'" data-localita="'+safeTerritoryText(item.localita||'')+'"><div class="module-card__media"><img src="'+heroImage+'" alt="'+heroTitle+'" loading="lazy" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><div class="module-card__media-fallback" hidden aria-hidden="true"><span>'+safeTerritoryText(territoryTranslate('hospitality.imageUnavailable','Immagine non disponibile'))+'</span></div></div><div class="module-card__copy"><h3>'+safeTerritoryText(displayName)+'</h3><div class="module-card__meta-row"><span class="module-card__type">'+typeLabel+'</span>'+badge+'</div>'+(locality?'<p class="module-card__location"><span class="module-card__location-icon" aria-hidden="true">⌖</span><span>'+safeTerritoryText(locality)+'</span></p>':'')+(highlight?'<p class="module-card__highlight">'+safeTerritoryText(highlight)+'</p>':'')+(summary?'<p class="module-card__description">'+safeTerritoryText(summary)+'</p>':'')+'<button class="module-card__cta" type="button" data-module-discover="'+safeTerritoryText(item.id||'')+'">'+safeTerritoryText(territoryTranslate('common.discover','Scopri'))+' <span aria-hidden="true">→</span></button></div></article>';
 }
 function municipalityModuleResultsHtml(records,config,municipalityName,comuneId,showReset=false){
  const cards=records.map(item=>municipalityModuleCardContent(item,config)).join('');
@@ -611,24 +639,49 @@ function municipalityModuleResultsHtml(records,config,municipalityName,comuneId,
  return '<div class="module-experience__results-grid" data-module-results-grid>'+(cards||'<div class="module-empty" role="status"><h3>'+safeTerritoryText(territoryTranslate('hospitality.noResults','Nessun risultato'))+'</h3><p>'+safeTerritoryText(territoryTranslate('hospitality.noResultsHint','Prova a rimuovere uno o piu filtri per ampliare la ricerca.'))+'</p>'+emptyActions+'</div>')+'</div>';
 }
 function municipalityModuleFilterHtml(config,records,filters={}){
+ const isSleep=config.entityType==='accommodation';
  const searchValue=String(filters.search||'');
  const booleanSelection=Array.isArray(filters.boolean)?filters.boolean:[];
+ const categorySelection=Array.isArray(filters.categories)?filters.categories:[];
  const quickFilters=municipalityModuleResolveQuickFilters(config,records);
+ const categories=municipalityModuleCategoryValues(records,config);
  const hasActiveFilters=municipalityModuleHasActiveFilters(filters);
+ const categoryMarkup=isSleep&&categories.length
+  ?'<div class="module-filter-quick"><p class="module-filter-quick-title">'+safeTerritoryText(territoryTranslate('hospitality.filterByCategory','Filtra per categoria'))+'</p><div class="module-filter-quick-list module-filter-quick-list--scroll">'+categories.map(category=>'<button class="module-filter-pill module-filter-pill--category" type="button" data-module-category="'+safeTerritoryText(category)+'" aria-pressed="'+String(categorySelection.includes(category))+'">'+safeTerritoryText(municipalityModuleCategoryLabel(category))+'</button>').join('')+'</div></div>'
+  :'';
  const quickFilterMarkup=quickFilters.map(filter=>'<button class="module-filter-pill" type="button" data-module-boolean="'+safeTerritoryText(filter.key)+'" aria-pressed="'+String(booleanSelection.includes(filter.key))+'">'+safeTerritoryText(filter.label)+'</button>').join('');
- return '<div class="module-experience__filters" data-module-filters><div class="module-filter-search"><label class="sr-only" for="moduleSearch">'+safeTerritoryText(territoryTranslate('common.search','Cerca'))+'</label><input id="moduleSearch" type="search" data-module-search value="'+safeTerritoryText(searchValue)+'" placeholder="'+safeTerritoryText(config.placeholder)+'" aria-label="'+safeTerritoryText(territoryTranslate('common.search','Cerca'))+'"></div><div class="module-filter-quick"><p class="module-filter-quick-title">'+safeTerritoryText(territoryTranslate('hospitality.quickFilters','Filtri rapidi'))+'</p><div class="module-filter-quick-list">'+quickFilterMarkup+'</div></div><button class="module-reset'+(hasActiveFilters?'':' hidden')+'" type="button" data-module-reset-filters>'+safeTerritoryText(territoryTranslate('hospitality.resetFilters','Azzera filtri'))+'</button></div>';
+ return '<div class="module-experience__filters" data-module-filters><div class="module-filter-search"><label class="sr-only" for="moduleSearch">'+safeTerritoryText(territoryTranslate('common.search','Cerca'))+'</label><input id="moduleSearch" type="search" data-module-search value="'+safeTerritoryText(searchValue)+'" placeholder="'+safeTerritoryText(config.placeholder)+'" aria-label="'+safeTerritoryText(territoryTranslate('common.search','Cerca'))+'"></div>'+categoryMarkup+'<div class="module-filter-quick"><p class="module-filter-quick-title">'+safeTerritoryText(territoryTranslate('hospitality.quickFilters','Filtri rapidi'))+'</p><div class="module-filter-quick-list module-filter-quick-list--scroll">'+quickFilterMarkup+'</div></div><button class="module-reset'+(hasActiveFilters?'':' hidden')+'" type="button" data-module-reset-filters>'+safeTerritoryText(territoryTranslate('hospitality.resetFilters','Azzera filtri'))+'</button></div>';
+}
+function municipalityModuleSleepHeroHtml(municipalityName,config){
+ const municipalityCard=territoryCardData(municipalityName);
+ const coverRecord=municipalityCard.imageCoverRecord||municipalityCard.imageCardRecord;
+ const intro=territoryText(municipalityCard.introduzione);
+ const imageMarkup=coverRecord
+  ?'<img class="module-sleep-hero__image" '+territoryImageAttributes(coverRecord,municipalityName,'cover')+'>'
+  :'';
+ return '<header class="module-sleep-hero"><h1 class="module-sleep-hero__title">'+safeTerritoryText(territoryTranslate('modules.sleep','Dove dormire')+' '+territoryTranslate('hospitality.inMunicipality','a')+' '+municipalityName)+'</h1><div class="module-sleep-hero__media">'+imageMarkup+'<div class="module-sleep-hero__fallback" aria-hidden="true"></div><div class="module-sleep-hero__shade" aria-hidden="true"></div>'+(intro?'<div class="module-sleep-hero__content"><p>'+safeTerritoryText(intro)+'</p></div>':'')+'</div></header>';
+}
+function municipalityModuleSleepConciergeHtml(){
+ return '<section class="module-sleep-concierge" aria-label="Cilentino Concierge"><img class="module-sleep-concierge__avatar" src="assets/cileo/avatar/cilentino-concierge.png" alt="Cilentino Concierge" loading="lazy"><p>'+safeTerritoryText(territoryTranslate('hospitality.sleepConciergeIntro','Ti aiuto a trovare la struttura piu adatta al tuo soggiorno.'))+'</p></section>';
 }
 function municipalityModuleViewHtml(type,municipalityName,comuneId,records,filters={}){
  const config=municipalityModuleConfig(type);
+ const isSleep=config.entityType==='accommodation';
  const title=config.titlePrefix+' '+municipalityName;
  const count=records.length;
  const resolvedComuneId=String(comuneId || municipalitySlug(municipalityName));
- return '<section class="module-experience" data-module-experience data-module-type="'+safeTerritoryText(type)+'" data-municipality-name="'+safeTerritoryText(municipalityName)+'" data-comune-id="'+safeTerritoryText(resolvedComuneId)+'" data-entity-type="'+safeTerritoryText(config.entityType)+'" data-module-view-root><div class="module-experience__header"><p class="module-experience__kicker">'+safeTerritoryText(territoryTranslate('hospitality.sectionLabel','Sezione dedicata'))+'</p><h2>'+safeTerritoryText(title)+'</h2><p class="module-experience__intro">'+safeTerritoryText(config.intro)+'</p><div class="module-experience__meta"><span class="module-experience__count" data-module-count>'+safeTerritoryText(municipalityModuleCountLabel(count,config))+'</span></div></div>'+municipalityModuleFilterHtml(config,records,filters)+municipalityModuleResultsHtml(records,config,municipalityName,comuneId,municipalityModuleHasActiveFilters(filters))+'</section>';
+ const header=isSleep
+  ?municipalityModuleSleepHeroHtml(municipalityName,config)
+  :'<div class="module-experience__header"><p class="module-experience__kicker">'+safeTerritoryText(territoryTranslate('hospitality.sectionLabel','Sezione dedicata'))+'</p><h2>'+safeTerritoryText(title)+'</h2><p class="module-experience__intro">'+safeTerritoryText(config.intro)+'</p><div class="module-experience__meta"><span class="module-experience__count" data-module-count>'+safeTerritoryText(municipalityModuleCountLabel(count,config))+'</span></div></div>';
+ const concierge=isSleep?municipalityModuleSleepConciergeHtml():'';
+ const countMarkup='<div class="module-experience__meta module-experience__meta--results"><span class="module-experience__count" data-module-count>'+safeTerritoryText(municipalityModuleCountLabel(count,config))+'</span></div>';
+ return '<section class="module-experience" data-module-experience data-module-type="'+safeTerritoryText(type)+'" data-municipality-name="'+safeTerritoryText(municipalityName)+'" data-comune-id="'+safeTerritoryText(resolvedComuneId)+'" data-entity-type="'+safeTerritoryText(config.entityType)+'" data-module-view-root>'+header+concierge+municipalityModuleFilterHtml(config,records,filters)+(isSleep?countMarkup:'')+municipalityModuleResultsHtml(records,config,municipalityName,comuneId,municipalityModuleHasActiveFilters(filters))+'</section>';
 }
 function municipalityModuleFilterRecords(records,filters,config){
  const searchValue=normalizeMunicipalityModuleText(filters.search||'');
  const localityValue=String(filters.locality||'').trim();
  const categoryValue=String(filters.category||'').trim();
+ const categorySelection=Array.isArray(filters.categories)?filters.categories:[];
  const priceValue=String(filters.price||'').trim();
  const booleanFilters=filters.boolean||[];
  return records.filter(item=>{
@@ -643,7 +696,7 @@ function municipalityModuleFilterRecords(records,filters,config){
   ].filter(Boolean).join(' '));
   const matchesSearch=!searchValue||haystack.includes(searchValue);
   const matchesLocality=!localityValue||String(item.localita||'').trim()===localityValue;
-  const matchesCategory=!categoryValue||String(item.categoria||'').trim()===categoryValue;
+  const matchesCategory=(!categoryValue||String(item.categoria||'').trim()===categoryValue)&&(!categorySelection.length||categorySelection.includes(territoryLocalizedText(item,'categoria')));
   const matchesPrice=!priceValue||String(item.fascia_prezzo||'').trim()===priceValue;
   const matchesBoolean=booleanFilters.every(flag=>municipalityModuleBooleanPredicate(flag,item));
   return matchesSearch&&matchesLocality&&matchesCategory&&matchesPrice&&matchesBoolean;
@@ -773,10 +826,12 @@ function bindMunicipalityDetailGalleryLightbox(){
 async function openMunicipalityModule(type,municipalityName,comuneId,state={}){
  const records=await loadMunicipalityModuleData(type);
  const config=municipalityModuleConfig(type);
- const initialFilters=state.filters||{search:'',locality:'',category:'',price:'',boolean:[]};
+ const initialFilters=state.filters||{search:'',locality:'',category:'',categories:[],price:'',boolean:[]};
  const filteredRecords=municipalityModuleFilterRecords(records,initialFilters,config).filter(item=>municipalityModuleMatches(item,municipalityName,comuneId));
  const title=config.titlePrefix+' '+municipalityName;
- openPanel(title,municipalityModuleViewHtml(type,municipalityName,comuneId,filteredRecords,initialFilters));
+ openPanel(type==='sleep'?'':title,municipalityModuleViewHtml(type,municipalityName,comuneId,filteredRecords,initialFilters));
+ overlay.classList.toggle('municipality-module-sleep-open',type==='sleep');
+ if(type==='sleep')configureNavigationDock('modal-return');
  const container=panelContent.querySelector('[data-module-experience]');
  if(container){
   container.setAttribute('data-module-records',JSON.stringify(records.filter(item=>municipalityModuleMatches(item,municipalityName,comuneId))));
@@ -796,7 +851,7 @@ async function openMunicipalityDetailById(type,municipalityName,comuneId,itemId,
  const config=municipalityModuleConfig(type);
  const item=matchingRecords.find(record=>String(record.id)===String(itemId));
  if(!item)return;
- const resolvedState=navigationState||buildMunicipalityModuleNavigationState(type,municipalityName,comuneId,{search:'',locality:'',category:'',price:'',boolean:[]},overlay.scrollTop);
+ const resolvedState=navigationState||buildMunicipalityModuleNavigationState(type,municipalityName,comuneId,{search:'',locality:'',category:'',categories:[],price:'',boolean:[]},overlay.scrollTop);
  setMunicipalityModuleNavigationState(resolvedState);
  openPanel('',municipalityModuleDetailHtml(item,config,municipalityName,comuneId));
  bindMunicipalityDetailGalleryLightbox();
@@ -810,13 +865,34 @@ async function openMunicipalityDetailById(type,municipalityName,comuneId,itemId,
 function municipalityModuleCollectFilters(root){
  const search=root.querySelector('[data-module-search]');
  const booleans=root.querySelectorAll('[data-module-boolean]');
- return {search:search?.value||'',locality:'',category:'',price:'',boolean:Array.from(booleans).filter(button=>button.getAttribute('aria-pressed')==='true').map(button=>button.getAttribute('data-module-boolean'))};
+ const categories=root.querySelectorAll('[data-module-category]');
+ return {
+  search:search?.value||'',
+  locality:'',
+  category:'',
+  categories:Array.from(categories).filter(button=>button.getAttribute('aria-pressed')==='true').map(button=>button.getAttribute('data-module-category')),
+  price:'',
+  boolean:Array.from(booleans).filter(button=>button.getAttribute('aria-pressed')==='true').map(button=>button.getAttribute('data-module-boolean'))
+ };
 }
 function bindMunicipalityModuleInteractions(root){
  if(!root)return;
  const search=root.querySelector('[data-module-search]');
  const booleans=root.querySelectorAll('[data-module-boolean]');
- const resetButtons=root.querySelectorAll('[data-module-reset-filters]');
+ const categories=root.querySelectorAll('[data-module-category]');
+
+ const bindResetButtons=()=>{
+  root.querySelectorAll('[data-module-reset-filters]').forEach(button=>{
+   button.onclick=null;
+   button.addEventListener('click',()=>{
+    if(search)search.value='';
+    root.querySelectorAll('[data-module-boolean]').forEach(control=>control.setAttribute('aria-pressed','false'));
+    root.querySelectorAll('[data-module-category]').forEach(control=>control.setAttribute('aria-pressed','false'));
+    updateResults();
+    if(search)search.focus({preventScroll:true});
+   });
+  });
+ };
 
  const openDetailById=(itemId,backStateRaw='')=>{
   const moduleType=root.getAttribute('data-module-type')||'sleep';
@@ -867,6 +943,7 @@ function bindMunicipalityModuleInteractions(root){
   const count=root.querySelector('[data-module-count]');
   if(count)count.textContent=municipalityModuleCountLabel(filtered.length,config);
   root.querySelectorAll('[data-module-reset-filters]').forEach(button=>button.classList.toggle('hidden',!hasActiveFilters));
+  bindResetButtons();
   bindDiscoverButtons();
  };
 
@@ -880,13 +957,36 @@ function bindMunicipalityModuleInteractions(root){
    updateResults();
   });
  });
- resetButtons.forEach(button=>{
-  button.onclick=null;
-  button.addEventListener('click',()=>{
+ categories.forEach(control=>{
+  control.onclick=null;
+  control.addEventListener('click',()=>{
+   const isPressed=control.getAttribute('aria-pressed')==='true';
+   control.setAttribute('aria-pressed',String(!isPressed));
+   updateResults();
+  });
+ });
+ if(root.dataset.moduleResetDelegationBound!=='true'){
+  root.addEventListener('click',event=>{
+   const resetButton=event.target.closest('[data-module-reset-filters]');
+   if(!resetButton||!root.contains(resetButton))return;
    if(search)search.value='';
    root.querySelectorAll('[data-module-boolean]').forEach(control=>control.setAttribute('aria-pressed','false'));
+   root.querySelectorAll('[data-module-category]').forEach(control=>control.setAttribute('aria-pressed','false'));
    updateResults();
    if(search)search.focus({preventScroll:true});
+  });
+  root.dataset.moduleResetDelegationBound='true';
+ }
+ bindResetButtons();
+ root.querySelectorAll('[data-module-back-to-towns]').forEach(button=>{
+  button.onclick=null;
+  button.addEventListener('click',()=>{
+   const moduleType=root.getAttribute('data-module-type')||'sleep';
+   const moduleTitle=territoryTranslate(moduleType==='eat'?'modules.eat':'modules.sleep',moduleType==='eat'?'Dove mangiare':'Dove dormire');
+   const note=moduleType==='eat'
+    ?'Scegli il Comune in cui cercare ristoranti e locali.'
+    :'Scegli il Comune in cui cercare una struttura ricettiva.';
+   openPanel(moduleTitle,'<section data-hub-section="'+safeTerritoryText(moduleType)+'">'+townSelector(note,'home-module',moduleType)+'</section>');
   });
  });
  bindDiscoverButtons();
@@ -1003,6 +1103,10 @@ function configureNavigationDock(level,backMunicipality=''){
 }
 function openPanel(title,html){
  const wasOpen=overlay.classList.contains('open');
+ const panel=panelContent.closest('.panel');
+ const closeButton=document.getElementById('closePanel');
+ if(closeButton&&panel&&closeButton.parentElement!==panel)panel.insertBefore(closeButton,panelContent);
+ overlay.classList.remove('municipality-module-sleep-open');
  panelContent.innerHTML=(title?'<h2>'+title+'</h2>':'')+html;
  globalThis.CilentomaniaI18n?.applyTranslations?.(panelContent);
  bindTerritoryImages(panelContent);
@@ -1041,7 +1145,7 @@ function unlockPageScroll(){
  document.documentElement.style.scrollBehavior='auto';window.scrollTo(0,lockedPageScrollY);document.documentElement.style.scrollBehavior=previousBehavior;
  pageScrollLocked=false;lockedBodyStyles=null;
 }
-function closePanel(){configureNavigationDock(null);overlay.classList.remove('open','territory-sheet-open');overlay.scrollTop=0;unlockPageScroll();}
+function closePanel(){configureNavigationDock(null);overlay.classList.remove('open','territory-sheet-open','municipality-module-sleep-open');overlay.scrollTop=0;unlockPageScroll();}
 function bindTownFilter(){
  const f=document.getElementById('townFilter'); if(!f)return;
  const selector=document.getElementById('townList');
