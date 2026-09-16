@@ -482,7 +482,7 @@ function municipalityModuleConfig(type){
     placeholder:territoryTranslate('hospitality.searchSleepPlaceholder','Cerca una struttura o una localita...'),
    empty:territoryTranslate('hospitality.noResults','Nessun risultato'),
   categories:['Hotel','Resort','Bed and Breakfast','Case vacanza','Agriturismo','Residence','Campeggi e villaggi','Ospitalità nel borgo'],
-  categoryOrder:['Bed and Breakfast','Hotel','Casa vacanza','Agriturismo','Resort'],
+  categoryOrder:['Hotel','Bed and Breakfast','Agriturismo','Casa vacanza','Campeggi e villaggi','Resort'],
    localities:['Castellabate centro storico','Santa Maria di Castellabate','San Marco di Castellabate','Lago','Ogliastro Marina','Licosa','Alano'],
   resultNoun:{singular:territoryTranslate('hospitality.resultsSleepSingular','struttura trovata'),plural:territoryTranslate('hospitality.resultsSleepPlural','strutture trovate')},
    booleanFilters:[
@@ -552,8 +552,9 @@ function municipalityModuleCategoryValues(records,config){
  const uniqueValues=territoryUniqueList(values);
  if(config?.entityType!=='accommodation')return uniqueValues;
  const ordered=(config.categoryOrder||[]).map(category=>{
-  const match=uniqueValues.find(value=>normalizeMunicipalityModuleText(value)===normalizeMunicipalityModuleText(category));
-  return match||category;
+  const canonical=value=>normalizeMunicipalityModuleText(value).replace(/^case vacanza$/, 'casa vacanza');
+  const record=records.find(item=>canonical(item.categoria)===canonical(category));
+  return record?territoryLocalizedText(record,'categoria'):category;
  });
  return territoryUniqueList([...ordered,...uniqueValues]);
 }
@@ -561,7 +562,9 @@ function municipalityModuleCategoryLabel(category){
  if(/^bed(?:\s+and\s+|\s*&\s*)breakfast$/i.test(String(category||'').trim())){
   return territoryTranslate('hospitality.categories.bedAndBreakfast','B&B');
  }
- return String(category||'');
+ const labels={'Hotel':['hotel','Hotel'],'Agriturismo':['farmstays','Agriturismi'],'Casa vacanza':['holidayHomes','Case vacanza'],'Case vacanza':['holidayHomes','Case vacanza'],'Campeggi e villaggi':['camping','Camping']};
+ const label=labels[category];
+ return label?territoryTranslate('hospitality.categories.'+label[0],label[1]):String(category||'');
 }
 function municipalityModuleHasActiveFilters(filters){
  const selected=Array.isArray(filters.boolean)?filters.boolean:[];
@@ -647,10 +650,12 @@ function municipalityModuleFilterHtml(config,records,filters={}){
  const categories=municipalityModuleCategoryValues(records,config);
  const hasActiveFilters=municipalityModuleHasActiveFilters(filters);
  const categoryMarkup=isSleep&&categories.length
-  ?'<div class="module-filter-quick"><p class="module-filter-quick-title">'+safeTerritoryText(territoryTranslate('hospitality.filterByCategory','Filtra per categoria'))+'</p><div class="module-filter-quick-list module-filter-quick-list--scroll">'+categories.map(category=>'<button class="module-filter-pill module-filter-pill--category" type="button" data-module-category="'+safeTerritoryText(category)+'" aria-pressed="'+String(categorySelection.includes(category))+'">'+safeTerritoryText(municipalityModuleCategoryLabel(category))+'</button>').join('')+'</div></div>'
+  ?'<div class="module-filter-quick"><p class="module-filter-quick-title">'+safeTerritoryText(territoryTranslate('hospitality.filterByCategory','Filtra per categoria'))+'</p><div class="module-filter-quick-list module-filter-quick-list--scroll module-filter-categories"><button class="module-filter-pill" type="button" data-module-all-categories aria-pressed="'+String(!categorySelection.length)+'">'+safeTerritoryText(territoryTranslate('hospitality.allCategories','Tutti'))+'</button>'+categories.map(category=>'<button class="module-filter-pill module-filter-pill--category" type="button" data-module-category="'+safeTerritoryText(category)+'" aria-pressed="'+String(categorySelection.includes(category))+'">'+safeTerritoryText(municipalityModuleCategoryLabel(category))+'</button>').join('')+'</div></div>'
   :'';
  const quickFilterMarkup=quickFilters.map(filter=>'<button class="module-filter-pill" type="button" data-module-boolean="'+safeTerritoryText(filter.key)+'" aria-pressed="'+String(booleanSelection.includes(filter.key))+'">'+safeTerritoryText(filter.label)+'</button>').join('');
- return '<div class="module-experience__filters" data-module-filters><div class="module-filter-search"><label class="sr-only" for="moduleSearch">'+safeTerritoryText(territoryTranslate('common.search','Cerca'))+'</label><input id="moduleSearch" type="search" data-module-search value="'+safeTerritoryText(searchValue)+'" placeholder="'+safeTerritoryText(config.placeholder)+'" aria-label="'+safeTerritoryText(territoryTranslate('common.search','Cerca'))+'"></div>'+categoryMarkup+'<div class="module-filter-quick"><p class="module-filter-quick-title">'+safeTerritoryText(territoryTranslate('hospitality.quickFilters','Filtri rapidi'))+'</p><div class="module-filter-quick-list module-filter-quick-list--scroll">'+quickFilterMarkup+'</div></div><button class="module-reset'+(hasActiveFilters?'':' hidden')+'" type="button" data-module-reset-filters>'+safeTerritoryText(territoryTranslate('hospitality.resetFilters','Azzera filtri'))+'</button></div>';
+ const quickStart=isSleep?'<details class="module-sleep-extra-filters"'+(booleanSelection.length?' open':'')+'><summary>'+safeTerritoryText(territoryTranslate('hospitality.quickFilters','Filtri rapidi'))+'</summary>':'<div class="module-filter-quick"><p class="module-filter-quick-title">'+safeTerritoryText(territoryTranslate('hospitality.quickFilters','Filtri rapidi'))+'</p>';
+ const quickEnd=isSleep?'</details>':'</div>';
+ return '<div class="module-experience__filters" data-module-filters><div class="module-filter-search"><label class="sr-only" for="moduleSearch">'+safeTerritoryText(territoryTranslate('common.search','Cerca'))+'</label><input id="moduleSearch" type="search" data-module-search value="'+safeTerritoryText(searchValue)+'" placeholder="'+safeTerritoryText(config.placeholder)+'" aria-label="'+safeTerritoryText(territoryTranslate('common.search','Cerca'))+'"></div>'+categoryMarkup+quickStart+'<div class="module-filter-quick-list module-filter-quick-list--scroll">'+quickFilterMarkup+'</div>'+quickEnd+'<button class="module-reset'+(hasActiveFilters?'':' hidden')+'" type="button" data-module-reset-filters>'+safeTerritoryText(territoryTranslate('hospitality.resetFilters','Azzera filtri'))+'</button></div>';
 }
 function municipalityModuleSleepHeroHtml(municipalityName,config){
  const municipalityCard=territoryCardData(municipalityName);
@@ -659,10 +664,10 @@ function municipalityModuleSleepHeroHtml(municipalityName,config){
  const imageMarkup=coverRecord
   ?'<img class="module-sleep-hero__image" '+territoryImageAttributes(coverRecord,municipalityName,'cover')+'>'
   :'';
- return '<header class="module-sleep-hero"><h1 class="module-sleep-hero__title">'+safeTerritoryText(territoryTranslate('modules.sleep','Dove dormire')+' '+territoryTranslate('hospitality.inMunicipality','a')+' '+municipalityName)+'</h1><div class="module-sleep-hero__media">'+imageMarkup+'<div class="module-sleep-hero__fallback" aria-hidden="true"></div><div class="module-sleep-hero__shade" aria-hidden="true"></div>'+(intro?'<div class="module-sleep-hero__content"><p>'+safeTerritoryText(intro)+'</p></div>':'')+'</div></header>';
+ return '<header class="module-sleep-hero"><div class="module-sleep-hero__media">'+imageMarkup+'<div class="module-sleep-hero__fallback" aria-hidden="true"></div><div class="module-sleep-hero__shade" aria-hidden="true"></div><div class="module-sleep-hero__content"><p class="module-sleep-eyebrow">CILENTOMANIA · '+safeTerritoryText(municipalityName)+'</p><h1 class="module-sleep-hero__title">'+safeTerritoryText(territoryTranslate('modules.sleep','Dove dormire'))+'</h1><p>'+safeTerritoryText(territoryTranslate('hospitality.sleepTagline','Il tuo prossimo risveglio nel Cilento.'))+'</p></div></div>'+(intro?'<details class="module-sleep-story"><summary>'+safeTerritoryText(territoryTranslate('hospitality.discoverTown','Scopri'))+' '+safeTerritoryText(municipalityName)+'</summary><p>'+safeTerritoryText(intro)+'</p></details>':'')+'</header>';
 }
 function municipalityModuleSleepConciergeHtml(){
- return '<section class="module-sleep-concierge" aria-label="Cilentino Concierge"><img class="module-sleep-concierge__avatar" src="assets/cileo/avatar/cilentino-concierge.png" alt="Cilentino Concierge" loading="lazy"><p>'+safeTerritoryText(territoryTranslate('hospitality.sleepConciergeIntro','Ti aiuto a trovare la struttura piu adatta al tuo soggiorno.'))+'</p></section>';
+ return '<section class="module-sleep-concierge" aria-label="Cilentino Concierge"><img class="module-sleep-concierge__avatar" src="assets/cileo/avatar/cilentino-concierge.png" alt="Cilentino Concierge" loading="lazy"><div><strong>Cilentino Concierge</strong><p>'+safeTerritoryText(territoryTranslate('hospitality.sleepConciergeIntro','Ti aiuto a trovare la struttura piu adatta al tuo soggiorno.'))+'</p><button type="button" class="module-sleep-chat" data-module-concierge>'+safeTerritoryText(territoryTranslate('hospitality.askCilentino','Chiedi a Cilentino'))+' <span aria-hidden="true">↗</span></button></div></section>';
 }
 function municipalityModuleViewHtml(type,municipalityName,comuneId,records,filters={}){
  const config=municipalityModuleConfig(type);
@@ -674,8 +679,8 @@ function municipalityModuleViewHtml(type,municipalityName,comuneId,records,filte
   ?municipalityModuleSleepHeroHtml(municipalityName,config)
   :'<div class="module-experience__header"><p class="module-experience__kicker">'+safeTerritoryText(territoryTranslate('hospitality.sectionLabel','Sezione dedicata'))+'</p><h2>'+safeTerritoryText(title)+'</h2><p class="module-experience__intro">'+safeTerritoryText(config.intro)+'</p><div class="module-experience__meta"><span class="module-experience__count" data-module-count>'+safeTerritoryText(municipalityModuleCountLabel(count,config))+'</span></div></div>';
  const concierge=isSleep?municipalityModuleSleepConciergeHtml():'';
- const countMarkup='<div class="module-experience__meta module-experience__meta--results"><span class="module-experience__count" data-module-count>'+safeTerritoryText(municipalityModuleCountLabel(count,config))+'</span></div>';
- return '<section class="module-experience" data-module-experience data-module-type="'+safeTerritoryText(type)+'" data-municipality-name="'+safeTerritoryText(municipalityName)+'" data-comune-id="'+safeTerritoryText(resolvedComuneId)+'" data-entity-type="'+safeTerritoryText(config.entityType)+'" data-module-view-root>'+header+concierge+municipalityModuleFilterHtml(config,records,filters)+(isSleep?countMarkup:'')+municipalityModuleResultsHtml(records,config,municipalityName,comuneId,municipalityModuleHasActiveFilters(filters))+'</section>';
+ const countMarkup='<div class="module-experience__meta module-experience__meta--results"><span class="module-experience__count" data-module-count aria-live="polite">'+safeTerritoryText(municipalityModuleCountLabel(count,config))+'</span><button class="module-sleep-change-town" type="button" data-module-back-to-towns>'+safeTerritoryText(territoryTranslate('hospitality.changeTown','Cambia Comune'))+' ↗</button></div>';
+ return '<section class="module-experience" data-module-experience data-module-type="'+safeTerritoryText(type)+'" data-municipality-name="'+safeTerritoryText(municipalityName)+'" data-comune-id="'+safeTerritoryText(resolvedComuneId)+'" data-entity-type="'+safeTerritoryText(config.entityType)+'" data-module-view-root>'+header+municipalityModuleFilterHtml(config,isSleep?(municipalityModuleDataCache[type]||records).filter(item=>municipalityModuleMatches(item,municipalityName,comuneId)):records,filters)+(isSleep?countMarkup:'')+municipalityModuleResultsHtml(records,config,municipalityName,comuneId,municipalityModuleHasActiveFilters(filters))+concierge+'</section>';
 }
 function municipalityModuleFilterRecords(records,filters,config){
  const searchValue=normalizeMunicipalityModuleText(filters.search||'');
@@ -881,18 +886,6 @@ function bindMunicipalityModuleInteractions(root){
  const booleans=root.querySelectorAll('[data-module-boolean]');
  const categories=root.querySelectorAll('[data-module-category]');
 
- const bindResetButtons=()=>{
-  root.querySelectorAll('[data-module-reset-filters]').forEach(button=>{
-   button.onclick=null;
-   button.addEventListener('click',()=>{
-    if(search)search.value='';
-    root.querySelectorAll('[data-module-boolean]').forEach(control=>control.setAttribute('aria-pressed','false'));
-    root.querySelectorAll('[data-module-category]').forEach(control=>control.setAttribute('aria-pressed','false'));
-    updateResults();
-    if(search)search.focus({preventScroll:true});
-   });
-  });
- };
 
  const openDetailById=(itemId,backStateRaw='')=>{
   const moduleType=root.getAttribute('data-module-type')||'sleep';
@@ -940,13 +933,22 @@ function bindMunicipalityModuleInteractions(root){
   const hasActiveFilters=municipalityModuleHasActiveFilters(filters);
   const results=root.querySelector('[data-module-results-grid]');
   if(results)results.outerHTML=municipalityModuleResultsHtml(filtered,config,root.dataset.municipalityName||'',root.dataset.comuneId||'',hasActiveFilters);
+  const allCategories=root.querySelector('[data-module-all-categories]');
+  if(allCategories)allCategories.setAttribute('aria-pressed',String(!filters.categories.length));
   const count=root.querySelector('[data-module-count]');
   if(count)count.textContent=municipalityModuleCountLabel(filtered.length,config);
   root.querySelectorAll('[data-module-reset-filters]').forEach(button=>button.classList.toggle('hidden',!hasActiveFilters));
-  bindResetButtons();
   bindDiscoverButtons();
  };
 
+ root.querySelector('[data-module-all-categories]')?.addEventListener('click',()=>{
+  categories.forEach(control=>control.setAttribute('aria-pressed','false'));
+  updateResults();
+ });
+ root.querySelector('[data-module-concierge]')?.addEventListener('click',()=>{
+  const launcher=document.querySelector('[data-cileo-launcher]');
+  if(launcher?.getAttribute('aria-expanded')!=='true')launcher?.click();
+ });
  [search].filter(Boolean).forEach(control=>control.oninput=null);
  [search].filter(Boolean).forEach(control=>control.addEventListener('input',updateResults));
  booleans.forEach(control=>{
@@ -977,7 +979,6 @@ function bindMunicipalityModuleInteractions(root){
   });
   root.dataset.moduleResetDelegationBound='true';
  }
- bindResetButtons();
  root.querySelectorAll('[data-module-back-to-towns]').forEach(button=>{
   button.onclick=null;
   button.addEventListener('click',()=>{

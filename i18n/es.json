@@ -97,7 +97,11 @@
     "book": "Reservar",
     "yes": "Si",
     "categories": {
-      "bedAndBreakfast": "B&B"
+      "bedAndBreakfast": "B&B",
+      "hotel": "Hoteles",
+      "farmstays": "Agroturismos",
+      "holidayHomes": "Casas vacacionales",
+      "camping": "Camping"
     },
     "filters": {
       "cucinaCilentana": "Cocina cilentana",
@@ -119,7 +123,12 @@
       "colazioneInclusa": "Desayuno incluido",
       "ariaCondizionata": "Aire acondicionado",
       "spaBenessere": "Spa / Bienestar"
-    }
+    },
+    "allCategories": "Todos",
+    "sleepTagline": "Tu próximo despertar en el Cilento.",
+    "discoverTown": "Descubre",
+    "askCilentino": "Pregunta a Cilentino",
+    "changeTown": "Cambiar municipio"
   },
   "overlay": {
     "close": "Cerrar",
