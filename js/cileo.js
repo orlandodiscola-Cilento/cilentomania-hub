@@ -37,7 +37,7 @@
   }
 
   function getLocalizedDemoFallback() {
-    return t('chat.fallback', 'Questo consiglio per ora mi sfugge. Possiamo continuare esplorando luoghi, eventi e itinerari del Cilento.');
+    return t('chat.fallback', 'Al momento non sono in grado di rispondere alla tua richiesta.');
   }
 
   function normalizeForIntentMatch(value) {
@@ -190,30 +190,30 @@
 
     if (context.section === 'sleep') {
       const requested = [
-        ['hotel', 'Hotel', `Mostrami gli hotel ${area}`],
-        ['bb', 'B&B', `Mostrami i B&B ${area}`],
-        ['case-vacanze', 'Case vacanze', `Mostrami le case vacanze ${area}`],
-        ['vicino-mare', 'Vicino al mare', `Cerco una struttura vicino al mare ${area}`],
-        ['piscina', 'Con piscina', `Cerco una struttura con piscina ${area}`],
-        ['parcheggio', 'Con parcheggio', `Cerco una struttura con parcheggio ${area}`],
-        ['pet', 'Pet friendly', `Cerco una struttura che accetta animali ${area}`],
-        ['accessibile', 'Accessibile', `Cerco una struttura accessibile ${area}`]
+        ['hotel', t('hospitality.categories.hotel', 'Hotel')],
+        ['bb', t('hospitality.categories.bedAndBreakfast', 'B&B')],
+        ['case-vacanze', t('hospitality.categories.holidayHomes', 'Case vacanza')],
+        ['vicino-mare', t('hospitality.filters.vicinoMare', 'Vicino al mare')],
+        ['piscina', t('hospitality.filters.piscina', 'Piscina')],
+        ['parcheggio', t('hospitality.filters.parcheggio', 'Parcheggio')],
+        ['pet', t('hospitality.filters.animaliAmmessi', 'Animali ammessi')],
+        ['accessibile', t('hospitality.filters.accessibile', 'Accessibile')]
       ];
-      return requested.map(([id, label, prompt]) => buildContextualSuggestion(`sleep-${id}`, label, prompt));
+      return requested.map(([id, label]) => buildContextualSuggestion(`sleep-${id}`, label, label));
     }
 
     if (context.section === 'eat') {
       const requested = [
-        ['cilentana', 'Cucina cilentana', `Dove posso mangiare cucina cilentana ${areaQuestion}`],
-        ['pesce', 'Ristoranti di pesce', `Mostrami i ristoranti di pesce ${area}`],
-        ['bracerie', 'Bracerie', `Mostrami le bracerie ${area}`],
-        ['pizzerie', 'Pizzerie', `Mostrami le pizzerie ${area}`],
-        ['vegetariano', 'Vegetariano', `Cerco proposte vegetariane ${area}`],
-        ['glutenfree', 'Senza glutine', `Cerco locali con opzioni senza glutine ${area}`],
-        ['pranzo', 'Aperto a pranzo', `Quali locali sono aperti a pranzo ${areaQuestion}`],
-        ['cena', 'Aperto a cena', `Quali locali sono aperti a cena ${areaQuestion}`]
+        ['cilentana', t('hospitality.filters.cucinaCilentana', 'Cucina cilentana')],
+        ['pesce', t('hospitality.filters.pesce', 'Pesce')],
+        ['carne', t('hospitality.filters.carne', 'Carne')],
+        ['pizza', t('hospitality.filters.pizza', 'Pizza')],
+        ['vegetariano', t('hospitality.filters.vegetariano', 'Vegetariano')],
+        ['glutenfree', t('hospitality.filters.senzaGlutine', 'Senza glutine')],
+        ['pranzo', t('hospitality.filters.apertoPranzo', 'Aperto a pranzo')],
+        ['cena', t('hospitality.filters.apertoCena', 'Aperto a cena')]
       ];
-      return requested.map(([id, label, prompt]) => buildContextualSuggestion(`eat-${id}`, label, prompt));
+      return requested.map(([id, label]) => buildContextualSuggestion(`eat-${id}`, label, label));
     }
 
     if (context.section === 'events') {
@@ -291,7 +291,7 @@
       this.baseUrl = options.baseUrl || new URL('../', script?.src || document.baseURI);
       this.config = Object.assign({
         apiBaseUrl: '',
-        enableDemoFallback: true,
+        enableDemoFallback: false,
         requestTimeoutMs: 7000
       }, global.CILENTINO_CONFIG || {});
       this.apiClient = global.CilentinoApiClient || null;
@@ -303,6 +303,14 @@
         onLauncherClick: event => this.handleLauncherClick(event),
         onInteraction: source => this.registerInteraction(source),
         onAction: action => this.handleAction(action),
+        onActions: actions => {
+          const context = getCilentinoNavigationContext();
+          const query = t('chat.multiQuery', 'Preferenze: {preferences}. Località: {town}.', {
+            preferences: actions.map(action => action.label).join(', '),
+            town: context.municipalityName || 'Cilento'
+          });
+          this.handleMessage(query);
+        },
         onMessage: message => this.handleMessage(message),
         onSuggestionsRequest: () => this.getContextualSuggestions(),
         onClearChat: () => this.clearChat()
@@ -469,6 +477,7 @@
     }
 
     updateContextPresentation(context = getCilentinoNavigationContext()) {
+      this.switchConversation(context);
       const type = ['eat', 'sleep'].includes(context.module) ? context.module : null;
       const prefix = type ? `chat.hospitality.${type}` : 'chat';
       const header = this.ui.root.querySelector('.cileo__header-copy');
@@ -672,6 +681,38 @@
       return response;
     }
 
+    conversationScope(context = getCilentinoNavigationContext()) {
+      const module = ['sleep', 'eat'].includes(context.module) ? context.module : 'general';
+      return [getChatLanguage(), module, module === 'general' ? '' : (context.municipalityId || context.municipalityName || '')].map(encodeURIComponent).join(':');
+    }
+
+    storageKey(kind, scope = this.activeConversationScope) {
+      // Legacy unscoped histories may mix languages and topics; leave them archived.
+      return CILEO_STORAGE_KEYS[kind] + ':scoped-v2:' + scope;
+    }
+
+    switchConversation(context) {
+      const scope = this.conversationScope(context);
+      if (scope === this.activeConversationScope) return;
+      if (this.activeConversationScope) this.saveStorageState();
+      this.cancelActiveTurn();
+      this.requestInFlight = false;
+      this.requestPhase = 'idle';
+      this.activeConversationScope = scope;
+      this.messages = [];
+      this.ui.clearMessages();
+      this.ui.resetInput();
+      this.ui.setSuggestionState('conversation');
+      this.initialWelcome = getDefaultWelcome();
+      this.initialActions = getDefaultActions();
+      const restored = this.readStorageState();
+      if (!this.restoreChatFromState(restored)) {
+        this.setChatActions(this.initialActions);
+        this.addChatMessage(this.initialWelcome, 'assistant');
+      }
+      this.ui.elements.input.value = restored?.inputValue || '';
+    }
+
     readStorageState() {
       const parseStored = value => {
         if (!value) return null;
@@ -682,8 +723,8 @@
         }
       };
       try {
-        const localState = parseStored(localStorage.getItem(CILEO_STORAGE_KEYS.localState));
-        const sessionState = parseStored(sessionStorage.getItem(CILEO_STORAGE_KEYS.sessionState));
+        const localState = parseStored(localStorage.getItem(this.storageKey('localState')));
+        const sessionState = parseStored(sessionStorage.getItem(this.storageKey('sessionState')));
         return localState || sessionState || null;
       } catch (error) {
         return null;
@@ -698,12 +739,12 @@
       };
       const serialized = JSON.stringify(state);
       try {
-        localStorage.setItem(CILEO_STORAGE_KEYS.localState, serialized);
+        localStorage.setItem(this.storageKey('localState'), serialized);
       } catch (error) {
         // Ignore storage quota or availability errors.
       }
       try {
-        sessionStorage.setItem(CILEO_STORAGE_KEYS.sessionState, serialized);
+        sessionStorage.setItem(this.storageKey('sessionState'), serialized);
       } catch (error) {
         // Ignore storage quota or availability errors.
       }
@@ -711,12 +752,12 @@
 
     removeStorageState() {
       try {
-        localStorage.removeItem(CILEO_STORAGE_KEYS.localState);
+        localStorage.removeItem(this.storageKey('localState'));
       } catch (error) {
         // Ignore storage availability errors.
       }
       try {
-        sessionStorage.removeItem(CILEO_STORAGE_KEYS.sessionState);
+        sessionStorage.removeItem(this.storageKey('sessionState'));
       } catch (error) {
         // Ignore storage availability errors.
       }
@@ -730,7 +771,8 @@
     }
 
     setChatActions(actions) {
-      this.ui.setActions(actions);
+      const module = getCilentinoNavigationContext().module;
+      this.ui.setActions(['sleep', 'eat'].includes(module) ? this.getContextualSuggestions() : actions);
       this.saveStorageState();
     }
 
@@ -752,6 +794,9 @@
 
     getContextualSuggestions() {
       const context = getCilentinoNavigationContext();
+      if (['sleep', 'eat'].includes(context.module)) {
+        return getCilentinoContextualSuggestions({ ...context, section: context.module }).map(action => ({ ...action, multiSelect: true }));
+      }
       return getCilentinoContextualSuggestions(context);
     }
 
@@ -799,6 +844,7 @@
       if (global.CilentomaniaI18n?.init) {
         await global.CilentomaniaI18n.init();
       }
+      this.activeConversationScope = this.conversationScope();
       this.setAvatarMachineState('GREETING');
       try {
         const data = await this.demo.load();
@@ -820,16 +866,8 @@
       }
 
       document.addEventListener('cilentomania:languagechange', () => {
-        this.syncLocalizedDefaults(true);
         if (!this.started) return;
-        if (!this.messages.length || (this.messages.length === 1 && this.messages[0].sender === 'assistant')) {
-          this.clearChat();
-          return;
-        }
-        if (Array.isArray(this.ui.currentActions) && this.ui.currentActions.length) {
-          this.ui.setActions(this.ui.currentActions.map(action => ({ ...action })));
-        }
-        if (this.ui.isOpen) this.updateContextPresentation();
+        this.updateContextPresentation();
       });
 
       this.ui.root.classList.add('is-ready');
@@ -853,6 +891,9 @@
 
     async respond(message, actionId) {
       const turnId = this.cancelActiveTurn();
+      const responseScope = this.activeConversationScope;
+      const responseMessages = this.messages.map(entry => ({ ...entry }));
+      const unavailableAnswer = getLocalizedDemoFallback();
       const context = getCilentinoNavigationContext();
       const thematicAvatar = this.selectTopicAvatar(message, null, context);
       this.currentTopicAvatar = thematicAvatar;
@@ -874,20 +915,29 @@
           response = null;
         }
 
-        if (!response && this.config.enableDemoFallback) {
-          const demoResponse = await this.demo.reply(message, actionId);
-          response = {
-            answer: demoResponse.text,
-            actions: demoResponse.actions || this.demo.getActions(),
-            sources: [],
-            fallback: true,
-            intent: demoResponse.intent || null,
-            pose: demoResponse.pose || 'idea'
-          };
-          fromBackend = false;
+        // Never substitute a verified answer with a canned demo response.
+        if (response && ((Array.isArray(response.results) && response.results.length === 0)
+          || (response.fallback === true && !response.results?.length && !response.sources?.length))) {
+          response = null;
         }
 
-        if (turnId !== this.turnId) return;
+        if (turnId !== this.turnId) {
+          // Only complete the original, unchanged history. Never replace newer messages.
+          if (responseScope !== this.activeConversationScope) {
+            try {
+              const key = this.storageKey('localState', responseScope);
+              const sessionKey = this.storageKey('sessionState', responseScope);
+              const saved = JSON.parse(localStorage.getItem(key) || sessionStorage.getItem(sessionKey) || 'null');
+              if (saved && JSON.stringify(saved.messages) === JSON.stringify(responseMessages)) {
+                saved.messages.push({ sender: 'assistant', text: response?.answer || unavailableAnswer });
+                const serialized = JSON.stringify(saved);
+                localStorage.setItem(key, serialized);
+                sessionStorage.setItem(sessionKey, serialized);
+              }
+            } catch (_) { /* Storage may be unavailable. */ }
+          }
+          return;
+        }
 
         if (!response) {
           this.stopTyping?.();

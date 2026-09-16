@@ -138,11 +138,29 @@
         this.scheduleContentScroll();
       });
       this.elements.actions.addEventListener('click', event => {
+        if (event.target.closest('[data-cileo-apply]')) {
+          const selected = (this.currentActions || []).filter(action => this.selectedSuggestions?.has(action.id));
+          if (!selected.length) return;
+          this.setSuggestionState('conversation');
+          this.options.onInteraction?.('quick-action');
+          this.options.onActions?.(selected);
+          this.selectedSuggestions.clear();
+          this.elements.input.focus({ preventScroll: true });
+          return;
+        }
         const button = event.target.closest('[data-cileo-action]');
         if (!button) return;
         const index = Number(button.dataset.cileoAction);
         const action = this.currentActions?.[index];
         if (!action) return;
+        if (action.multiSelect) {
+          if (this.selectedSuggestions.has(action.id)) this.selectedSuggestions.delete(action.id);
+          else this.selectedSuggestions.add(action.id);
+          button.setAttribute('aria-pressed', String(this.selectedSuggestions.has(action.id)));
+          this.elements.actions.querySelector('[data-cileo-apply]').disabled = !this.selectedSuggestions.size;
+          this.options.onInteraction?.('suggestion-select');
+          return;
+        }
         this.setSuggestionState('conversation');
         this.options.onInteraction?.('quick-action');
         this.options.onAction(action);
@@ -314,11 +332,19 @@
 
     setActions(actions) {
       const normalizedActions = Array.isArray(actions) ? actions : [];
+      const signature = JSON.stringify(normalizedActions);
+      if (signature !== this.suggestionsSignature) this.selectedSuggestions = new Set();
+      this.suggestionsSignature = signature;
+      this.selectedSuggestions ||= new Set();
       this.currentActions = normalizedActions;
       if (!this.primaryActions) this.primaryActions = normalizedActions;
       this.elements.actions.innerHTML = normalizedActions.map((action, index) =>
-        `<button type="button" data-cileo-action="${index}">${action.icon ? `<span aria-hidden="true">${escapeHtml(action.icon)}</span>` : ''}${escapeHtml(action.label)}</button>`
+        `<button type="button" data-cileo-action="${index}" ${action.multiSelect ? `aria-pressed="${this.selectedSuggestions.has(action.id)}"` : ''}>${action.icon ? `<span aria-hidden="true">${escapeHtml(action.icon)}</span>` : ''}${escapeHtml(action.label)}</button>`
       ).join('');
+      if (normalizedActions.some(action => action.multiSelect)) {
+        this.elements.actions.insertAdjacentHTML('afterbegin', '<p class="cileo__selection-hint">' + escapeHtml(this.t('chat.multiHint', 'Scegli una o più preferenze, poi conferma.')) + '</p>');
+        this.elements.actions.insertAdjacentHTML('beforeend', '<button type="button" class="cileo__apply" data-cileo-apply' + (this.selectedSuggestions.size ? '' : ' disabled') + '>' + escapeHtml(this.t('chat.multiApply', 'Cerca con queste preferenze')) + '</button>');
+      }
       this.syncSuggestionControls();
       window.requestAnimationFrame(() => this.scrollContentToBottom());
     }
@@ -337,6 +363,7 @@
     }
 
     clearMessages() {
+      this.selectedSuggestions = new Set();
       this.elements.messages.innerHTML = '';
       this.hasConversation = false;
     }

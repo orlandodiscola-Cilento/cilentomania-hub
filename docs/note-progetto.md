@@ -23,3 +23,18 @@ Riepiloghi sintetici di stato raggiunto, commit pubblicati e verifiche effettuat
 ### Stato repository
 - Push su `origin/main` eseguito senza force, nessuna divergenza residua.
 - File esclusi dal commit/deploy: `.vscode/`, `node_modules/`, `review-cilentino/`, screenshot temporanei — rimasti solo in locale, non pubblicati.
+
+## 2026-09-16 — Correzioni chat salvate localmente, non pubblicate
+
+- Cronologie separate per lingua, sezione e Comune; vecchie cronologie globali lasciate intatte e non importate.
+- Suggerimenti multipli per ospitalità e ristorazione, tradotti nelle cinque lingue, invio di una sola richiesta con le preferenze selezionate.
+- Risposta breve localizzata quando mancano risultati o il servizio non è disponibile; eliminato il ricorso alle risposte demo.
+- Protezione delle cronologie più recenti o cancellate dalle risposte tardive; preservata la bozza nel salvataggio di una risposta tardiva.
+- Istruzione e pulsante di conferma a larghezza piena nella griglia dei suggerimenti.
+- Anteprima locale allineata al progetto principale.
+
+Verifiche: sintassi dei due JavaScript, allineamento delle chiavi i18n, diff senza errori; test ripetibile `node tools/check-cileo-conversations.cjs` per risposte tardive (cronologia invariata, aggiornata, cancellata e assenza di risposta); controllo visivo del pulsante nell'anteprima italiana di Agropoli. Controlli precedenti confermano separazione/ripristino delle cronologie e gestione di risposte mancanti o verificate.
+
+Limiti: la selezione multipla compone una richiesta; non certifica che il backend applichi tutti i filtri ai dati. Non sono stati aggiunti servizi AI o credenziali. Le conversazioni già salvate possono contenere risposte demo storiche: non sono state cancellate. La verifica responsive completa nelle cinque lingue resta da effettuare prima della pubblicazione. Una risposta tardiva viene ignorata se la sua cronologia è stata modificata nel frattempo, per evitare sovrascritture.
+
+Stato: solo salvataggio locale; nessun push/deploy. I file temporanei e personali restano esclusi.

@@ -246,3 +246,9 @@ html.cileo-page-locked { overflow: hidden; overscroll-behavior: none; }
   .cileo__launcher, .cileo__avatar-visual, .cileo__panel, .cileo__bubble, .cileo__avatar-visual img { transition: none; }
   .cileo__typing i { animation: none; }
 }
+
+/* Multiple hospitality preferences */
+.cileo__actions button[aria-pressed="true"] { background: #0879ac; color: #fff; border-color: #075b83; box-shadow: inset 0 0 0 2px #075b83; }
+.cileo__selection-hint { grid-column: 1 / -1; margin: 0 0 8px; font-size: .9rem; }
+.cileo__actions .cileo__apply { grid-column: 1 / -1; background: #0879ac; color: #fff; margin-top: 8px; min-height: 44px; }
+.cileo__actions .cileo__apply:disabled { opacity: .45; cursor: not-allowed; }

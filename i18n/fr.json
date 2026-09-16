@@ -200,7 +200,7 @@
     "confirmCancel": "Annuler",
     "confirmDelete": "Effacer",
     "welcome": "Je peux vous aider à trouver des villages, des plages, des événements, des expériences, des itinéraires, des restaurants, des hébergements et des Infopoints.\n\nPar où voulez-vous commencer ?",
-    "fallback": "Je n'ai pas encore cette suggestion. Nous pouvons continuer à explorer les lieux, événements et itinéraires du Cilento.",
+    "fallback": "Pour le moment, je ne suis pas en mesure de répondre à votre demande.",
     "actions": {
       "territory": "Explorer le territoire",
       "events": "Événements",
@@ -238,6 +238,9 @@
         "questionTown": "Quel type de séjour recherchez-vous à {town} ?",
         "preferences": "Avec qui voyagez-vous et quels services sont importants pour vous ?"
       }
-    }
+    },
+    "multiHint": "Choisissez une ou plusieurs préférences, puis confirmez.",
+    "multiApply": "Rechercher avec ces préférences",
+    "multiQuery": "Je recherche : {preferences}. Lieu : {town}."
   }
 }
