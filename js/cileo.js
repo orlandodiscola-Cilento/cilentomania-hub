@@ -369,9 +369,30 @@
       this.ui.hideBubble();
     }
 
+    setHospitalityMood(mood) {
+      window.clearTimeout(this.avatarMoodTimer);
+      const context = getCilentinoNavigationContext();
+      const active = this.ui.isOpen && ['sleep', 'eat'].includes(context.module);
+      this.ui.root.dataset.avatarMood = active ? mood : 'idle';
+      if (active && ['presenting', 'unavailable', 'listening'].includes(mood)) {
+        this.avatarMoodTimer = window.setTimeout(() => {
+          this.ui.root.dataset.avatarMood = 'idle';
+        }, mood === 'unavailable' ? 2200 : 1600);
+      }
+    }
+
     setAvatarMachineState(machineState, options = {}) {
+      const mood = options.responseMood || ({ THINKING: 'thinking', ERROR: 'unavailable', COMPLETE: 'presenting' }[machineState]) || 'idle';
+      this.setHospitalityMood(mood);
       if (this.homeAvatarReset && !this.ui.isOpen && getCilentinoNavigationContext().section === 'home') {
         machineState = 'SLEEPING'; options = {};
+      }
+      const context = getCilentinoNavigationContext();
+      const hospitalityAvatar = { sleep: 'concierge', eat: 'chef' }[context.module];
+      // Keep the page character during thinking, errors and completed replies.
+      if (this.ui.isOpen && hospitalityAvatar) {
+        machineState = 'TOPIC';
+        options = { topicState: hospitalityAvatar };
       }
       return this.animation.setMachineState(machineState, options);
     }
@@ -425,12 +446,15 @@
     }
 
     registerInteraction(source) {
+      if (source === 'close') this.setHospitalityMood('idle');
+      if (['input-focus', 'input-change'].includes(source) && !this.isChatBusy()) this.setHospitalityMood('listening');
       if (source === 'submit' || source === 'quick-action') this.hideWakeBubble();
       this.clearSleepTimer();
       if (!this.isChatBusy()) this.restartSleepTimer();
     }
 
     cancelActiveTurn() {
+      this.setHospitalityMood('idle');
       this.turnId += 1;
       this.clearTurnTimers();
       this.clearSleepTimer();
@@ -958,7 +982,7 @@
         this.requestPhase = 'typing';
         let topicShownAt = 0;
         if (thematicAvatar) {
-          this.setAvatarMachineState('TOPIC', { topicState: thematicAvatar });
+          this.setAvatarMachineState('TOPIC', { topicState: thematicAvatar, responseMood: 'presenting' });
           topicShownAt = Date.now();
         }
         this.stopTyping?.();

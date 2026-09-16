@@ -252,3 +252,16 @@ html.cileo-page-locked { overflow: hidden; overscroll-behavior: none; }
 .cileo__selection-hint { grid-column: 1 / -1; margin: 0 0 8px; font-size: .9rem; }
 .cileo__actions .cileo__apply { grid-column: 1 / -1; background: #0879ac; color: #fff; margin-top: 8px; min-height: 44px; }
 .cileo__actions .cileo__apply:disabled { opacity: .45; cursor: not-allowed; }
+
+/* Keep Chef/Concierge artwork; animate its outer layer without changing image alignment. */
+.cileo[data-avatar-mood="thinking"] .cileo__avatar-layer { animation: cileoContextThinking 1.5s ease-in-out infinite; }
+.cileo[data-avatar-mood="listening"] .cileo__avatar-layer { animation: cileoContextListening 1.2s ease-in-out 1; }
+.cileo[data-avatar-mood="presenting"] .cileo__avatar-layer { animation: cileoContextPresenting 1.2s ease-in-out 1; }
+.cileo[data-avatar-mood="unavailable"] .cileo__avatar-layer { animation: cileoContextUnavailable 2s ease-in-out 1; }
+@keyframes cileoContextThinking { 0%,100% { transform: translateY(-2px) rotate(-2deg); } 50% { transform: translateY(-4px) rotate(2deg); } }
+@keyframes cileoContextListening { 0%,100% { transform: translateY(-2px); } 50% { transform: translateY(-2px) rotate(-4deg); } }
+@keyframes cileoContextPresenting { 0%,100% { transform: translateY(-2px); } 40% { transform: translateY(-6px) rotate(3deg); } 70% { transform: translateY(-2px) rotate(-1deg); } }
+@keyframes cileoContextUnavailable { 0%,100% { transform: translateY(-2px); } 35%,65% { transform: translateY(3px) rotate(-3deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .cileo[data-avatar-mood] .cileo__avatar-layer { animation: none; }
+}

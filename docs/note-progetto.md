@@ -46,3 +46,12 @@ Stato: solo salvataggio locale; nessun push/deploy. I file temporanei e personal
 - IT/EN/DE/FR/ES: controllati gli otto suggerimenti di entrambe le sezioni e i testi necessari; allineamento i18n superato. Non effettuato un collaudo visivo di ogni combinazione lingua/dispositivo.
 - Test automatici delle risposte tardive superati. Il limite della ricerca effettiva nei dati rimane quello descritto sopra.
 - Commit applicativo: ace1006. In avvio il push/deploy autorizzato; l'esito sarà verificato separatamente.
+
+## 2026-09-16 — Avatar contestuali e movimenti
+
+- Chef e Concierge restano il personaggio della sezione anche durante ricerca, risposta e indisponibilità; comportamento della homepage conservato.
+- Movimenti discreti di ricerca, ascolto, presentazione e mancata risposta sulle immagini esistenti, con ritorno automatico in attesa; nessuna nuova espressione del volto.
+- Animazioni disattivate per chi preferisce movimento ridotto.
+- Verifiche: sintassi JavaScript e test delle conversazioni superati; test degli stati per Chef/Concierge e ritorno alla home superato nella sessione di sviluppo; anteprima controllata dopo una richiesta, con avatar concierge e animazione cileoContextUnavailable.
+- Pubblicazione su /hub autorizzata dall'utente; deploy avviato dal push di questo commit. Esito disponibile nel workflow GitHub Actions associato.
+- File personali e temporanei esclusi dal commit e dalla pubblicazione.
