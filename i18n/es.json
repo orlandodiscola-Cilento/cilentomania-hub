@@ -128,7 +128,10 @@
     "sleepTagline": "Tu próximo despertar en el Cilento.",
     "discoverTown": "Descubre",
     "askCilentino": "Pregunta a Cilentino",
-    "changeTown": "Cambiar municipio"
+    "changeTown": "Cambiar municipio",
+    "eatTagline": "El Cilento, para saborear.",
+    "eatConciergeIntro": "Te ayudo a elegir dónde comer y a descubrir los sabores del Cilento.",
+    "discoverRestaurant": "Descubre el restaurante"
   },
   "overlay": {
     "close": "Cerrar",
@@ -217,6 +220,24 @@
       "itineraries": "Recomiéndame un itinerario en Cilento",
       "infopoint": "Muéstrame los Infopoints de Cilentomania",
       "nearby": "¿Qué hay cerca de mí en Cilento?"
+    },
+    "hospitality": {
+      "eat": {
+        "greeting": "Hola, soy Cilentino Chef",
+        "subtitle": "Tu guía de los sabores del Cilento",
+        "intro": "Te ayudo a elegir dónde comer, entre cocina local, especialidades del mar y sabores tradicionales.",
+        "question": "¿Qué te apetece probar?",
+        "questionTown": "¿Qué te apetece probar en {town}?",
+        "preferences": "Dime qué cocina prefieres y si tienes alguna necesidad alimentaria especial."
+      },
+      "sleep": {
+        "greeting": "Hola, soy Cilentino Concierge",
+        "subtitle": "Encontramos la estancia ideal para ti",
+        "intro": "¿Cerca del mar, en un pueblo histórico o en plena naturaleza? Busquemos juntos lo que mejor se adapte a ti.",
+        "question": "¿En qué zona te gustaría alojarte?",
+        "questionTown": "¿Qué tipo de estancia buscas en {town}?",
+        "preferences": "Cuéntame con quién viajas y qué servicios son importantes para ti."
+      }
     }
   }
 }

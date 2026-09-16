@@ -362,6 +362,9 @@
     }
 
     setAvatarMachineState(machineState, options = {}) {
+      if (this.homeAvatarReset && !this.ui.isOpen && getCilentinoNavigationContext().section === 'home') {
+        machineState = 'SLEEPING'; options = {};
+      }
       return this.animation.setMachineState(machineState, options);
     }
 
@@ -370,7 +373,8 @@
     }
 
     isSleepBlocked() {
-      return this.isChatBusy() || this.ui.confirmOpen || document.activeElement === this.ui.elements.input;
+      const hospitalityChat = this.ui.isOpen && ['eat', 'sleep'].includes(getCilentinoNavigationContext().module);
+      return this.isChatBusy() || hospitalityChat || this.ui.confirmOpen || document.activeElement === this.ui.elements.input;
     }
 
     showWakeBubble() {
@@ -404,6 +408,7 @@
 
     wakeFromSleep(showBubble = true) {
       if (!this.isSleeping || this.isChatBusy()) return false;
+      this.homeAvatarReset = false;
       this.isSleeping = false;
       this.setAvatarMachineState('GREETING');
       if (showBubble) this.showWakeBubble();
@@ -447,11 +452,45 @@
     }
 
     handleChatOpen() {
+      this.homeAvatarReset = false;
       this.registerInteraction('open');
+      const context = getCilentinoNavigationContext();
+      this.updateContextPresentation(context);
+      const avatar = { eat: 'chef', sleep: 'concierge' }[context.module] || (context.section === 'home' ? 'guida' : null);
+      if (avatar && !this.isChatBusy()) {
+        this.isSleeping = false;
+        this.hideWakeBubble();
+        this.setAvatarMachineState('TOPIC', { topicState: avatar });
+      }
     }
 
     handleChatClose() {
       this.registerInteraction('close');
+    }
+
+    updateContextPresentation(context = getCilentinoNavigationContext()) {
+      const type = ['eat', 'sleep'].includes(context.module) ? context.module : null;
+      const prefix = type ? `chat.hospitality.${type}` : 'chat';
+      const header = this.ui.root.querySelector('.cileo__header-copy');
+      ['greeting', 'subtitle', 'intro'].forEach((field, index) => {
+        const element = header.children[index];
+        element.setAttribute('data-i18n', `${prefix}.${field}`);
+        element.textContent = t(`${prefix}.${field}`, t(`chat.${field}`, ''));
+      });
+      // Only replace the introductory message; never erase an existing conversation.
+      if (this.messages.length > 1 || this.messages.some(message => message.sender === 'user')) return;
+      let welcome = getDefaultWelcome();
+      if (type) {
+        const question = context.municipalityName
+          ? t(`${prefix}.questionTown`, '', { town: context.municipalityName })
+          : t(`${prefix}.question`, '');
+        const localizedQuestion = getChatLanguage() === 'it' ? question.replace(/ a ([Aa])/g, ' ad $1') : question;
+        welcome = localizedQuestion + '\n\n' + t(`${prefix}.preferences`, '');
+      }
+      if (this.messages[0]?.text === welcome) return;
+      this.messages = [];
+      this.ui.elements.messages.replaceChildren();
+      this.addChatMessage(welcome, 'assistant');
     }
 
     shouldUseGeolocation(message) {
@@ -495,7 +534,7 @@
         experiences: 'escursionista',
         territory: 'guida'
       };
-      return bySection[section] || null;
+      return bySection[context?.module] || bySection[section] || null;
     }
 
     async renderAssistantMessage(answerText, turnId) {
@@ -731,7 +770,22 @@
       const panelContent = document.getElementById('panelContent');
       const overlay = document.getElementById('overlay');
       if (!panelContent || !overlay) return;
+      let previousSection = getCilentinoNavigationContext().section;
       const closeSuggestions = () => {
+        const context = getCilentinoNavigationContext();
+        const returnedHome = previousSection !== 'home' && context.section === 'home';
+        previousSection = context.section;
+        if (returnedHome) {
+          this.currentTopicAvatar = 'guida';
+          this.clearSleepTimer();
+          this.hideWakeBubble();
+          this.animation.cancelTimers();
+          this.updateContextPresentation(context);
+          this.homeAvatarReset = !this.ui.isOpen;
+          this.isSleeping = !this.ui.isOpen;
+          if (this.isSleeping) this.sleepCycleId += 1;
+          this.setAvatarMachineState(this.isSleeping ? 'SLEEPING' : 'GREETING');
+        }
         if (this.ui?.suggestionState === 'suggestions-open') this.ui.setSuggestionState('conversation');
       };
       const panelObserver = new MutationObserver(closeSuggestions);
@@ -775,6 +829,7 @@
         if (Array.isArray(this.ui.currentActions) && this.ui.currentActions.length) {
           this.ui.setActions(this.ui.currentActions.map(action => ({ ...action })));
         }
+        if (this.ui.isOpen) this.updateContextPresentation();
       });
 
       this.ui.root.classList.add('is-ready');
@@ -906,6 +961,7 @@
       this.setAvatarMachineState('GREETING');
       this.restartSleepTimer();
       this.ui.elements.input.focus({ preventScroll: true });
+      if (this.ui.isOpen) this.handleChatOpen();
     }
 
     setCileoState(state, options) {

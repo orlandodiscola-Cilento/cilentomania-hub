@@ -158,6 +158,7 @@
       });
       this.root.addEventListener('keydown', event => {
         if (event.key !== 'Escape' || !this.isOpen) return;
+        event.stopPropagation();
         if (this.confirmOpen) {
           event.preventDefault();
           this.closeConfirm(true);
@@ -416,7 +417,7 @@
       this.unlockPageScroll();
       this.options.onInteraction?.('close');
       this.options.onClose();
-      this.lastFocus?.focus?.();
+      this.lastFocus?.focus?.({ preventScroll: true });
     }
 
     toggle() {

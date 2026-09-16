@@ -41,7 +41,7 @@ function bindModuleLaunchers(getModules){
 function bindApplication(getModules){
  document.getElementById('closePanel').addEventListener('click',closePanel);
 overlay.addEventListener('click',e=>{if(e.target===overlay)closePanel();});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closePanel();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!document.querySelector('.cileo.is-open'))closePanel();});
 bindModuleLaunchers(getModules);
 document.getElementById('exploreBtn').addEventListener('click',()=>openPanel(t('overlay.exploreTerritory','Esplora il Territorio'),townSelector('Cerca e seleziona un Comune.')));
 document.querySelectorAll('[data-detail]').forEach(b=>b.addEventListener('click',()=>{
