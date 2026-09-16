@@ -38,3 +38,11 @@ Verifiche: sintassi dei due JavaScript, allineamento delle chiavi i18n, diff sen
 Limiti: la selezione multipla compone una richiesta; non certifica che il backend applichi tutti i filtri ai dati. Non sono stati aggiunti servizi AI o credenziali. Le conversazioni già salvate possono contenere risposte demo storiche: non sono state cancellate. La verifica responsive completa nelle cinque lingue resta da effettuare prima della pubblicazione. Una risposta tardiva viene ignorata se la sua cronologia è stata modificata nel frattempo, per evitare sovrascritture.
 
 Stato: solo salvataggio locale; nessun push/deploy. I file temporanei e personali restano esclusi.
+
+### Verifica pre-pubblicazione
+- Autorizzata la pubblicazione dall'utente dopo i controlli.
+- Smartphone 390x844 e tablet 768x1024: verifica visiva di chat e suggerimenti, nessun overflow orizzontale della pagina, conferma a larghezza piena.
+- Invio unico Hotel/Piscina/Parcheggio verificato; risposta di indisponibilità corretta.
+- IT/EN/DE/FR/ES: controllati gli otto suggerimenti di entrambe le sezioni e i testi necessari; allineamento i18n superato. Non effettuato un collaudo visivo di ogni combinazione lingua/dispositivo.
+- Test automatici delle risposte tardive superati. Il limite della ricerca effettiva nei dati rimane quello descritto sopra.
+- Commit applicativo: ace1006. In avvio il push/deploy autorizzato; l'esito sarà verificato separatamente.
