@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "organizations": [{"id":"org-mare","name":"Dimora del Mare"},{"id":"org-borgo","name":"Ospitalità del Borgo"}],
+  "users": [{"id":"anna","name":"Anna","email":"anna@example.test","role":"operator"},{"id":"luca","name":"Luca","email":"luca@example.test","role":"operator"},{"id":"marta","name":"Marta","email":"marta@example.test","role":"operator"},{"id":"redazione","name":"Redazione Cilentomania","email":"redazione@example.test","role":"admin"}],
+  "memberships": [{"userId":"anna","organizationId":"org-mare"},{"userId":"luca","organizationId":"org-mare"},{"userId":"marta","organizationId":"org-borgo"}],
+  "profiles": [{"id":"mare","organizationId":"org-mare","type":"accommodation","sourceId":"CAST-DORM-MASTER-DEMO","name":"Dimora del Mare","publicPageId":"CAST-DORM-MASTER-DEMO","publicationStatus":"published"},{"id":"borgo","organizationId":"org-borgo","type":"accommodation","sourceId":"CAST-DORM-MASTER-DEMO","name":"Casa del Borgo — Demo","publicationStatus":"draft"}]
+}

@@ -30,6 +30,7 @@ jobs:
             **/.github/**
             **/.vscode/**
             **/node_modules/**
+            operatori/**
             docs/**
             tools/**
             seo/**

@@ -209,6 +209,14 @@ function initTerritoryData(data){
  usefulContactsPromise=loadUsefulContacts();
  territoryImagesPromise=loadTerritoryImages();
  territoryImageConfigPromise=loadTerritoryImageConfig();
+ const requestedProfile=new URLSearchParams(location.search).get('scheda');
+ if(requestedProfile) Promise.resolve().then(async()=>{
+  await globalThis.CilentomaniaI18n?.init?.();
+  const records=await loadMunicipalityModuleData('sleep');
+  const record=records.find(item=>String(item.id)===requestedProfile);
+  const municipality=record&&municipalities.find(name=>municipalitySlug(name)===record.comune_id);
+  if(municipality)await openMunicipalityDetailById('sleep',municipality,record.comune_id,record.id);
+ }).catch(error=>console.warn('Apertura scheda non disponibile',error));
 }
 async function loadTerritoryImageConfig(){
  try{

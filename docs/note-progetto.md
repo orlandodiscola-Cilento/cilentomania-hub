@@ -78,3 +78,23 @@ Stato: solo salvataggio locale; nessun push/deploy. I file temporanei e personal
 - Test Scheda Master, i18n e conversazioni superati; dati preesistenti e traduzioni esterne al nuovo namespace invariati; Dove Mangiare verificato.
 - Commit e push autorizzati dall’utente; deploy previsto dal workflow esistente su main in /hub/. Esito da verificare dopo il push.
 - Esclusi file locali, screenshot, node_modules e server di anteprima LAN.
+
+## 2026-09-17 — Fase 2 Area Operatori v1, solo locale
+
+- Login demo, dashboard “Le mie schede”, editor in sei sezioni e Area Cilentomania con coda, ricerca, filtri e storico invii.
+- Due organizzazioni demo; Anna e Luca condividono la prima, Marta appartiene alla seconda. Modello predisposto per più utenti e più contenuti per organizzazione.
+- publishedVersion separata da workingRevision e invii: approvare non modifica la versione pubblica. Stati pubblicazione/sospensione soltanto nel simulatore Admin locale.
+- Foto e bozze in IndexedDB, media con id/tipo/ordine/didascalia/ALT. Anteprima sul renderer Master esistente, con CTA demo inattive. Codici servizi condivisi e dati sconosciuti mantenuti come non specificati.
+- Nessuna modifica al renderer, modello, stile o dati della Scheda Master pubblica. Solo apertura diretta opzionale della scheda tramite parametro URL nella navigazione esistente.
+- Test di isolamento, campi amministrativi, workflow, concorrenza, modello pubblico e traduzioni superati. Verificati caricamento foto, persistenza, gallery e responsive 390/768/1024/1440 px.
+- Architettura, credenziali demo, limiti e autorizzazioni database future documentati in docs/area-operatori.md. Nessuna autenticazione reale e nessuna logica commerciale.
+- Nessun commit, push o deploy: attesa approvazione grafica e funzionale. Attenzione per la fase successiva: il workflow su main pubblica automaticamente anche operatori/ se non viene esclusa.
+
+### Approvazione Area Operatori v1 e salvataggio remoto
+
+- Area Operatori v1 approvata dall’utente come prototipo funzionale. Prossimo passaggio: database + autenticazione reale, applicando le autorizzazioni lato database documentate in docs/area-operatori.md.
+- Rieseguiti con esito positivo i test Area Operatori (workflow, permessi, isolamento e versioni), Scheda Master, allineamento traduzioni e conversazioni Cilentino; controllo sintattico dei nuovi moduli superato.
+- Autorizzati commit “feat: add operator management area” e push su origin/main, senza pubblicazione. Il corpo del commit include [skip ci] per non avviare il deploy automatico di questo push.
+- Aggiunta esclusione operatori/** nel workflow FTP anche per i futuri deploy: l’accesso demo non deve essere pubblicato come area riservata reale. Nessuna modifica alle credenziali o agli altri meccanismi di deploy.
+- Renderer, stile, modello e dati pubblici della Scheda Master, Dove Mangiare e traduzioni esistenti restano invariati. La piccola apertura diretta via parametro URL resta salvata nel codice ma non viene distribuita con questo push.
+- Esclusi cartelle locali, node_modules, screenshot e altri file temporanei. Nessun deploy richiesto o avviato intenzionalmente.
