@@ -1,5 +1,332 @@
 [
   {
+    "id": "CAST-DORM-MASTER-DEMO",
+    "slug": "dimora-del-mare-demo",
+    "comune_id": "castellabate",
+    "nome": "Dimora del Mare",
+    "categoria": "Boutique hotel",
+    "localita": "Castellabate · Cilento",
+    "claim": "Il tempo lento, tra il blu e il borgo.",
+    "descrizione_breve": "Scheda dimostrativa della nuova ospitalità Cilentomania. Struttura di fantasia.",
+    "descrizione_completa": "Immagina una dimora luminosa, un terrazzo aperto sul paesaggio e giornate senza fretta. Questa struttura di fantasia racconta il modo in cui una scheda Cilentomania può dare spazio all’ospitalità.\n\nCamere, servizi e caratteristiche sono esempi di presentazione. Le fotografie mostrano il territorio: non documentano una struttura ricettiva reale.",
+    "tipologie_camere": [
+      "Camera doppia",
+      "Suite con terrazza"
+    ],
+    "trattamenti_disponibili": [
+      "Pernottamento e colazione"
+    ],
+    "periodo_apertura": "Da aprile a ottobre · esempio",
+    "ideale_per": [
+      "In coppia",
+      "Vacanze lente",
+      "Tra mare e borghi"
+    ],
+    "immagine_copertina": "images/comuni/castellabate-card.jpg",
+    "galleria": [
+      "images/comuni/castellabate-cover.jpg",
+      "images/comuni/centola-cover.jpg",
+      "images/comuni/camerota-cover.webp",
+      "images/comuni/cannalonga-cover.jpg",
+      "images/comuni/castelcivita-cover.jpg",
+      "images/comuni/auletta-cover.webp"
+    ],
+    "photosIllustrative": true,
+    "servizi": [
+      "Wi-Fi",
+      "Piscina",
+      "Parcheggio",
+      "Colazione inclusa",
+      "Aria condizionata",
+      "Vista mare"
+    ],
+    "serviceCodes": [
+      "wifi",
+      "pool",
+      "parking",
+      "breakfast",
+      "air_conditioning",
+      "sea_view"
+    ],
+    "accessibile": null,
+    "animali_ammessi": null,
+    "adatto_famiglie": true,
+    "aperto_tutto_anno": null,
+    "latitudine": 40.2789,
+    "longitudine": 14.9606,
+    "indirizzo": "",
+    "telefono": "",
+    "whatsapp": "",
+    "email": "",
+    "sito_web": "",
+    "url_prenotazione": "",
+    "facebook": "",
+    "instagram": "",
+    "partner_cilentomania": false,
+    "demo": true,
+    "stato_pubblicazione": "bozza tecnica",
+    "editorialStatus": "demo",
+    "organizationId": null,
+    "contentOwner": null,
+    "planId": null,
+    "subscriptionId": null,
+    "administration": {
+      "commercial": {
+        "startsAt": null,
+        "expiresAt": null,
+        "subscriptionStatus": null,
+        "renewalAt": null
+      }
+    },
+    "relatedContent": [
+      {
+        "type": "municipality",
+        "id": "castellabate"
+      },
+      {
+        "type": "municipality",
+        "id": "agropoli"
+      },
+      {
+        "type": "municipality",
+        "id": "centola"
+      }
+    ],
+    "translations": {
+      "en": {
+        "nome": "Dimora del Mare",
+        "categoria": "Boutique hotel",
+        "localita": "Castellabate · Cilento",
+        "claim": "Slow days, between sea and village.",
+        "descrizione_breve": "A demonstration of Cilentomania hospitality. A fictional property.",
+        "descrizione_completa": "Imagine a bright retreat, a terrace overlooking the landscape and unhurried days. This fictional property shows how a Cilentomania profile can tell a story of hospitality.\n\nRooms, services and features are presentation examples. The photographs show the area, not a real accommodation.",
+        "tipologie_camere": [
+          "Double room",
+          "Terrace suite"
+        ],
+        "trattamenti_disponibili": [
+          "Bed and breakfast"
+        ],
+        "periodo_apertura": "April to October · example",
+        "ideale_per": [
+          "Couples",
+          "Slow holidays",
+          "Sea and villages"
+        ],
+        "servizi": [
+          "Wi-Fi",
+          "Pool",
+          "Parking",
+          "Breakfast",
+          "Air conditioning",
+          "Sea view"
+        ]
+      },
+      "de": {
+        "nome": "Dimora del Mare",
+        "categoria": "Boutiquehotel",
+        "localita": "Castellabate · Cilento",
+        "claim": "Entspannte Tage zwischen Meer und Dorf.",
+        "descrizione_breve": "Eine Demonstration der Gastlichkeit von Cilentomania. Eine fiktive Unterkunft.",
+        "descrizione_completa": "Stellen Sie sich ein helles Haus, eine Terrasse mit weitem Blick und entspannte Tage vor. Diese fiktive Unterkunft zeigt, wie ein Cilentomania-Profil Gastlichkeit vermitteln kann.\n\nZimmer, Leistungen und Merkmale dienen als Beispiele. Die Fotos zeigen die Region, keine reale Unterkunft.",
+        "tipologie_camere": [
+          "Doppelzimmer",
+          "Suite mit Terrasse"
+        ],
+        "trattamenti_disponibili": [
+          "Übernachtung mit Frühstück"
+        ],
+        "periodo_apertura": "April bis Oktober · Beispiel",
+        "ideale_per": [
+          "Paare",
+          "Entspannte Ferien",
+          "Meer und Dörfer"
+        ],
+        "servizi": [
+          "WLAN",
+          "Pool",
+          "Parkplatz",
+          "Frühstück",
+          "Klimaanlage",
+          "Meerblick"
+        ]
+      },
+      "fr": {
+        "nome": "Dimora del Mare",
+        "categoria": "Hôtel de charme",
+        "localita": "Castellabate · Cilento",
+        "claim": "Des jours paisibles, entre mer et village.",
+        "descrizione_breve": "Une démonstration de l’hospitalité Cilentomania. Un établissement fictif.",
+        "descrizione_completa": "Imaginez une maison lumineuse, une terrasse ouverte sur le paysage et des journées sans hâte. Cet établissement fictif montre comment une fiche Cilentomania peut raconter l’hospitalité.\n\nChambres, services et caractéristiques sont des exemples. Les photos montrent le territoire, pas un hébergement réel.",
+        "tipologie_camere": [
+          "Chambre double",
+          "Suite avec terrasse"
+        ],
+        "trattamenti_disponibili": [
+          "Nuitée et petit-déjeuner"
+        ],
+        "periodo_apertura": "Avril à octobre · exemple",
+        "ideale_per": [
+          "En couple",
+          "Vacances paisibles",
+          "Mer et villages"
+        ],
+        "servizi": [
+          "Wi-Fi",
+          "Piscine",
+          "Parking",
+          "Petit-déjeuner",
+          "Climatisation",
+          "Vue mer"
+        ]
+      },
+      "es": {
+        "nome": "Dimora del Mare",
+        "categoria": "Hotel boutique",
+        "localita": "Castellabate · Cilento",
+        "claim": "Días tranquilos, entre el mar y el pueblo.",
+        "descrizione_breve": "Una demostración de la hospitalidad Cilentomania. Un alojamiento ficticio.",
+        "descrizione_completa": "Imagina una casa luminosa, una terraza abierta al paisaje y días sin prisas. Este alojamiento ficticio muestra cómo una ficha Cilentomania puede presentar la hospitalidad.\n\nHabitaciones, servicios y características son ejemplos. Las fotografías muestran el territorio, no un alojamiento real.",
+        "tipologie_camere": [
+          "Habitación doble",
+          "Suite con terraza"
+        ],
+        "trattamenti_disponibili": [
+          "Alojamiento y desayuno"
+        ],
+        "periodo_apertura": "Abril a octubre · ejemplo",
+        "ideale_per": [
+          "En pareja",
+          "Vacaciones tranquilas",
+          "Mar y pueblos"
+        ],
+        "servizi": [
+          "Wi-Fi",
+          "Piscina",
+          "Aparcamiento",
+          "Desayuno",
+          "Aire acondicionado",
+          "Vistas al mar"
+        ]
+      }
+    },
+    "logo": null,
+    "numero_camere": 12,
+    "posti_letto": 24,
+    "check_in": "15:00",
+    "check_out": "10:30",
+    "territoryContent": [
+      {
+        "id": "castellabate-demo-event",
+        "type": "event",
+        "municipalityId": "castellabate",
+        "demo": true,
+        "title": "Una sera di musica nel borgo",
+        "description": "Un esempio di spazio dedicato agli appuntamenti del territorio. Data, luogo e programma saranno mostrati solo quando disponibili e confermati.",
+        "image": "images/comuni/castellabate-cover.jpg",
+        "translations": {
+          "en": {
+            "title": "An evening of village music",
+            "description": "An example of a local event block. Date, venue and programme will appear only when available and confirmed."
+          },
+          "de": {
+            "title": "Ein Musikabend im Dorf",
+            "description": "Ein Beispiel für regionale Termine. Datum, Ort und Programm erscheinen erst nach Bestätigung."
+          },
+          "fr": {
+            "title": "Une soirée musicale au village",
+            "description": "Un exemple de bloc événementiel local. Date, lieu et programme seront affichés après confirmation."
+          },
+          "es": {
+            "title": "Una noche de música en el pueblo",
+            "description": "Un ejemplo de agenda local. Fecha, lugar y programa aparecerán solo cuando estén confirmados."
+          }
+        }
+      },
+      {
+        "id": "castellabate-demo-experience",
+        "type": "experience",
+        "municipalityId": "castellabate",
+        "demo": true,
+        "title": "Il mare, a passo lento",
+        "description": "Un’idea dimostrativa di esperienza lungo la costa. Durata, disponibilità e operatore saranno collegati ai dati dell’esperienza.",
+        "image": "images/comuni/castellabate-card.jpg",
+        "translations": {
+          "en": {
+            "title": "A slower pace by the sea",
+            "description": "A demo idea for a coastal experience. Duration, availability and operator will come from the experience record."
+          },
+          "de": {
+            "title": "Das Meer in aller Ruhe",
+            "description": "Eine Demo-Idee für ein Küstenerlebnis. Dauer, Verfügbarkeit und Anbieter folgen aus dem Erlebniskatalog."
+          },
+          "fr": {
+            "title": "La mer, tout doucement",
+            "description": "Une idée de démonstration sur la côte. Durée, disponibilité et prestataire proviendront de la fiche expérience."
+          },
+          "es": {
+            "title": "El mar, sin prisas",
+            "description": "Una idea demo de experiencia costera. Duración, disponibilidad y operador vendrán de la ficha de experiencia."
+          }
+        }
+      },
+      {
+        "id": "castellabate-demo-restaurant",
+        "type": "restaurant",
+        "municipalityId": "castellabate",
+        "demo": true,
+        "title": "Sapori e racconti del Cilento",
+        "description": "Una proposta editoriale dimostrativa per scoprire la cucina locale. Il collegamento a un ristorante reale sarà disponibile con contenuti verificati.",
+        "image": "images/comuni/cannalonga-cover.jpg",
+        "translations": {
+          "en": {
+            "title": "Flavours and stories of Cilento",
+            "description": "A demo editorial idea about local food. A real restaurant link will appear with verified content."
+          },
+          "de": {
+            "title": "Geschichten und Aromen des Cilento",
+            "description": "Eine redaktionelle Demo-Idee zur regionalen Küche. Ein reales Restaurant wird erst mit verifizierten Inhalten verlinkt."
+          },
+          "fr": {
+            "title": "Saveurs et récits du Cilento",
+            "description": "Une idée éditoriale de démonstration sur la cuisine locale. Un restaurant réel sera lié avec des contenus vérifiés."
+          },
+          "es": {
+            "title": "Sabores e historias del Cilento",
+            "description": "Una idea editorial demo sobre la cocina local. Un restaurante real se enlazará con contenido verificado."
+          }
+        }
+      },
+      {
+        "id": "castellabate-demo-itinerary",
+        "type": "itinerary",
+        "municipalityId": "castellabate",
+        "demo": true,
+        "title": "Dal borgo alla costa",
+        "description": "Un esempio di itinerario tra vicoli, panorami e mare. Tappe e informazioni pratiche saranno fornite dal catalogo del territorio.",
+        "image": "images/comuni/centola-cover.jpg",
+        "translations": {
+          "en": {
+            "title": "From village to coast",
+            "description": "An example route between village lanes, views and the sea. Stops and practical information will come from the area catalogue."
+          },
+          "de": {
+            "title": "Vom Dorf zur Küste",
+            "description": "Eine Beispielroute durch Gassen und Küstenlandschaften. Etappen und Hinweise folgen aus dem Gebietskatalog."
+          },
+          "fr": {
+            "title": "Du village à la côte",
+            "description": "Un exemple de parcours entre ruelles et mer. Étapes et informations pratiques viendront du catalogue territorial."
+          },
+          "es": {
+            "title": "Del pueblo a la costa",
+            "description": "Un ejemplo de recorrido entre calles y mar. Etapas e información práctica vendrán del catálogo territorial."
+          }
+        }
+      }
+    ]
+  },
+  {
     "id": "CAST-DORM-001",
     "comune_id": "castellabate",
     "nome": "Struttura ricettiva demo tecnica 1",
@@ -12,8 +339,14 @@
     "descrizione_breve": "Bozza tecnica per testare il layout della sezione e i filtri della vista dedicata.",
     "descrizione_completa": "Questa scheda rappresenta un record dimostrativo contrassegnato come bozza tecnica, inserito esclusivamente per validare la struttura dati e il rendering delle informazioni di supporto.",
     "immagine_copertina": "images/comuni/castellabate-card.jpg",
-    "galleria": ["images/comuni/castellabate-cover.jpg"],
-    "servizi": ["Wi‑Fi", "Colazione inclusa", "Parcheggio"],
+    "galleria": [
+      "images/comuni/castellabate-cover.jpg"
+    ],
+    "servizi": [
+      "Wi‑Fi",
+      "Colazione inclusa",
+      "Parcheggio"
+    ],
     "fascia_prezzo": "€€",
     "periodo_apertura": "Tutto l'anno",
     "telefono": "+39 000 000 0000",
@@ -33,7 +366,11 @@
         "localita": "Castellabate historic center",
         "descrizione_breve": "Technical draft to test section layout and dedicated filters.",
         "descrizione_completa": "This record represents a technical draft entry used only to validate data structure and rendering of supporting information.",
-        "servizi": ["Wi-Fi", "Breakfast included", "Parking"],
+        "servizi": [
+          "Wi-Fi",
+          "Breakfast included",
+          "Parking"
+        ],
         "fascia_prezzo": "EUR EUR",
         "periodo_apertura": "All year"
       },
@@ -43,7 +380,11 @@
         "localita": "Historisches Zentrum von Castellabate",
         "descrizione_breve": "Technischer Entwurf zum Testen von Layout und Filtern der Detailansicht.",
         "descrizione_completa": "Dieser Datensatz ist ein technischer Entwurf und dient ausschliesslich zur Prufung von Datenstruktur und Darstellung der Zusatzinformationen.",
-        "servizi": ["Wi-Fi", "Frustuck inklusive", "Parkplatz"],
+        "servizi": [
+          "Wi-Fi",
+          "Frustuck inklusive",
+          "Parkplatz"
+        ],
         "fascia_prezzo": "EUR EUR",
         "periodo_apertura": "Ganzjahrig"
       },
@@ -53,7 +394,11 @@
         "localita": "Centre historique de Castellabate",
         "descrizione_breve": "Brouillon technique pour tester la mise en page et les filtres dedies.",
         "descrizione_completa": "Cette fiche est un enregistrement de demonstration technique, utilise uniquement pour valider la structure des donnees et le rendu des informations de support.",
-        "servizi": ["Wi-Fi", "Petit-dejeuner inclus", "Parking"],
+        "servizi": [
+          "Wi-Fi",
+          "Petit-dejeuner inclus",
+          "Parking"
+        ],
         "fascia_prezzo": "EUR EUR",
         "periodo_apertura": "Toute l'annee"
       },
@@ -63,7 +408,11 @@
         "localita": "Centro historico de Castellabate",
         "descrizione_breve": "Borrador tecnico para probar el diseno de la seccion y los filtros dedicados.",
         "descrizione_completa": "Este registro representa una ficha de borrador tecnico, usada solo para validar la estructura de datos y el renderizado de informacion de apoyo.",
-        "servizi": ["Wi-Fi", "Desayuno incluido", "Aparcamiento"],
+        "servizi": [
+          "Wi-Fi",
+          "Desayuno incluido",
+          "Aparcamiento"
+        ],
         "fascia_prezzo": "EUR EUR",
         "periodo_apertura": "Todo el ano"
       }
@@ -83,8 +432,14 @@
     "descrizione_breve": "Bozza tecnica per testare i filtri dedicati a mare, famiglia e accessibilità.",
     "descrizione_completa": "Questa struttura dimostrativa consente di verificare la coerenza tra dati, filtri e scheda dettagliata, senza introdurre informazioni commerciali non verificate.",
     "immagine_copertina": "images/comuni/castellabate-cover.jpg",
-    "galleria": ["images/comuni/castellabate-card.jpg"],
-    "servizi": ["Vicinanza al mare", "Piscina", "Aria condizionata"],
+    "galleria": [
+      "images/comuni/castellabate-card.jpg"
+    ],
+    "servizi": [
+      "Vicinanza al mare",
+      "Piscina",
+      "Aria condizionata"
+    ],
     "fascia_prezzo": "€€€",
     "periodo_apertura": "Da aprile a ottobre",
     "telefono": "+39 000 000 0001",
@@ -103,7 +458,11 @@
         "localita": "Santa Maria di Castellabate",
         "descrizione_breve": "Technical draft to test filters for sea proximity, family suitability, and accessibility.",
         "descrizione_completa": "This demo accommodation helps verify consistency between data, filters, and the detailed page without unverified commercial content.",
-        "servizi": ["Near the sea", "Pool", "Air conditioning"],
+        "servizi": [
+          "Near the sea",
+          "Pool",
+          "Air conditioning"
+        ],
         "fascia_prezzo": "EUR EUR EUR",
         "periodo_apertura": "From April to October"
       },
@@ -113,7 +472,11 @@
         "localita": "Santa Maria di Castellabate",
         "descrizione_breve": "Technischer Entwurf zum Testen der Filter fur Meeresnahe, Familienfreundlichkeit und Barrierefreiheit.",
         "descrizione_completa": "Diese Demo-Unterkunft hilft, die Konsistenz zwischen Daten, Filtern und Detailseite ohne nicht verifizierte kommerzielle Inhalte zu prufen.",
-        "servizi": ["Nahe zum Meer", "Pool", "Klimaanlage"],
+        "servizi": [
+          "Nahe zum Meer",
+          "Pool",
+          "Klimaanlage"
+        ],
         "fascia_prezzo": "EUR EUR EUR",
         "periodo_apertura": "Von April bis Oktober"
       },
@@ -123,7 +486,11 @@
         "localita": "Santa Maria di Castellabate",
         "descrizione_breve": "Brouillon technique pour tester les filtres proximite mer, familles et accessibilite.",
         "descrizione_completa": "Cet hebergement de demonstration permet de verifier la coherence entre donnees, filtres et fiche detaillee sans contenu commercial non verifie.",
-        "servizi": ["Proche de la mer", "Piscine", "Climatisation"],
+        "servizi": [
+          "Proche de la mer",
+          "Piscine",
+          "Climatisation"
+        ],
         "fascia_prezzo": "EUR EUR EUR",
         "periodo_apertura": "D'avril a octobre"
       },
@@ -133,7 +500,11 @@
         "localita": "Santa Maria di Castellabate",
         "descrizione_breve": "Borrador tecnico para probar filtros de cercania al mar, familia y accesibilidad.",
         "descrizione_completa": "Este alojamiento de demostracion permite verificar la coherencia entre datos, filtros y ficha detallada sin contenido comercial no verificado.",
-        "servizi": ["Cerca del mar", "Piscina", "Aire acondicionado"],
+        "servizi": [
+          "Cerca del mar",
+          "Piscina",
+          "Aire acondicionado"
+        ],
         "fascia_prezzo": "EUR EUR EUR",
         "periodo_apertura": "De abril a octubre"
       }
@@ -153,8 +524,14 @@
     "descrizione_breve": "Bozza tecnica per testare il dettaglio completo e i collegamenti con il territorio.",
     "descrizione_completa": "Il record consente di verificare la gestione delle informazioni pratiche, della galleria e dei collegamenti utili per il futuro assistente digitale.",
     "immagine_copertina": "images/comuni/castellabate-card.jpg",
-    "galleria": ["images/comuni/castellabate-cover.jpg"],
-    "servizi": ["Colazione", "Parcheggio", "Vista mare"],
+    "galleria": [
+      "images/comuni/castellabate-cover.jpg"
+    ],
+    "servizi": [
+      "Colazione",
+      "Parcheggio",
+      "Vista mare"
+    ],
     "fascia_prezzo": "€",
     "periodo_apertura": "Tutto l'anno",
     "telefono": "+39 000 000 0002",
@@ -173,7 +550,11 @@
         "localita": "Licosa",
         "descrizione_breve": "Technical draft to test full detail view and links with the surrounding area.",
         "descrizione_completa": "This record helps validate practical information handling, gallery behavior, and useful connected links for the future digital assistant.",
-        "servizi": ["Breakfast", "Parking", "Sea view"],
+        "servizi": [
+          "Breakfast",
+          "Parking",
+          "Sea view"
+        ],
         "fascia_prezzo": "EUR",
         "periodo_apertura": "All year"
       },
@@ -183,7 +564,11 @@
         "localita": "Licosa",
         "descrizione_breve": "Technischer Entwurf zum Testen der kompletten Detailansicht und der Verknupfungen mit dem Gebiet.",
         "descrizione_completa": "Dieser Datensatz hilft bei der Prufung praktischer Informationen, der Galerie und nutzlicher Verknupfungen fur den zukunftigen digitalen Assistenten.",
-        "servizi": ["Frustuck", "Parkplatz", "Meerblick"],
+        "servizi": [
+          "Frustuck",
+          "Parkplatz",
+          "Meerblick"
+        ],
         "fascia_prezzo": "EUR",
         "periodo_apertura": "Ganzjahrig"
       },
@@ -193,7 +578,11 @@
         "localita": "Licosa",
         "descrizione_breve": "Brouillon technique pour tester la fiche complete et les liens avec le territoire.",
         "descrizione_completa": "Cet enregistrement permet de verifier la gestion des informations pratiques, de la galerie et des liens utiles pour le futur assistant numerique.",
-        "servizi": ["Petit-dejeuner", "Parking", "Vue mer"],
+        "servizi": [
+          "Petit-dejeuner",
+          "Parking",
+          "Vue mer"
+        ],
         "fascia_prezzo": "EUR",
         "periodo_apertura": "Toute l'annee"
       },
@@ -203,7 +592,11 @@
         "localita": "Licosa",
         "descrizione_breve": "Borrador tecnico para probar la ficha completa y los enlaces con el territorio.",
         "descrizione_completa": "Este registro permite verificar la gestion de informacion practica, galeria y enlaces utiles para el futuro asistente digital.",
-        "servizi": ["Desayuno", "Aparcamiento", "Vista al mar"],
+        "servizi": [
+          "Desayuno",
+          "Aparcamiento",
+          "Vista al mar"
+        ],
         "fascia_prezzo": "EUR",
         "periodo_apertura": "Todo el ano"
       }

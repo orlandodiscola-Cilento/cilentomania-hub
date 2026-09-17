@@ -613,7 +613,8 @@ function municipalityModuleChipIcon(value){
 }
 function municipalityModuleCardContent(item,config){
  const isSleep=config.entityType==='accommodation';
- const badge=item.partner_cilentomania?'<span class="module-card__badge">Partner Cilentomania</span>':'';
+ const sleepProfile=isSleep && globalThis.OperatorProfileModel?.normalize(item).publicProfile;
+ const badge=item.partner_cilentomania&&!(sleepProfile&&(sleepProfile.isDemo||sleepProfile.isDraft))?'<span class="module-card__badge">Partner Cilentomania</span>':'';
  const typeLabel=safeTerritoryText(municipalityModuleCategoryLabel(territoryLocalizedText(item,'categoria',{neutralFallback:true})));
  const locality=territoryLocalizedText(item,'localita');
  const summary=territoryLocalizedText(item,'descrizione_breve');
@@ -862,6 +863,15 @@ async function openMunicipalityDetailById(type,municipalityName,comuneId,itemId,
  if(!item)return;
  const resolvedState=navigationState||buildMunicipalityModuleNavigationState(type,municipalityName,comuneId,{search:'',locality:'',category:'',categories:[],price:'',boolean:[]},overlay.scrollTop);
  setMunicipalityModuleNavigationState(resolvedState);
+ if(type==='sleep'&&globalThis.OperatorProfile){
+  const model=globalThis.OperatorProfileModel.normalize(item,globalThis.CilentomaniaI18n?.getCurrentLanguage?.()||'it');
+  const catalog=municipalities.map(name=>({type:'municipality',id:municipalitySlug(name),name,image:territoryImageByType(name,'card')?.file||territoryPlaceholderSource()}));
+  const context={municipality:municipalityName,navigationState:resolvedState,catalog,openRelated:id=>{const entry=catalog.find(row=>row.id===id);if(entry)openTerritoryMunicipality(entry.name);}};
+  openPanel('',globalThis.OperatorProfile.render(model.publicProfile,context));
+  globalThis.OperatorProfile.bind(panelContent.querySelector('.operator-profile'),model.publicProfile,context);
+  overlay.scrollTo({top:0,left:0,behavior:'auto'});
+  return;
+ }
  openPanel('',municipalityModuleDetailHtml(item,config,municipalityName,comuneId));
  bindMunicipalityDetailGalleryLightbox();
  bindMunicipalityDetailContentInteractions();

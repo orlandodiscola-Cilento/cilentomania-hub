@@ -55,3 +55,26 @@ Stato: solo salvataggio locale; nessun push/deploy. I file temporanei e personal
 - Verifiche: sintassi JavaScript e test delle conversazioni superati; test degli stati per Chef/Concierge e ritorno alla home superato nella sessione di sviluppo; anteprima controllata dopo una richiesta, con avatar concierge e animazione cileoContextUnavailable.
 - Pubblicazione su /hub autorizzata dall'utente; deploy avviato dal push di questo commit. Esito disponibile nel workflow GitHub Actions associato.
 - File personali e temporanei esclusi dal commit e dalla pubblicazione.
+
+## 2026-09-17 — Prima Scheda Master Operatore, solo locale
+
+- Nuovo dettaglio Dove Dormire con hero, gallery, servizi a codici stabili, caratteristiche a tre stati, CTA, contatti, mappa e collegamenti al territorio. Demo “Dimora del Mare — Demo” a Castellabate chiaramente identificata; nessuna adesione o verifica implicita.
+- Modello pubblico separato dalla predisposizione amministrativa/commerciale (soli segnaposto, nessuna logica abbonamenti). Documentazione in `docs/operator-profile.md`.
+- Responsive controllato a 390/768/1024/1440 px; gallery, ritorno all'elenco, cinque lingue e Concierge verificati. Dove Mangiare conserva il dettaglio precedente.
+- Test automatici del modello e sintassi superati. Limite: cartografia OpenStreetMap incorporata non visibile nel browser locale; presente collegamento esterno. CTA della demo volutamente inattive.
+- File modificati solo localmente. Nessun commit, push, deploy o pubblicazione: attesa approvazione dell'utente.
+
+### Secondo passaggio grafico Scheda Master (solo locale)
+
+- Hero immersiva, badge DEMO separato, logo opzionale, CTA immediate e sticky mobile.
+- Servizi compatti, caratteristiche strutturate con icone, gallery estesa a sette immagini demo.
+- Quattro blocchi territoriali dimostrativi (Eventi, Esperienze, Dove mangiare, Itinerari) e CTA Concierge nei dintorni.
+- Verifiche responsive 390/768/1024/1440 e test del modello superati; resta il limite della mappa esterna nel browser locale.
+- Nessun commit, push o deploy; in attesa di revisione grafica.
+
+### Pubblicazione Scheda Master autorizzata
+
+- Versione finale semplificata, senza barra interna, riquadro Concierge o gallery separata. Gallery completa dalla hero; chat generale invariata.
+- Test Scheda Master, i18n e conversazioni superati; dati preesistenti e traduzioni esterne al nuovo namespace invariati; Dove Mangiare verificato.
+- Commit e push autorizzati dall’utente; deploy previsto dal workflow esistente su main in /hub/. Esito da verificare dopo il push.
+- Esclusi file locali, screenshot, node_modules e server di anteprima LAN.
