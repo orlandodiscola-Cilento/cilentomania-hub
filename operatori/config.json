@@ -1,0 +1,8 @@
+{
+  "auth": "demo",
+  "supabase": {
+    "url": "",
+    "publishableKey": ""
+  },
+  "backend": "demo"
+}

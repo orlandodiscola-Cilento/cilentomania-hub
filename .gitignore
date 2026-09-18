@@ -1,0 +1,13 @@
+.env
+.env.*
+!.env.example
+supabase/.temp/
+supabase/.branches/
+operatori/config.local.json
+**/node_modules/
+.vscode/
+review-cilentino/
+temp-*.png
+_site/
+tmp-*/
+tmp_*.txt

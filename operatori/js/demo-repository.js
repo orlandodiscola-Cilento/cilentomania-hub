@@ -4,6 +4,7 @@ import {validatePatch,validateMedia,makeInitial} from './model.js';
 import {transition} from './workflow.js';
 export function operation(state,session,action,args={},codes=[]) {
  const user=actor(state,session);
+ if(action==='context')return {user:{id:user.id,name:user.name,role:user.role},organizations:state.organizations.filter(o=>user.role==='admin'||state.memberships.some(m=>m.userId===user.id&&m.organizationId===o.id)).map(o=>({id:o.id,name:o.name}))};
  if(action==='list')return state.profiles.filter(p=>canSee(state,session,p));
  if(action==='queue'){
   if(user.role!=='admin')throw Error('Accesso riservato a Cilentomania.');
@@ -45,10 +46,11 @@ export function operation(state,session,action,args={},codes=[]) {
 export class DemoRepository extends OperatorRepository {
  constructor(db,codes){super();this.db=db;this.codes=codes;}
  async run(session,action,args){return new Promise((resolve,reject)=>{
-  const tx=this.db.transaction('workspace',['list','get','queue'].includes(action)?'readonly':'readwrite');const store=tx.objectStore('workspace');let result,error;
+  const tx=this.db.transaction('workspace',['list','get','queue','context'].includes(action)?'readonly':'readwrite');const store=tx.objectStore('workspace');let result,error;
   tx.oncomplete=()=>resolve(structuredClone(result));tx.onerror=()=>reject(error||tx.error);tx.onabort=()=>reject(error||Error('Salvataggio non riuscito.'));
   store.get('state').onsuccess=e=>{try{const state=e.target.result;result=operation(state,session,action,args,this.codes);if(tx.mode==='readwrite')store.put(state,'state');}catch(err){error=err;tx.abort();}};
  });}
+ context(s){return this.run(s,'context');}
  list(s){return this.run(s,'list');}get(s,id){return this.run(s,'get',{id});}save(s,args){return this.run(s,'save',args);}submit(s,args){return this.run(s,'submit',args);}review(s,args){return this.run(s,'review',args);}queue(s){return this.run(s,'queue');}simulate(s,args){return this.run(s,'simulate',args);}
 }
 export async function connect(){

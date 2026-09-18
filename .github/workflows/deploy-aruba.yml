@@ -14,6 +14,29 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install pinned build and local database test dependencies
+        run: |
+          npm ci --prefix tools/auth-sdk --ignore-scripts
+          npm ci --prefix supabase/tests --ignore-scripts
+
+      - name: Security and regression checks
+        run: |
+          node tools/check-operator-auth.cjs
+          node tools/check-operator-backend.cjs
+          node tools/check-operator-area.cjs
+          node tools/check-operator-profile.cjs
+          node tools/check-i18n-keys.js
+          node tools/check-cileo-conversations.cjs
+          npm test --prefix supabase/tests
+
+      - name: Build public allowlisted package
+        run: node tools/build-public.cjs
+
       - name: Deploy su Aruba via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -21,7 +44,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: /www.cilentomania.it/hub/
-          local-dir: ./
+          local-dir: ./_site/
           protocol: ftp
           port: 21
           exclude: |
@@ -30,7 +53,14 @@ jobs:
             **/.github/**
             **/.vscode/**
             **/node_modules/**
-            operatori/**
+            **/config.local.json
+            review-cilentino/**
+            temp-*.png
+            supabase/**
+            tests/**
+            **/.env*
+            package.json
+            package-lock.json
             docs/**
             tools/**
             seo/**
