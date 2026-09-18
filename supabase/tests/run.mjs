@@ -106,6 +106,15 @@ try {
  await deny("insert into storage.objects(bucket_id,name) values('listing-drafts','not-authorized')",'unregistered Storage path denied');
  check((await sql("update storage.objects set name='changed' returning id")).rows.length===0,'Storage overwrite denied');
  check((await sql('delete from storage.objects returning id')).rows.length===0,'Storage delete denied');
+ check((await val('select hub_api.media_processing_context($1) as v',[media.id])).id===media.id,'processing context scoped to owner');
+ await deny('select hub_api.claim_media_processing($1)','operator cannot obtain worker lease',[media.id]);
+ await identity(uid(3));await deny('select hub_api.media_processing_context($1)','other organization cannot process media',[media.id]);
+ await identity(null,'service_role');const lease=await val('select hub_api.claim_media_processing($1) as v',[media.id]);
+ await deny('select hub_api.claim_media_processing($1)','concurrent worker excluded',[media.id]);
+ await deny("select hub_api.finish_media_processing($1,$2,repeat('a',64),800,600)",'no finalize without prepared object',[media.id,lease]);
+ await sql("select hub_api.finish_media_processing($1,$2,null,null,null,'processing_failed')",[media.id,lease]);
+ await deny("select hub_api.finish_media_processing($1,$2,null,null,null,'processing_failed')",'closed lease cannot complete twice',[media.id,lease]);
+ await identity(uid(1));
  await deny("select hub_api.register_media($1,2,'image/svg+xml',1024)",'SVG registration denied',[r1]);
  await deny("select hub_api.register_media($1,2,'image/png',5242881)",'oversize registration denied',[r1]);
  await sql('select hub_api.save_draft($1,2,$2::jsonb)',[r1,JSON.stringify({media:[{id:media.id,role:'cover',alt:'Test image'}]})]);
@@ -161,13 +170,18 @@ try {
  await root();
  await sql("insert into storage.objects(bucket_id,name) values('listing-published',$1)",[media.path.replace('/original','/published')]);
  await identity(null,'service_role');
- await sql("select hub_api.finalize_media($1,repeat('a',64),800,600)",[media.id]);
+ await root();await sql("update hub_private.media_processing_jobs set updated_at=now()-interval '1 minute' where media_id=$1",[media.id]);await identity(null,'service_role');
+ const finalLease=await val('select hub_api.claim_media_processing($1) as v',[media.id]);
+ await sql("select hub_api.finish_media_processing($1,$2,repeat('a',64),800,600)",[media.id,finalLease]);
+ check(true,'worker finishes validated private copy through lease');
  await sql("select hub_api.finalize_media($1,repeat('a',64),800,600)",[media.id]);
  await deny("select hub_api.finalize_media($1,repeat('b',64),800,600)",'validated media immutable',[media.id]);
  await identity(uid(5));
  check(await val('select hub_api.publish_revision($1,$2,3) as v',[lid(1),next])===4,'admin publishes approved ready revision');
  check(await val('select hub_api.publish_revision($1,$2,3) as v',[lid(1),next])===4,'publication retry is idempotent');
  await identity(null,'anon');
+ await deny("select hub_api.public_listings(null)",'catalog rejects missing type');
+ check(Array.isArray(await val("select hub_api.public_listings('accommodation') as v")),'public catalog returns array');
  const published=await val("select hub_api.public_listing('test-listing-1') as v");
  check(published.name==='Local test accommodation','public projection displays published content');
  check(!JSON.stringify(published).match(/organization_id|created_by|subscription|checksum|original|workflow/),'public projection excludes private fields');
@@ -242,7 +256,7 @@ try {
  await root();
  check(await val("select count(*)::int as v from pg_tables where schemaname='hub_private' and not rowsecurity")===0,'all private tables have RLS');
  check(await val("select count(*)::int as v from information_schema.role_table_grants where table_schema='hub_private' and grantee in ('anon','authenticated') and privilege_type in ('INSERT','UPDATE','DELETE')")===0,'no browser table mutation grants');
- check(await val("select count(*)::int as v from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='hub_api' and p.proname<>'public_listing' and has_function_privilege('anon',p.oid,'EXECUTE')")===0,'anonymous can execute only public projection');
+ check(await val("select count(*)::int as v from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='hub_api' and p.proname not in ('public_listing','public_listings') and has_function_privilege('anon',p.oid,'EXECUTE')")===0,'anonymous can execute only public projection');
  check(await val("select count(*)::int as v from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname in ('hub_api','hub_private') and p.prosecdef and not coalesce(p.proconfig @> array['search_path=\"\"'],false)")===0,'definer functions fix search_path');
  console.log(`\n${checks} database checks passed. Local PGlite only; no remote connection.`);
 } catch (error) {

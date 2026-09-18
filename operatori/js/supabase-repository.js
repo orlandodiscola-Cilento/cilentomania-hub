@@ -1,4 +1,4 @@
-import {validatePhoto} from './media.js';
+import {validatePhoto,preparePhoto} from './media.js';
 import {OperatorRepository} from './repository.js';
 import {contentType} from './content-types.js';
 import {validatePatch} from './model.js';
@@ -85,6 +85,7 @@ export class SupabaseRepository extends OperatorRepository {
      if(!upload){const registered=await this.rpc('register_media',{rid:row.workingRevision.id,expected_version:row.workingRevision.version,mime_type:m.blob.type,file_bytes:m.blob.size});upload={...registered,blob:m.blob,done:false};this.uploads.set(key,upload);}
      if(upload.blob!==m.blob)throw Error('La foto è cambiata. Aggiungila nuovamente.');
      if(!upload.done){const {error}=await this.client.storage.from(upload.bucket).upload(upload.path,m.blob,{contentType:m.blob.type,upsert:false});if(error&&String(error.statusCode)!=='409')throw unavailable();upload.done=true;}
+     if(!upload.candidateDone){upload.candidate ||= await preparePhoto(m.blob);const {error}=await this.client.storage.from(upload.bucket).upload(upload.path.replace('/original','/candidate'),upload.candidate,{contentType:'image/webp',upsert:false});if(error&&String(error.statusCode)!=='409')throw unavailable();upload.candidateDone=true;}
      uploaded.push(mediaPatch({...m,id:upload.id}));
     }
     row=await save({media:uploaded});
@@ -97,7 +98,15 @@ export class SupabaseRepository extends OperatorRepository {
  }
  async submit(session,args){await this.context();await this.rpc('submit_revision',{rid:args.revisionId,expected_version:args.revisionVersion});return this.get(session,args.id);}
  async previewContext(session,id){const p=await this.get(session,id);return {territoryContent:[],isDemo:p.workingRevision.isDemo,photosIllustrative:false};}
- async queue(){await this.context();return this.rpc('review_queue');}
+ async prepareMedia(session,id){
+  const p=await this.get(session,id);for(const media of p.workingRevision.media){
+   const {data,error}=await this.client.functions.invoke('process-listing-photo',{body:{mediaId:media.id}});
+   if(error||data?.status!=='ready')throw Error('Una foto non è pronta per la pubblicazione. Riprova; se è troppo grande, richiedi la sostituzione della foto.');
+  }return this.get(session,id);
+ }
+ async publish(session,{id,revisionId}){const p=await this.get(session,id);if(p.workingRevision.id!==revisionId)throw Error('La scheda è cambiata. Riapri il riepilogo.');await this.prepareMedia(session,id);return this.rpc('publish_revision',{lid:id,rid:revisionId,expected_version:p.version});}
+ async suspend(session,{id}){const p=await this.get(session,id);return this.rpc('suspend_listing',{lid:id,expected_version:p.version});}
+ async queue(){await this.context();const rows=await this.rpc('review_queue');for(const r of rows){const l=await this.rpc('get_listing',{lid:r.listingId});r.isCurrent=l.working_revision_id===r.id;r.isPublished=l.published_revision_id===r.id&&l.publication_status==='published';}return rows;}
  async compare(session,lid,rid){await this.context();return this.rpc('compare_revision',{lid,rid});}
  async review(session,args){await this.context();return this.rpc('review_revision',{rid:args.revisionId,expected_version:args.revisionVersion,target:args.target,feedback:args.feedback||null});}
 }

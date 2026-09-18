@@ -44,6 +44,7 @@ async function main(){
  entry=entry.replace('PUBLIC_OPERATOR_ENTRY_ENABLED = false','PUBLIC_OPERATOR_ENTRY_ENABLED = true')
    .replace(/export function entryUrl\(location\) \{[\s\S]*?\n\}/,'export function entryUrl() { return PUBLIC_OPERATOR_URL; }');
  fs.writeFileSync(path.join(output,'js/operator-entry.js'),entry);
+ const catalogPath=path.join(output,'js/public-listings.js');fs.writeFileSync(catalogPath,fs.readFileSync(catalogPath,'utf8').replace('operatori/public/config.json','operatori/config.json'));
  const cileoPath=path.join(output,'js/cileo.js');
  let cileo=fs.readFileSync(cileoPath,'utf8');
  const devLine=cileo.split(/\r?\n/).find(line=>line.includes('const isDevelopment ='));

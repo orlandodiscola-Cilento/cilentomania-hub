@@ -11,3 +11,16 @@ export async function addFiles(files,items){
 }
 export function mediaUrl(item){if(item.remoteUrl){const u=new URL(item.remoteUrl);if(u.origin!=='https://qgkwqzjapvjvzmvdfges.supabase.co'||!u.pathname.startsWith('/storage/v1/object/sign/'))throw Error('Immagine non disponibile.');return u.href;}return item.blob?URL.createObjectURL(item.blob):new URL('../../'+item.source,import.meta.url).href;}
 export const release=urls=>urls.forEach(url=>{if(url.startsWith('blob:'))URL.revokeObjectURL(url);});
+export async function preparePhoto(file){
+ await validatePhoto(file);
+ const bitmap=await createImageBitmap(file,{imageOrientation:'from-image'});
+ try{
+  const scale=Math.min(1,1600/Math.max(bitmap.width,bitmap.height));
+  const width=Math.max(1,Math.round(bitmap.width*scale)),height=Math.max(1,Math.round(bitmap.height*scale));
+  const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;
+  const ctx=canvas.getContext('2d');if(!ctx)throw Error('Preparazione foto non disponibile.');ctx.drawImage(bitmap,0,0,width,height);
+  const result=await new Promise(resolve=>canvas.toBlob(resolve,'image/webp',0.9));
+  if(!result||result.size>5*1024*1024||result.type!=='image/webp')throw Error('Non è possibile preparare questa foto.');
+  canvas.width=canvas.height=1;return result;
+ }finally{bitmap.close();}
+}

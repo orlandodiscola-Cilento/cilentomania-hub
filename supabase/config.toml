@@ -1,0 +1,5 @@
+project_id = "cilentomania-hub-dev"
+[functions.photo-validation-lab]
+verify_jwt = true
+[functions.process-listing-photo]
+verify_jwt = true

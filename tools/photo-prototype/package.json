@@ -1,0 +1,1 @@
+{"name":"cilentomania-photo-prototype","private":true,"type":"module","scripts":{"test":"node test.mjs"},"dependencies":{"@imagemagick/magick-wasm":"0.0.43"}}
