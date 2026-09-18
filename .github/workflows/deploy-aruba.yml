@@ -29,6 +29,9 @@ jobs:
           node tools/check-operator-auth.cjs
           node tools/check-operator-backend.cjs
           node tools/check-operator-area.cjs
+          node tools/check-operator-types.cjs
+          node tools/check-operator-online.cjs
+          node tools/check-operator-media.cjs
           node tools/check-operator-profile.cjs
           node tools/check-i18n-keys.js
           node tools/check-cileo-conversations.cjs

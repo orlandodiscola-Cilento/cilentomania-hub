@@ -3,7 +3,7 @@ import {openEditor} from './editor.js';
 import {contentType} from './content-types.js';
 import {labels} from './workflow.js';
 const escape=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-export async function mountOnline(root,{auth,repo}) {
+export async function mountOnline(root,{auth,repo}, {publicArea=false}={}) {
  let current;
  const dashboard=async session=>{
   current=session||current;
@@ -16,5 +16,5 @@ export async function mountOnline(root,{auth,repo}) {
   const id=new URLSearchParams(location.search).get('scheda');if(id)await edit(id);
  };
  await mountAuth(root,auth,dashboard);
- document.querySelector('.demo-banner').textContent='Ambiente DEV · Dati online della propria organizzazione.';
+ document.querySelector('.demo-banner').textContent=publicArea?'Area riservata · Le modifiche restano private fino alla pubblicazione.':'Ambiente DEV · Dati online della propria organizzazione.';
 }

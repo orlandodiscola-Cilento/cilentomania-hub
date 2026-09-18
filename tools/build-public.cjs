@@ -12,7 +12,7 @@ const copy=(from,to=from)=>{const dest=path.join(output,to);fs.mkdirSync(path.di
 // Explicit public allowlist. No root-wide upload, server source, tests or admin.
 for(const dir of ['assets','css','data','i18n','images','js'])copy(dir);
 for(const file of ['index.html','bottega-del-cilento.html','robots.txt','sitemap.xml'])copy(file);
-copy('operatori/css/area-operatori.css');copy('operatori/.htaccess');
+copy('operatori/css/area-operatori.css');copy('operatori/css/restaurant-preview.css');copy('operatori/anteprima.html');copy('operatori/.htaccess');
 copy('operatori/js/vendor/THIRD-PARTY-NOTICES.txt','operatori/THIRD-PARTY-NOTICES.txt');
 fs.writeFileSync(path.join(output,'operatori/config.json'),JSON.stringify(config));
 for(const page of ['index.html','password.html']){
@@ -25,7 +25,8 @@ for(const page of ['index.html','password.html']){
 // Build a temporary source entry through esbuild's normal resolveDir/alias mapping.
 const esbuild=require('./auth-sdk/node_modules/esbuild');
 async function main(){
- for(const name of ['app','password'])await esbuild.build({entryPoints:[path.join(root,'operatori/public',name+'.js')],outfile:path.join(output,'operatori/js',name+'.js'),bundle:true,format:'esm',platform:'browser',target:'es2022',minify:true,legalComments:'none',plugins:[{name:'public-only',setup(build){
+ for(const name of ['app','password','preview'])await esbuild.build({entryPoints:[path.join(root,'operatori/public',name+'.js')],outfile:path.join(output,'operatori/js',name+'.js'),bundle:true,format:'esm',platform:'browser',target:'es2022',minify:true,legalComments:'none',plugins:[{name:'public-only',setup(build){
+   build.onResolve({filter:/(^|[\\/])backend\.js$/},()=>({path:path.join(root,'operatori/public/backend.js')}));
    build.onResolve({filter:/configuration\.js$/},()=>({path:path.join(root,'operatori/public/configuration.js')}));
    build.onResolve({filter:/auth-urls\.js$/},()=>({path:path.join(root,'operatori/public/auth-urls.js')}));
    build.onLoad({filter:/vendor[\\/]supabase\.js$/},args=>{
@@ -57,7 +58,17 @@ async function main(){
    return `${attribute}="${file}?v=${version}"`;
  });
  fs.writeFileSync(indexPath,html);
+ // Version operator assets too: do not mix old login bundles with the online editor.
+ for(const page of ['index.html','password.html','anteprima.html']){
+  const file=path.join(output,'operatori',page);
+  let html=fs.readFileSync(file,'utf8');
+  html=html.replace(/(src|href)="((?:operatori\/)?(?:js|css)\/[^"?]+)"/g,(match,attribute,url)=>{
+   const asset=path.join(output,page==='anteprima.html'?'':'operatori',url);
+   const hash=crypto.createHash('sha256').update(fs.readFileSync(asset)).digest('hex').slice(0,12);
+   return attribute+'="'+url+'?v='+hash+'"';
+  });fs.writeFileSync(file,html);
+ }
  require('./check-public-package.cjs')(output);
- console.log('PASS: public package generated from explicit allowlist; Auth only, no local configuration or demo operator routes.');
+ console.log('PASS: public package generated from explicit allowlist; Private online editor, no local configuration or demo operator routes.');
 }
 main().catch(error=>{console.error(error.message);process.exitCode=1;});
