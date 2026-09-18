@@ -48,6 +48,15 @@ async function main(){
  const devLine=cileo.split(/\r?\n/).find(line=>line.includes('const isDevelopment ='));
  assert.ok(devLine,'Expected existing development-only logging guard');
  cileo=cileo.replace(devLine,'    const isDevelopment = false;');fs.writeFileSync(cileoPath,cileo);
+ // Version public assets by their actual bytes so returning browsers cannot
+ // combine the new HTML with an older cached tourism/chat implementation.
+ const crypto=require('node:crypto');
+ const indexPath=path.join(output,'index.html');
+ const html=fs.readFileSync(indexPath,'utf8').replace(/(src|href)="((?:js|css)\/[^"?]+)(?:\?[^"\s]*)?"/g,(match,attribute,file)=>{
+   const version=crypto.createHash('sha256').update(fs.readFileSync(path.join(output,file))).digest('hex').slice(0,12);
+   return `${attribute}="${file}?v=${version}"`;
+ });
+ fs.writeFileSync(indexPath,html);
  require('./check-public-package.cjs')(output);
  console.log('PASS: public package generated from explicit allowlist; Auth only, no local configuration or demo operator routes.');
 }
