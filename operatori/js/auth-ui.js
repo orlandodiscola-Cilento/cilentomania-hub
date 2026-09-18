@@ -2,7 +2,7 @@
 const field=(name,label,type,autocomplete)=>`<label class="field">${label}<input name="${name}" type="${type}" autocomplete="${autocomplete}" required></label>`;
 const back='<p><a href="../">← Torna a Cilentomania HUB</a></p>';
 export function accessShell(root,title,fields,buttons) {
-  root.innerHTML=`<section class="panel login"><div class="welcome"><p class="eyebrow">Cilentomania HUB</p><h1>La tua attività,<br>al centro del Cilento.</h1><p>Uno spazio semplice per raccontare la tua attività e tenere aggiornate le tue schede su Cilentomania.</p></div><form><p class="eyebrow">Area Operatori</p><h2></h2>${back}${fields}${buttons}<p role="status" class="status" aria-live="polite"></p></form></section>`;
+  root.innerHTML=`<section class="panel login"><div class="welcome"><h1>La tua attività,<br>al centro del Cilento.</h1><p>Uno spazio semplice per raccontare la tua attività e tenere aggiornate le tue schede su Cilentomania.</p></div><form><p class="eyebrow">Area Operatori</p><h2></h2>${back}${fields}${buttons}<p role="status" class="status" aria-live="polite"></p></form></section>`;
   root.querySelector('h2').textContent=title;
 }
 export const status=(root,text)=>{root.querySelector('[role=status]').textContent=text;};
