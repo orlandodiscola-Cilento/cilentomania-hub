@@ -7,7 +7,7 @@ const root=path.resolve(__dirname,'..');const read=p=>JSON.parse(fs.readFileSync
  const source=read('data/strutture-ricettive.json'),original=JSON.stringify(source),state=makeInitial(read('operatori/data/demo.json'),source);
  const anna={userId:'anna'},luca={userId:'luca'},marta={userId:'marta'},admin={userId:'redazione'};
  const run=(s,a,args)=>operation(state,s,a,args,codes);const p=()=>run(anna,'get',{id:'mare'});
- assert.equal(run(anna,'list').length,1);assert.equal(run(marta,'list')[0].id,'borgo');assert.equal(run(luca,'get',{id:'mare'}).id,'mare');
+ assert.equal(run(anna,'list').length,2);assert.equal(run(marta,'list')[0].id,'borgo');assert.equal(run(luca,'get',{id:'mare'}).id,'mare');
  for(const a of ['get','save','submit'])assert.throws(()=>run(marta,a,{id:'mare',version:0,patch:{},media:[]}),/Non puoi/);
  for(const key of ['organizationId','planId','subscriptionId','editorialStatus','publicationStatus','payment','contract','expiresAt','contentOwner'])assert.throws(()=>validatePatch({[key]:'forged'},codes),/Campo non modificabile/);
  assert.throws(()=>run(anna,'simulate',{id:'mare',version:0,target:'suspended'}),/Non puoi/);assert.throws(()=>run(anna,'queue'),/riservato/);
@@ -28,7 +28,7 @@ const root=path.resolve(__dirname,'..');const read=p=>JSON.parse(fs.readFileSync
  run(admin,'simulate',{id:'mare',version:p().version,target:'suspended'});assert.equal(p().publicationStatus,'suspended');
  run(admin,'simulate',{id:'mare',version:p().version,target:'published'});
  assert.equal(JSON.stringify(source),original,'Source public data never mutated');
- state.profiles.push({...structuredClone(p()),id:'seconda',type:'restaurant'});assert.equal(run(anna,'list').length,2);assert.equal(run(marta,'list').length,1);
+ state.profiles.push({...structuredClone(p()),id:'seconda',type:'restaurant'});assert.equal(run(anna,'list').length,3);assert.equal(run(marta,'list').length,1);
  assert.equal(validatePatch({posti_letto:null,accessibile:null},codes).posti_letto,null);assert.throws(()=>validatePatch({serviceCodes:['translated-service']},codes));
  assert.throws(()=>validateMedia([{id:'bad',kind:'gallery',source:'images/../../private'}]));
  const m=validateMedia([{id:'one',kind:'gallery',caption:'Caption',alt:'Alt',source:'images/comuni/centola-cover.jpg'}]);assert.equal(m[0].order,0);assert.equal(m[0].alt,'Alt');

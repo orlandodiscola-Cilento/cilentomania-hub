@@ -12,7 +12,7 @@ export async function busy(root,action) {
   try {await action();} catch(error) {if(root.querySelector('[role=status]')) status(root,error.message);}
   finally {controls.forEach(b=>b.disabled=false);}
 }
-export async function mountAuth(root,auth) {
+export async function mountAuth(root,auth,onAuthenticated) {
   document.querySelector('.demo-banner').textContent='Ambiente di sviluppo · Accesso riservato agli operatori invitati. Gestione delle schede non ancora collegata.';
   let rendering=0;
   function login(message='') {
@@ -34,13 +34,14 @@ export async function mountAuth(root,auth) {
       try {
         const context=await auth.context();
         if(turn!==rendering)return;
+        if(context&&onAuthenticated){await onAuthenticated(session);return;}
         status(root,context?'Accesso verificato. La gestione online delle tue schede sarà disponibile nel prossimo passaggio.':'L’account non è ancora abilitato all’Area Operatori oppure è stato sospeso. Contatta Cilentomania.');
       } catch {if(turn===rendering)status(root,'Non è possibile verificare l’abilitazione. Le schede rimangono inaccessibili. Puoi uscire e riprovare più tardi.');}
     } catch {if(turn===rendering)login('Impossibile verificare la sessione. Controlla la connessione e riprova.');}
   }
   const unsubscribe=auth.onChange(event=>{
     if(event==='SIGNED_OUT'){++rendering;login('La sessione è terminata. Accedi nuovamente.');}
-    if(event==='TOKEN_REFRESHED'||event==='SIGNED_IN')void render();
+    if(!onAuthenticated&&(event==='TOKEN_REFRESHED'||event==='SIGNED_IN'))void render();
   });
   window.addEventListener('pagehide',unsubscribe,{once:true});
   window.addEventListener('pageshow',event=>{if(event.persisted)location.reload();});

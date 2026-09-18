@@ -1,0 +1,23 @@
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const {pathToFileURL}=require('node:url');const root=path.resolve(__dirname,'..');const read=p=>JSON.parse(fs.readFileSync(path.join(root,p),'utf8'));
+(async()=>{
+ const load=p=>import(pathToFileURL(path.join(root,'operatori/js',p)));
+ const {makeInitial,upgradeDemo,validatePatch}=await load('model.js');const {operation}=await load('demo-repository.js');const {CONTENT_TYPES}=await load('content-types.js');
+ const seed=read('operatori/data/demo.json'),records=read('data/strutture-ricettive.json'),state=makeInitial(seed,records),anna={userId:'anna'},marta={userId:'marta'},admin={userId:'redazione'};
+ const run=(s,a,args)=>operation(state,s,a,args);const p=()=>run(anna,'get',{id:'ristorante-mare'}),hotel=JSON.stringify(run(anna,'get',{id:'mare'}));
+ assert.equal(run(anna,'list').length,2);assert.equal(CONTENT_TYPES.service.categories.beach_club.label,'Stabilimento balneare');
+ for(const key of ['numero_camere','posti_letto','organizationId','type','planId','subscriptionId','administration'])assert.throws(()=>validatePatch({[key]:1},undefined,'restaurant'));
+ assert.throws(()=>validatePatch({serviceCodes:['pool']},undefined,'restaurant'));assert.throws(()=>validatePatch({serviceCodes:['vegan_options']},undefined,'accommodation'));
+ assert.throws(()=>validatePatch({coperti_interni:-1},undefined,'restaurant'));assert.throws(()=>validatePatch({menu_url:'javascript:alert(1)'},undefined,'restaurant'));
+ assert.throws(()=>run(marta,'get',{id:p().id}));
+ run(anna,'save',{id:p().id,version:p().version,patch:{coperti_interni:0,accessibile:null,serviceCodes:['vegan_options'],tipo_cucina:['Cilentana']},media:p().workingRevision.media});
+ assert.equal(p().workingRevision.content.coperti_interni,0);assert.equal(p().workingRevision.content.accessibile,null);
+ assert.deepEqual(JSON.parse(JSON.stringify(state)).profiles.find(p=>p.id==='ristorante-mare').workingRevision.content,p().workingRevision.content);
+ run(anna,'submit',{id:p().id,version:p().version});run(admin,'review',{id:p().id,version:p().version,revisionId:p().workingRevision.id,target:'changes_requested',feedback:'Completa gli orari'});
+ run(anna,'save',{id:p().id,version:p().version,patch:{orari_apertura:'12:00–15:00'},media:p().workingRevision.media});run(anna,'submit',{id:p().id,version:p().version});run(admin,'review',{id:p().id,version:p().version,revisionId:p().workingRevision.id,target:'in_review'});run(admin,'review',{id:p().id,version:p().version,revisionId:p().workingRevision.id,target:'approved'});
+ assert.equal(p().publishedVersion,null);assert.equal(JSON.stringify(run(anna,'get',{id:'mare'})),hotel);
+ const old=structuredClone(state);old.profiles=old.profiles.filter(p=>p.id!=='ristorante-mare');old.profiles[0].workingRevision.content.nome='Bozza da conservare';const upgraded=upgradeDemo(old,seed,records);
+ assert.equal(upgraded.profiles.length,3);assert.equal(upgraded.profiles[0].workingRevision.content.nome,'Bozza da conservare');assert.deepEqual(upgradeDemo(upgraded,seed,records),upgraded);
+ assert.equal(p().administration.listingId,p().id);assert.equal(p().administration.subscriptionId,null);
+ console.log('PASS: typed fields/services, restaurant workflow, separate per-listing administration, organization isolation, preserved drafts and idempotent demo upgrade.');
+})().catch(e=>{console.error(e);process.exitCode=1;});

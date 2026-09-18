@@ -158,3 +158,36 @@ I due redirect pubblici sono stati aggiunti manualmente e verificati, mantenendo
 Build pubblica con allowlist e solo autenticazione reale; demo Operatori, simulatore Admin, configurazioni locali, test e strumenti esclusi. La configurazione pubblica contiene solo URL e Publishable Key. Il pulsante Area Operatori viene attivato nel pacchetto pubblico; rimane il ritorno al sito HUB. Sito turistico e Scheda Master demo conservati.
 
 Test Auth/backend/workflow/permessi/Scheda Master/traduzioni/Cilentino superati; 87 verifiche RLS locali. Controlli su segreti e riferimenti locali nel pacchetto superati. La verifica con account reale di login/logout/persistenza sul dominio pubblico richiede l'accesso personale dell'utente e non viene dichiarata conclusa dai soli test simulati. Il push main avvia il workflow di test, build e deploy Aruba; esito da verificare sul run e sul sito dopo il push.
+
+
+### Schede per attività — prototipo locale non pubblicato
+
+Moduli ricettività e ristorazione separati, due schede nella stessa organizzazione demo, codici servizi specifici e nuova anteprima ristorante. Stabilimenti balneari previsti nei Servizi con sottocategoria beach_club e modulo futuro. Regola commerciale approvata: un canone annuale per ogni scheda/attività, non per account; nessun pagamento attivato. Conservate bozze esistenti e separazione pubblicato/bozza. Migrazione 008 pronta solo per collaudo locale, non applicata al DEV. Documentazione, limiti e file: docs/operatori-schede-per-attivita.md. Nessun commit/push/deploy in questo passaggio.
+
+
+### Collegamento online — preparazione locale
+
+Creati adapter RPC, dashboard online e salvataggio atomico con migrazione 009 (claim, catalogo Comuni, controllo concorrenza). 109 test database locali e test adapter simulato. Migrazioni 008/009 NON applicate al DEV, configurazioni e dati remoti invariati; nessun commit/push/deploy. Prima dell’attivazione occorrono autorizzazione alle migrazioni e a due eventuali schede TEST, collaudo reale e completamento caricamento immagini. Dettagli e limiti: docs/operatori-collegamento-online.md.
+
+
+### Aggiornamento: applicazione DEV autorizzata
+
+Applicate con CLI ufficiale le migrazioni 008 e 009 al solo progetto qgkwqzjapvjvzmvdfges, Cilentomania HUB - DEV UE, eu-central-1, dopo verifica progetto, storico e dry-run. Nessun errore. Nove migrazioni presenti. RLS attiva su tutte le tabelle private, nessuna scrittura diretta browser, nuova RPC inaccessibile ad anon e CREATE su hub_api revocato a hub_executor.
+
+Create in un’unica transazione due schede e relative bozze iniziali, is_demo=true: [TEST] Struttura ricettiva (test-struttura-ricettiva) e [TEST] Ristorante (test-ristorante), nella sola organizzazione esistente [TEST] Cilentomania HUB. Entrambe unpublished, published_revision_id nullo, proiezioni pubbliche nulle. Membership resta operator, nessuno staff. Un account Auth, un’organizzazione, zero dati commerciali; impronta catalogo Auth e quattro policy Storage invariate. Nessun dato Dimora del Mare.
+
+Selezionati backend=supabase e auth=supabase nei soli config.local.json ignorati da Git, mantenendo URL/Publishable Key. Porta 8765 ora pronta per il login reale; porta 8766 ancora demo separata. Login personale del titolare necessario per il collaudo browser: non dichiarato completato. Catalogo Comuni remoto ancora vuoto, nuove foto online disabilitate. Nessun commit, push o deploy.
+
+### Foto private e inquadratura — DEV
+
+Applicata la migrazione 010 media_framing al solo DEV Francoforte, dopo dry-run che elencava esclusivamente tale migrazione. Introduce posizione focale per revisione e RPC autenticata di disponibilità; nessuna modifica degli oggetti Auth o delle policy Storage. Caricamento privato JPG/PNG/WebP entro 5 MB e 40 megapixel, fino a 40 foto. Originale conservato, copertina senza deformazioni con cursori orizzontale/verticale, logo intero, gallery intera. Prima foto impostata come copertina.
+
+Collaudo reale: una foto del territorio chiaramente illustrativa caricata nella sola scheda [TEST] Ristorante; bozza salvata online con inquadratura 25/75. Scheda ricettiva aperta dall’utente con modifiche non salvate lasciata intatta. 113 controlli database locali e test upload/retry, adapter online, Auth, backend, tipologie e Master superati. Pacchetto pubblico ancora Auth-only, nessun commit/push/deploy.
+
+Limiti: validazione definitiva delle immagini lato server e pulizia automatica degli upload orfani restano da implementare prima della pubblicazione delle foto. I media rimangono pending e non possono essere pubblicati senza validazione. In caso di errore dopo il salvataggio testi, un messaggio esplicito invita a mantenere aperta la pagina e riprovare: la stessa sessione riusa la registrazione dell’upload. Gli URL privati scadono dopo 5 minuti; riaprire la scheda li rinnova. Nessuna nuova organizzazione, account o dato commerciale.
+
+### Compilazione e invio unico — anteprima locale
+La sezione finale Riepilogo e invio riunisce l’invio dell’intera scheda. Nelle sezioni di compilazione restano Salva bozza, Anteprima e il collegamento al riepilogo: nessun invio implicito. L’anteprima conserva la bozza se modificata e ritorna alla sezione di provenienza. Conferma esplicita prima di inviare tutte le sezioni insieme. Nessuna modifica al workflow remoto o allo stato di schede già inviate; nessun commit, push o deploy.
+
+### Chiusura sessione — 18 settembre 2026
+Salvataggio approvato dall’utente. Test Auth, backend, operatori, tipologie, upload, traduzioni, Master e Cilentino superati; 113 controlli database locali. Foto private verificate sul DEV. Pacchetto pubblico resta intenzionalmente Auth-only: editor online, demo, Admin, configurazioni locali e dati TEST esclusi. Non dichiarare pubblicate le nuove funzioni delle schede. Restano da completare validazione server immagini, pulizia upload orfani, collaudo e rilascio editor pubblico. Ritiro invio proposto ma non implementato: schede submitted restano in sola lettura. Dieci migrazioni applicate al DEV. Nessuna nuova migrazione in questa chiusura.

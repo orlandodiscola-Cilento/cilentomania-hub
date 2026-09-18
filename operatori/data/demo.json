@@ -1,7 +1,109 @@
 {
-  "schemaVersion": 1,
-  "organizations": [{"id":"org-mare","name":"Dimora del Mare"},{"id":"org-borgo","name":"Ospitalità del Borgo"}],
-  "users": [{"id":"anna","name":"Anna","email":"anna@example.test","role":"operator"},{"id":"luca","name":"Luca","email":"luca@example.test","role":"operator"},{"id":"marta","name":"Marta","email":"marta@example.test","role":"operator"},{"id":"redazione","name":"Redazione Cilentomania","email":"redazione@example.test","role":"admin"}],
-  "memberships": [{"userId":"anna","organizationId":"org-mare"},{"userId":"luca","organizationId":"org-mare"},{"userId":"marta","organizationId":"org-borgo"}],
-  "profiles": [{"id":"mare","organizationId":"org-mare","type":"accommodation","sourceId":"CAST-DORM-MASTER-DEMO","name":"Dimora del Mare","publicPageId":"CAST-DORM-MASTER-DEMO","publicationStatus":"published"},{"id":"borgo","organizationId":"org-borgo","type":"accommodation","sourceId":"CAST-DORM-MASTER-DEMO","name":"Casa del Borgo — Demo","publicationStatus":"draft"}]
+  "schemaVersion": 2,
+  "organizations": [
+    {
+      "id": "org-mare",
+      "name": "Dimora del Mare"
+    },
+    {
+      "id": "org-borgo",
+      "name": "Ospitalità del Borgo"
+    }
+  ],
+  "users": [
+    {
+      "id": "anna",
+      "name": "Anna",
+      "email": "anna@example.test",
+      "role": "operator"
+    },
+    {
+      "id": "luca",
+      "name": "Luca",
+      "email": "luca@example.test",
+      "role": "operator"
+    },
+    {
+      "id": "marta",
+      "name": "Marta",
+      "email": "marta@example.test",
+      "role": "operator"
+    },
+    {
+      "id": "redazione",
+      "name": "Redazione Cilentomania",
+      "email": "redazione@example.test",
+      "role": "admin"
+    }
+  ],
+  "memberships": [
+    {
+      "userId": "anna",
+      "organizationId": "org-mare"
+    },
+    {
+      "userId": "luca",
+      "organizationId": "org-mare"
+    },
+    {
+      "userId": "marta",
+      "organizationId": "org-borgo"
+    }
+  ],
+  "profiles": [
+    {
+      "id": "mare",
+      "organizationId": "org-mare",
+      "type": "accommodation",
+      "sourceId": "CAST-DORM-MASTER-DEMO",
+      "name": "Dimora del Mare",
+      "publicPageId": "CAST-DORM-MASTER-DEMO",
+      "publicationStatus": "published"
+    },
+    {
+      "id": "borgo",
+      "organizationId": "org-borgo",
+      "type": "accommodation",
+      "sourceId": "CAST-DORM-MASTER-DEMO",
+      "name": "Casa del Borgo — Demo",
+      "publicationStatus": "draft"
+    },
+    {
+      "id": "ristorante-mare",
+      "organizationId": "org-mare",
+      "type": "restaurant",
+      "sourceId": "restaurant-local-demo",
+      "name": "La Tavola del Mare",
+      "publicationStatus": "draft",
+      "demoSource": {
+        "nome": "La Tavola del Mare",
+        "categoria": "Ristorante",
+        "comune_id": "castellabate",
+        "localita": "Castellabate",
+        "claim": "Sapori del Cilento, una tavola da condividere.",
+        "descrizione_breve": "Esempio dimostrativo di ristorante: contenuti e fotografie illustrativi.",
+        "descrizione_completa": "Una scheda dimostrativa dedicata alla ristorazione. Qui potrai raccontare la tua cucina, presentare le specialità e aggiornare menu, orari e servizi. Questo locale è un esempio e non corrisponde a un’attività acquistabile o prenotabile.",
+        "tipo_cucina": [
+          "Cucina cilentana",
+          "Mediterranea"
+        ],
+        "specialita": [
+          "Pasta fresca",
+          "Verdure di stagione"
+        ],
+        "coperti_interni": 40,
+        "coperti_esterni": 20,
+        "orari_apertura": "Orari da inserire",
+        "accessibile": null,
+        "serviceCodes": [
+          "outdoor_seating",
+          "vegetarian_options"
+        ],
+        "immagine_copertina": "images/comuni/castellabate-card.jpg",
+        "galleria": [
+          "images/comuni/centola-cover.jpg"
+        ]
+      }
+    }
+  ]
 }

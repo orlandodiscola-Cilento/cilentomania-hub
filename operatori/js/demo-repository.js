@@ -1,6 +1,6 @@
 import {OperatorRepository} from './repository.js';
 import {actor,authorize,canSee} from './permissions.js';
-import {validatePatch,validateMedia,makeInitial} from './model.js';
+import {validatePatch,validateMedia,upgradeDemo} from './model.js';
 import {transition} from './workflow.js';
 export function operation(state,session,action,args={},codes=[]) {
  const user=actor(state,session);
@@ -16,7 +16,7 @@ export function operation(state,session,action,args={},codes=[]) {
  const now=new Date().toISOString();
  if(action==='save') {
   if(!['draft','changes_requested','approved','published'].includes(p.workingRevision.status))throw Error('Attendi la revisione di Cilentomania prima di modificare.');
-  const content={...p.workingRevision.content,...validatePatch(args.patch,codes)};
+  const content={...p.workingRevision.content,...validatePatch(args.patch,undefined,p.type)};
   const media=validateMedia(args.media);
   if(media.filter(m=>m.kind==='cover').length>1||media.filter(m=>m.kind==='logo').length>1)throw Error('Scegli una sola copertina e un solo logo.');
   const newId=p.workingRevision.status==='draft'?p.workingRevision.id:crypto.randomUUID();
@@ -56,6 +56,6 @@ export class DemoRepository extends OperatorRepository {
 export async function connect(){
  const [seed,records]=await Promise.all(['data/demo.json','../data/strutture-ricettive.json'].map(async url=>{const r=await fetch(new URL(url,new URL('../',import.meta.url)));if(!r.ok)throw Error('Impossibile caricare i dati demo.');return r.json();}));
  const db=await new Promise((resolve,reject)=>{const r=indexedDB.open('cilentomania-operatori-v1',1);r.onupgradeneeded=()=>r.result.createObjectStore('workspace');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(Error('Il browser non consente il salvataggio locale.'));});
- await new Promise((resolve,reject)=>{const tx=db.transaction('workspace','readwrite'),store=tx.objectStore('workspace');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);store.get('state').onsuccess=e=>{if(!e.target.result)store.put(makeInitial(seed,records),'state');};});
+ await new Promise((resolve,reject)=>{const tx=db.transaction('workspace','readwrite'),store=tx.objectStore('workspace');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);store.get('state').onsuccess=e=>{store.put(upgradeDemo(e.target.result,seed,records),'state');};});
  return {repo:new DemoRepository(db,globalThis.OperatorProfileModel.SERVICE_CODES),seed,records};
 }
